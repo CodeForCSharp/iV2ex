@@ -1,0 +1,59 @@
+﻿<toolkit:MtPage
+    x:Class="iV2EX.Views.MoneyDetailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:iV2EX.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:toolkit="using:MyToolkit.Paging"
+    xmlns:model="using:iV2EX.Model"
+    xmlns:converter="using:iV2EX.Util">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView
+            Name="MoneyList"
+            SelectionMode="None"
+            ItemsSource="{x:Bind Moneys}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:MoneyModel">
+                    <RelativePanel>
+                        <Grid
+                            Margin="5"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            Name="SpendPanel"
+                            Height="50"
+                            Width="50"
+                            Background="{x:Bind converter:Converter.SymbolToColor(Spend)}">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Spend}"
+                                Foreground="White"
+                                FontSize="24" />
+                        </Grid>
+                        <TextBlock
+                            Margin="5"
+                            Name="TypePanel"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.RightOf="SpendPanel"
+                            Text="{x:Bind Type}" />
+                        <TextBlock
+                            Margin="5"
+                            Name="TimePanel"
+                            RelativePanel.Below="TypePanel"
+                            RelativePanel.RightOf="SpendPanel"
+                            Text="{x:Bind Time}"
+                            FontSize="13"
+                            Foreground="Gray" />
+                        <TextBlock
+                            TextWrapping="Wrap"
+                            Text="{x:Bind Desc}"
+                            RelativePanel.Below="TimePanel" />
+                    </RelativePanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</toolkit:MtPage>

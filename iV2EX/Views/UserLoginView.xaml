@@ -1,0 +1,70 @@
+﻿<paging:MtPage
+    x:Class="iV2EX.Views.UserLoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:localcontrol="using:iV2EX.Controls"
+    xmlns:paging="using:MyToolkit.Paging"
+    x:Name="UserLoginPage">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="1,0" StartPoint="0,1">
+                <GradientStop Color="#FF0E68F2" />
+                <GradientStop Color="#FF89D280" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBox
+                MaxWidth="500"
+                Name="TbUsername"
+                Grid.Row="0"
+                Grid.Column="0"
+                BorderThickness="1,1,1,1"
+                BorderBrush="Black"
+                PlaceholderText="账号"
+                Margin="5" />
+            <PasswordBox
+                MaxWidth="500"
+                Name="TbPassword"
+                Grid.Row="1"
+                Grid.Column="0"
+                PasswordRevealMode="Peek"
+                PlaceholderText="密码"
+                BorderThickness="1,1,1,1"
+                BorderBrush="Black"
+                Margin="5" />
+            <Image
+                MaxWidth="500"
+                Grid.Row="2"
+                Margin="5"
+                Name="CaptchaImage" />
+            <TextBox
+                MaxWidth="500"
+                Name="TbCaptcha"
+                Grid.Row="3"
+                Grid.Column="0"
+                BorderThickness="1,1,1,1"
+                BorderBrush="Black"
+                PlaceholderText="验证码"
+                Margin="5" />
+            <Button
+                Name="BtnLogin"
+                MaxWidth="500"
+                Content="登录"
+                HorizontalAlignment="Stretch"
+                Grid.Row="4"
+                Margin="5" />
+        </Grid>
+        <localcontrol:ToastTips HorizontalAlignment="Right" VerticalAlignment="Top" x:Name="Toast" />
+    </Grid>
+</paging:MtPage>

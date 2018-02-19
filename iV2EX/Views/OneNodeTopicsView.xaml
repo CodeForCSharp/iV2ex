@@ -1,0 +1,59 @@
+﻿<toolkit:MtPage
+    x:Class="iV2EX.Views.OneNodeTopicsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:templates="using:iV2EX.Templates"
+    mc:Ignorable="d"
+    xmlns:toolkit="using:MyToolkit.Paging"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    x:Name="OneNodeTopicsPage">
+    <toolkit:MtPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <templates:NormalTopicModelTemplate />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </toolkit:MtPage.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView
+            IsItemClickEnabled="True"
+            Name="NodeTopcisList"
+            ItemTemplate="{StaticResource TopicModelNormalTemplate}"
+            ItemsSource="{x:Bind NotifyData}">
+            <ListView.Header>
+                <RelativePanel>
+                    <controls:ImageEx
+                        Name="CoverPanel"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True"
+                        Margin="10"
+                        Height="40"
+                        Width="40"
+                        Source="{x:Bind Node.Cover,Mode=OneWay}" />
+                    <TextBlock
+                        Name="TitlePanel"
+                        Margin="5"
+                        RelativePanel.RightOf="CoverPanel"
+                        Text="{x:Bind Node.Title, Mode=OneWay}" />
+                    <TextBlock
+                        Margin="5"
+                        RelativePanel.Below="TitlePanel"
+                        RelativePanel.RightOf="CoverPanel"
+                        FontSize="14"
+                        Foreground="Gray">
+                        <Run Text="主题数量 " />
+                        <Run Text="{x:Bind Node.Topics, Mode=OneWay}" />
+                    </TextBlock>
+                    <Button
+                        Margin="0,0,15,0"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Content="{x:Bind Node.IsCollect,Mode=OneWay}"
+                        Name="CollectNode" />
+                </RelativePanel>
+            </ListView.Header>
+        </ListView>
+    </Grid>
+</toolkit:MtPage>

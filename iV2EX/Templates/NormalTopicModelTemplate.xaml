@@ -1,0 +1,77 @@
+﻿<ResourceDictionary
+    x:Class="iV2EX.Templates.NormalTopicModelTemplate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:iV2EX.Templates"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:model="using:iV2EX.Model">
+    <DataTemplate x:DataType="model:TopicModel" x:Key="TopicModelNormalTemplate">
+        <RelativePanel>
+            <TextBlock
+                Name="TitlePanel"
+                Text="{x:Bind Title}"
+                Margin="8,8,0,0"
+                TextWrapping="Wrap"
+                FontSize="14"
+                Foreground="#FF3D3D3D"
+                RelativePanel.RightOf="ImagePanel"
+                RelativePanel.AlignTopWithPanel="True" />
+            <TextBlock
+                Name="NodeTitlePanel"
+                RelativePanel.Below="TitlePanel"
+                RelativePanel.RightOf="ImagePanel"
+                Text="{x:Bind NodeName}"
+                FontSize="12"
+                Foreground="Gray"
+                Margin="8,8,0,0"
+                TextWrapping="Wrap" />
+            <TextBlock
+                RelativePanel.Below="TitlePanel"
+                RelativePanel.RightOf="NodeTitlePanel"
+                Text="{x:Bind Member.Username}"
+                FontSize="12"
+                Foreground="Gray"
+                Margin="16,8,0,0"
+                TextWrapping="Wrap" />
+            <TextBlock
+                Name="LastUsernamePanel"
+                RelativePanel.RightOf="ImagePanel"
+                RelativePanel.Below="NodeTitlePanel"
+                Text="{x:Bind LastUsername}"
+                FontSize="12"
+                Foreground="Gray"
+                Margin="8,8,0,0"
+                TextWrapping="Wrap" />
+            <TextBlock
+                RelativePanel.Below="NodeTitlePanel"
+                RelativePanel.RightOf="LastUsernamePanel"
+                Text="{x:Bind LastReply}"
+                FontSize="12"
+                Foreground="Gray"
+                Margin="16,8,0,0"
+                TextWrapping="Wrap" />
+            <controls:ImageEx
+                Name="ImagePanel"
+                Source="{x:Bind Member.Image}"
+                Height="40"
+                Width="40"
+                Margin="0,8,0,0"
+                RelativePanel.AlignLeftWithPanel="True" />
+            <Grid
+                Background="#7986CB"
+                CornerRadius="9"
+                Margin="5,8,0,0"
+                RelativePanel.Below="ImagePanel"
+                Width="30">
+                <TextBlock
+                    Text="{x:Bind Replies}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    FontSize="12"
+                    Foreground="White"
+                    Height="17"
+                    HorizontalAlignment="Center" />
+            </Grid>
+        </RelativePanel>
+    </DataTemplate>
+</ResourceDictionary>

@@ -1,0 +1,434 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{6A1C7072-3881-4152-A4FC-65CB7C4938B1}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>iV2EX</RootNamespace>
+    <AssemblyName>iV2EX</AssemblyName>
+    <DefaultLanguage>zh-CN</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PackageCertificateKeyFile>iV2EX_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>F265081650C699CD42CFC269B2554BC4593D4DC5</PackageCertificateThumbprint>
+    <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="Assets\default.png" />
+    <Content Include="Assets\IconFont\iconfont.ttf" />
+    <None Include="iV2EX_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HtmlTextBlock.xaml.cs">
+      <DependentUpon>HtmlTextBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Paging\Animations\IPageAnimation.cs" />
+    <Compile Include="Controls\Paging\Animations\PageInsertionMode.cs" />
+    <Compile Include="Controls\Paging\Animations\PushPageAnimation.cs" />
+    <Compile Include="Controls\Paging\Animations\ScalePageAnimation.cs" />
+    <Compile Include="Controls\Paging\Animations\TurnstilePageAnimation.cs" />
+    <Compile Include="Controls\Paging\Collections\AlphaGroupCollection.cs" />
+    <Compile Include="Controls\Paging\Collections\BlockingQueue.cs" />
+    <Compile Include="Controls\Paging\Collections\Group.cs" />
+    <Compile Include="Controls\Paging\Collections\IObservableCollectionView.cs" />
+    <Compile Include="Controls\Paging\Collections\MtNotifyCollectionChangedEventArgs.cs" />
+    <Compile Include="Controls\Paging\Collections\MtObservableCollection.cs" />
+    <Compile Include="Controls\Paging\Collections\ObservableCollectionObserver.cs" />
+    <Compile Include="Controls\Paging\Collections\ObservableCollectionView.cs" />
+    <Compile Include="Controls\Paging\Collections\ObservableCollectionViewBase.cs" />
+    <Compile Include="Controls\Paging\Collections\ObservableDictionary.cs" />
+    <Compile Include="Controls\Paging\Collections\QueryObservableCollectionView.cs" />
+    <Compile Include="Controls\Paging\Collections\TopItemsGroup.cs" />
+    <Compile Include="Controls\Paging\Command\AsyncRelayCommand.cs" />
+    <Compile Include="Controls\Paging\Command\CommandBase.cs" />
+    <Compile Include="Controls\Paging\Command\RelayCommand.cs" />
+    <Compile Include="Controls\Paging\Environment\Device.cs" />
+    <Compile Include="Controls\Paging\Events\EventUtilities.cs" />
+    <Compile Include="Controls\Paging\Events\SingleEvent.cs" />
+    <Compile Include="Controls\Paging\Events\WeakEvent.cs" />
+    <Compile Include="Controls\Paging\Handlers\BackKeyPressedHandler.cs" />
+    <Compile Include="Controls\Paging\Handlers\NavigationKeyHandler.cs" />
+    <Compile Include="Controls\Paging\Handlers\PageStackManager.cs" />
+    <Compile Include="Controls\Paging\Handlers\PageStateHandler.cs" />
+    <Compile Include="Controls\Paging\Input\Keyboard.cs" />
+    <Compile Include="Controls\Paging\Model\AsyncValidatedObservableObject.cs" />
+    <Compile Include="Controls\Paging\Model\GraphObservableObject.cs" />
+    <Compile Include="Controls\Paging\Model\GraphPropertyChangedEventArgs.cs" />
+    <Compile Include="Controls\Paging\Model\ObservableObject.cs" />
+    <Compile Include="Controls\Paging\Model\PropertyChangedEventArgsExtensions.cs" />
+    <Compile Include="Controls\Paging\Model\ValidatedObservableObject.cs" />
+    <Compile Include="Controls\Paging\MtApplication.cs" />
+    <Compile Include="Controls\Paging\MtFrame.cs" />
+    <Compile Include="Controls\Paging\MtFrameDescription.cs" />
+    <Compile Include="Controls\Paging\MtLoadStateEventArgs.cs" />
+    <Compile Include="Controls\Paging\MtNavigatingCancelEventArgs.cs" />
+    <Compile Include="Controls\Paging\MtNavigationEventArgs.cs" />
+    <Compile Include="Controls\Paging\MtPage.cs" />
+    <Compile Include="Controls\Paging\MtPageDescription.cs" />
+    <Compile Include="Controls\Paging\MtSaveStateEventArgs.cs" />
+    <Compile Include="Controls\Paging\MtSuspensionManager.cs" />
+    <Compile Include="Controls\Paging\Mvvm\DependencyPropertyHelper.cs" />
+    <Compile Include="Controls\Paging\Mvvm\IDispatcher.cs" />
+    <Compile Include="Controls\Paging\Mvvm\IStateHandlingViewModel.cs" />
+    <Compile Include="Controls\Paging\Mvvm\ViewModelBase.cs" />
+    <Compile Include="Controls\Paging\Mvvm\ViewModelHelper.cs" />
+    <Compile Include="Controls\Paging\Serialization\DataContractSerialization.cs" />
+    <Compile Include="Controls\Paging\Serialization\XmlSerialization.cs" />
+    <Compile Include="Controls\Paging\UI\Designer.cs" />
+    <Compile Include="Controls\Paging\UI\FrameworkElementExtensions.cs" />
+    <Compile Include="Controls\Paging\UI\PopupBase.cs" />
+    <Compile Include="Controls\Paging\UI\PopupHelper.cs" />
+    <Compile Include="Controls\Paging\UI\TemplatedVisualTreeExtensions.cs" />
+    <Compile Include="Controls\Paging\UI\TextBinding.cs" />
+    <Compile Include="Controls\Paging\UI\TiltEffect.cs" />
+    <Compile Include="Controls\Paging\UI\UIElementExtensions.cs" />
+    <Compile Include="Controls\Paging\UI\VisibilityManager.cs" />
+    <Compile Include="Controls\Paging\Utilities\AdditionalStreamExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\CodeContractExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\ColorUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\CommandProcessor.cs" />
+    <Compile Include="Controls\Paging\Utilities\DateTimeExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\DateTimeUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\DependencyObjectExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\DependencyPropertyChangedEvent.cs" />
+    <Compile Include="Controls\Paging\Utilities\DictionaryExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\DisposableProvider.cs" />
+    <Compile Include="Controls\Paging\Utilities\EnumerableExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\EnumerableMathExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\EventHandlerExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\ExpressionUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\GeolocationUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\HttpUtilityExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\IdentityGenerator.cs" />
+    <Compile Include="Controls\Paging\Utilities\IEntity.cs" />
+    <Compile Include="Controls\Paging\Utilities\ItemsControlExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\PageUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\PropertyPathHelper.cs" />
+    <Compile Include="Controls\Paging\Utilities\ReflectionExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\ReflectionUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\StreamExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\StringExtensions.cs" />
+    <Compile Include="Controls\Paging\Utilities\TaskSynchronizationScope.cs" />
+    <Compile Include="Controls\Paging\Utilities\TaskUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\ThreadUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\ToastNotificationUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\VersionUtilities.cs" />
+    <Compile Include="Controls\Paging\Utilities\Xml.cs" />
+    <Compile Include="Controls\Paging\Utilities\XmlDocumentationExtensions.cs" />
+    <Compile Include="Fragments\CollectedTopicsFragment.xaml.cs">
+      <DependentUpon>CollectedTopicsFragment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Fragments\NodesFragment.xaml.cs">
+      <DependentUpon>NodesFragment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Fragments\UserInfoFragment.xaml.cs">
+      <DependentUpon>UserInfoFragment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GetData\ApiClient.cs" />
+    <Compile Include="GetData\V2exCommand.cs" />
+    <Compile Include="GetData\V2exManager.cs" />
+    <Compile Include="Model\LoginModel.cs" />
+    <Compile Include="Model\MoneyModel.cs" />
+    <Compile Include="Templates\NormalTopicModelTemplate.xaml.cs">
+      <DependentUpon>NormalTopicModelTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TupleModel\CollectedListModel.cs" />
+    <Compile Include="Model\MemberModel.cs" />
+    <Compile Include="TupleModel\NodeInGroup.cs" />
+    <Compile Include="Model\NodeModel.cs" />
+    <Compile Include="Model\NotificationModel.cs" />
+    <Compile Include="TupleModel\PagesWithNodeModel.cs" />
+    <Compile Include="Util\Converter.cs" />
+    <Compile Include="Util\GetBitmapFromUrl.cs" />
+    <Compile Include="Util\IncrementalLoadingCollection.cs" />
+    <Compile Include="Util\PageInformation.cs" />
+    <Compile Include="Util\PageStack.cs" />
+    <Compile Include="Model\PersonCenterModel.cs" />
+    <Compile Include="Model\ReplyModel.cs" />
+    <Compile Include="Model\TopicModel.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\PinYin.cs" />
+    <Compile Include="TupleModel\PagesBaseModel.cs" />
+    <Compile Include="Views\BlankPage.xaml.cs">
+      <DependentUpon>BlankPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImageViewerPage.xaml.cs">
+      <DependentUpon>ImageViewerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MemberView.xaml.cs">
+      <DependentUpon>MemberView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MoneyDetailView.xaml.cs">
+      <DependentUpon>MoneyDetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OneNodeTopicsView.xaml.cs">
+      <DependentUpon>OneNodeTopicsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PeopleFollowerView.xaml.cs">
+      <DependentUpon>PeopleFollowerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PeopleNodeView.xaml.cs">
+      <DependentUpon>PeopleNodeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PeopleNotificationView.xaml.cs">
+      <DependentUpon>PeopleNotificationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PeopleTopicView.xaml.cs">
+      <DependentUpon>PeopleTopicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RefreshButton.xaml.cs">
+      <DependentUpon>RefreshButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RepliesAndTopicView.xaml.cs">
+      <DependentUpon>RepliesAndTopicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ToastTips.xaml.cs">
+      <DependentUpon>ToastTips.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserLoginView.xaml.cs">
+      <DependentUpon>UserLoginView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WriteTopicView.xaml.cs">
+      <DependentUpon>WriteTopicView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\300x300.png" />
+    <Content Include="Assets\50x50.png" />
+    <Content Include="Assets\88x88.png" />
+    <Content Include="Assets\Splash.png" />
+    <Content Include="Properties\Default.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Controls\HtmlTextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Fragments\CollectedTopicsFragment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Fragments\NodesFragment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Fragments\UserInfoFragment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Templates\NormalTopicModelTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\BlankPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ImageViewerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MemberView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MoneyDetailView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OneNodeTopicsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PeopleFollowerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PeopleNodeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PeopleNotificationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PeopleTopicView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\RefreshButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RepliesAndTopicView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ToastTips.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserLoginView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\WriteTopicView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AngleSharp">
+      <Version>0.9.9.1</Version>
+    </PackageReference>
+    <PackageReference Include="Laojiu.WebApiClient">
+      <Version>1.1.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ApplicationInsights">
+      <Version>2.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ApplicationInsights.PersistenceChannel">
+      <Version>1.2.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.0.6</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp">
+      <Version>2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
+      <Version>2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>10.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reactive">
+      <Version>3.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

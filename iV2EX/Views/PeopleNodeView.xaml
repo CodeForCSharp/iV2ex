@@ -1,0 +1,48 @@
+﻿<toolkit:MtPage
+    x:Name="PeopleNodePage"
+    x:Class="iV2EX.Views.PeopleNodeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:iV2EX.Model"
+    mc:Ignorable="d"
+    xmlns:toolkit="using:MyToolkit.Paging">
+    <toolkit:MtPage.Resources>
+        <DataTemplate x:Name="NodesTemplate" x:DataType="data:NodeModel">
+            <RelativePanel>
+                <Image
+                    RelativePanel.AlignLeftWithPanel="True"
+                    Name="ImagePanel"
+                    Height="40"
+                    Width="40"
+                    Source="{x:Bind Image}"
+                    Margin="5" />
+                <TextBlock
+                    Name="TitlePanel"
+                    RelativePanel.RightOf="ImagePanel"
+                    Text="{x:Bind Title}"
+                    Margin="10,5,0,0"
+                    TextWrapping="Wrap"
+                    FontSize="16"
+                    Foreground="#FF3D3D3D" />
+                <TextBlock
+                    RelativePanel.Below="TitlePanel"
+                    RelativePanel.RightOf="ImagePanel"
+                    Text="{x:Bind Topics}"
+                    Margin="10,5,0,0"
+                    TextWrapping="Wrap"
+                    FontSize="14"
+                    Foreground="Gray" />
+            </RelativePanel>
+        </DataTemplate>
+    </toolkit:MtPage.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView
+            Name="PeopleNodeList"
+            IsItemClickEnabled="True"
+            ItemTemplate="{StaticResource NodesTemplate}"
+            SelectionMode="Single"
+            ShowsScrollingPlaceholders="True" />
+    </Grid>
+</toolkit:MtPage>
