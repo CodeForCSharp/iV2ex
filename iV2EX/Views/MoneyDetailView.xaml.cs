@@ -16,10 +16,9 @@ namespace iV2EX.Views
     {
         public MoneyDetailView()
         {
-            var client = ApiClient.Client;
             Moneys.LoadDataTask = async count =>
             {
-                var html = await client.GetMoneyDetail(Moneys.CurrentPage);
+                var html = await ApiClient.GetMoneyDetail(Moneys.CurrentPage);
                 var dom = new HtmlParser().Parse(html);
                 var pages = int.Parse(dom.QuerySelector("input.page_input").GetAttribute("max"));
                 var moneys = dom.QuerySelector("table.data").QuerySelectorAll("tr").Skip(1).Select(e =>

@@ -14,15 +14,14 @@ namespace iV2EX.Views
         public PeopleFollowerView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             NotifyData.LoadDataTask = async count =>
             {
-                var html = await client.GetFollowerTopics(NotifyData.CurrentPage);
+                var html = await ApiClient.GetFollowerTopics(NotifyData.CurrentPage);
                 var dom = new HtmlParser().Parse(html);
                 return new PagesBaseModel<TopicModel>
                 {
-                    Pages = V2ExManager.ParseMaxPage(dom),
-                    Entity = V2ExManager.ParseTopics(dom)
+                    Pages = DomParse.ParseMaxPage(dom),
+                    Entity = DomParse.ParseTopics(dom)
                 };
             };
             var click = Observable

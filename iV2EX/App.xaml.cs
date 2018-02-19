@@ -7,6 +7,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
+using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Views;
 using Microsoft.Toolkit.Uwp.UI;
@@ -35,7 +36,7 @@ namespace iV2EX
             if (localSettings.Values["Cookies"] != null)
             {
                 var cookiesHeader = (string) localSettings.Values["Cookies"];
-                var container = ApiClient.Client.ApiConfig.HttpClient.Handler.CookieContainer;
+                var container = ApiClient.Handler.CookieContainer;
                 foreach (var item in Regex.Split(cookiesHeader, "; "))
                 {
                     var index = item.IndexOf('=');
@@ -46,7 +47,16 @@ namespace iV2EX
                 }
             }
 
-            return await V2ExCommand.IsLoginAsync() ? typeof(MainPage) : typeof(UserLoginView);
+            try
+            {
+                var content = await ApiClient.GetMainPage();
+                var b = new HtmlParser().Parse(content).GetElementById("Top").TextContent.Contains("登出");
+                return b? typeof(MainPage) : typeof(UserLoginView);
+            }
+            catch
+            {
+                return typeof(UserLoginView);
+            }
         }
 
         public override Task OnInitializedAsync(MtFrame frame, ApplicationExecutionState e)

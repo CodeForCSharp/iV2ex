@@ -12,7 +12,7 @@ namespace iV2EX.Model
 
         public int Topics { get; set; }
 
-        [JsonProperty("head")] public string Header { get; set; }
+        [JsonProperty("header")] public string Header { get; set; }
 
         [JsonProperty("footer")] public string Footer { get; set; }
 

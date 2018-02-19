@@ -15,17 +15,34 @@ namespace iV2EX.Fragments
 {
     public partial class CollectedTopicsFragment
     {
+
+        private CollectedListModel[] _tabs =
+        {
+            new CollectedListModel {Text = "技术", Name = "tech"},
+            new CollectedListModel {Text = "创意", Name = "creative"},
+            new CollectedListModel {Text = "好玩", Name = "play"},
+            new CollectedListModel {Text = "Apple", Name = "apple"},
+            new CollectedListModel {Text = "酷工作", Name = "jobs"},
+            new CollectedListModel {Text = "交易", Name = "deals"},
+            new CollectedListModel {Text = "城市", Name = "city"},
+            new CollectedListModel {Text = "问与答", Name = "qna"},
+            new CollectedListModel {Text = "最热", Name = "hot"},
+            new CollectedListModel {Text = "全部", Name = "all"},
+            new CollectedListModel {Text = "R2", Name = "r2"},
+            new CollectedListModel {Text = "节点", Name = "nodes"},
+            new CollectedListModel {Text = "关注", Name = "members"}
+
+        };
         public CollectedTopicsFragment()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
-            LabelPanel.ItemsSource = V2ExManager.GetCollectedTab();
+            LabelPanel.ItemsSource = _tabs;
             var loadData = Observable.FromAsync(async x =>
             {
                 var model = LabelPanel.SelectedItem as CollectedListModel;
-                var html = await client.GetTopicsWithTab(model.Name);
+                var html = await ApiClient.GetTopicsWithTab(model.Name);
                 var dom = new HtmlParser().Parse(html);
-                return V2ExManager.ParseTopics(dom);
+                return DomParse.ParseTopics(dom);
             }).Retry(10);
             var selectionChanged = Observable
                 .FromEventPattern<SelectionChangedEventArgs>(LabelPanel, nameof(LabelPanel.SelectionChanged))

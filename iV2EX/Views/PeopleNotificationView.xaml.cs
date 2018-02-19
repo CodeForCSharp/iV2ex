@@ -15,7 +15,6 @@ namespace iV2EX.Views
         public PeopleNotificationView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(NotificationList, nameof(NotificationList.ItemClick))
                 .ObserveOnDispatcher()
@@ -27,7 +26,7 @@ namespace iV2EX.Views
                 });
             NotifyData.LoadDataTask = async count =>
             {
-                var html = await client.GetNotifications(NotifyData.CurrentPage);
+                var html = await ApiClient.GetNotifications(NotifyData.CurrentPage);
                 var dom = new HtmlParser().Parse(html);
                 var header = dom.GetElementById("Main").QuerySelector("div.header");
                 var messages = int.Parse(header.QuerySelector("strong.gray")?.TextContent ?? "0");

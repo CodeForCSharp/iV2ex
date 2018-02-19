@@ -32,21 +32,20 @@ namespace iV2EX.Views
         public RepliesAndTopicView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var controls = new List<Control> {Send, ReplyText};
             var send = Observable.FromEventPattern<RoutedEventArgs>(Send, nameof(Send.Click))
                 .Select(async x =>
                 {
                     var content = ReplyText.Text;
                     if (string.IsNullOrEmpty(content)) return ReplyStatus.TextEmpty;
-                    var html = await client.GetTopicInformation(_id);
+                    var html = await ApiClient.GetTopicInformation(_id);
                     var once = new HtmlParser().Parse(html).QuerySelector("input[name='once']").GetAttribute("value");
                     var pramas = new Dictionary<string, string>
                     {
                         {"content", content},
                         {"once", once}
                     };
-                    var text = await client.ReplyTopic($"https://www.v2ex.com/t{_id}",
+                    var text = await ApiClient.ReplyTopic($"https://www.v2ex.com/t{_id}",
                         new FormUrlEncodedContent(pramas), _id);
                     if (text.Contains("你回复过于频繁了")) return ReplyStatus.Ban;
                     return ReplyStatus.Success;
@@ -90,13 +89,13 @@ namespace iV2EX.Views
                 {
                     try
                     {
-                        var html = await client.GetTopicInformation(_id);
+                        var html = await ApiClient.GetTopicInformation(_id);
                         var url = "";
                         var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
                         var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
                         if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
                         if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
-                        await client.OnlyGet($"https://www.v2ex.com{url}");
+                        await ApiClient.OnlyGet($"https://www.v2ex.com{url}");
                         if (Topic.Collect == "加入\n收藏")
                         {
                             Topic.Collect = "已\n收藏";
@@ -128,7 +127,7 @@ namespace iV2EX.Views
                 });
             Replies.LoadDataTask = async count =>
             {
-                var html = await client.GetRepliesAndTopicContent(_id, 1);
+                var html = await ApiClient.GetRepliesAndTopicContent(_id, 1);
                 var main = new HtmlParser().Parse(html).GetElementById("Main");
                 if (Replies.MaxPage == 0)
                     try

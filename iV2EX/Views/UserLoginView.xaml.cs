@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Reactive.Linq;
 using Windows.Storage;
@@ -21,11 +22,10 @@ namespace iV2EX.Views
         public UserLoginView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var controls = new List<Control> {TbPassword, TbUsername, BtnLogin, TbCaptcha};
             var loginData = Observable.FromAsync(async x =>
             {
-                var html = await client.GetSignInInformation();
+                var html = await ApiClient.GetSignInInformation();
                 var form = new HtmlParser().Parse(html).QuerySelector("form[action='/signin']");
                 var inputs = form.QuerySelectorAll("input");
                 return new LoginModel
@@ -51,7 +51,7 @@ namespace iV2EX.Views
                         {_data.PName, TbPassword.Password},
                         {_data.CName, TbCaptcha.Text}
                     };
-                    var r = await client.SignIn(new FormUrlEncodedContent(parmas));
+                    var r = await ApiClient.SignIn(new FormUrlEncodedContent(parmas));
                     if (r.Contains("用户名和密码无法匹配")) return SignInStatus.UsernameOrPasswordError;
                     if (r.Contains("登出")) return SignInStatus.Success;
                     return SignInStatus.NetworkError;
@@ -80,9 +80,8 @@ namespace iV2EX.Views
                                 break;
                             case SignInStatus.Success:
                                 var localSettings = ApplicationData.Current.LocalSettings;
-                                var httpClient = ApiClient.Client.ApiConfig.HttpClient;
                                 var cookies =
-                                    httpClient.Handler.CookieContainer.GetCookieHeader(new Uri("https://www.v2ex.com"));
+                                    ApiClient.Handler.CookieContainer.GetCookieHeader(new Uri("https://www.v2ex.com"));
                                 if (localSettings.Values["Cookies"] == null)
                                     localSettings.Values.Add("Cookies", cookies);
                                 else

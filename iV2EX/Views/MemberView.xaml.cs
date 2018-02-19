@@ -25,10 +25,9 @@ namespace iV2EX.Views
         public MemberView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var loadData = Observable.FromAsync(async x =>
                 {
-                    var html = await client.GetMemberInformation(_username);
+                    var html = await ApiClient.GetMemberInformation(_username);
                     var cell = new HtmlParser().Parse(html).GetElementById("Main").QuerySelector("div.cell");
                     var inputs = cell.QuerySelectorAll("input");
                     if (!inputs.Any())
@@ -62,7 +61,7 @@ namespace iV2EX.Views
                 {
                     try
                     {
-                        await client.OnlyGet(Member.Notice);
+                        await ApiClient.OnlyGet(Member.Notice);
                         Member.IsNotice = "取消特别关注";
                     }
                     catch
@@ -75,7 +74,7 @@ namespace iV2EX.Views
                 {
                     try
                     {
-                        await client.OnlyGet(Member.Block);
+                        await ApiClient.OnlyGet(Member.Block);
                         Member.IsBlock = "取消Block";
                     }
                     catch
@@ -91,7 +90,7 @@ namespace iV2EX.Views
                 });
             Topics.LoadDataTask = async count =>
             {
-                var html = await client.GetTopicsByUsername(_username, Topics.CurrentPage);
+                var html = await ApiClient.GetTopicsByUsername(_username, Topics.CurrentPage);
                 if (html.Contains("主题列表被隐藏"))
                 {
                     ListHiddenPanel.Visibility = Visibility.Visible;
@@ -103,7 +102,7 @@ namespace iV2EX.Views
                 }
 
                 var dom = new HtmlParser().Parse(html);
-                var pages = V2ExManager.ParseMaxPage(dom);
+                var pages = DomParse.ParseMaxPage(dom);
                 var topics = dom.GetElementById("Main").GetElementsByClassName("cell item").Select(node =>
                 {
                     var hrefs = node.QuerySelectorAll("a");
@@ -136,12 +135,12 @@ namespace iV2EX.Views
             };
             Notifications.LoadDataTask = async count =>
             {
-                var html = await client.GetRepliesByUsername(_username, Notifications.CurrentPage);
+                var html = await ApiClient.GetRepliesByUsername(_username, Notifications.CurrentPage);
                 var dom = new HtmlParser().Parse(html);
                 var main = dom.GetElementById("Main");
                 var nodes = main.QuerySelectorAll("div.dock_area");
                 var replies = main.QuerySelectorAll("div.reply_content");
-                var pages = V2ExManager.ParseMaxPage(dom);
+                var pages = DomParse.ParseMaxPage(dom);
                 var notifications = nodes.Select(
                     (node, i) =>
                     {

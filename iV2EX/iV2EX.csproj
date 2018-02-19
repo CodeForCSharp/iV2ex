@@ -206,8 +206,7 @@
       <DependentUpon>UserInfoFragment.xaml</DependentUpon>
     </Compile>
     <Compile Include="GetData\ApiClient.cs" />
-    <Compile Include="GetData\V2exCommand.cs" />
-    <Compile Include="GetData\V2exManager.cs" />
+    <Compile Include="GetData\DomParse.cs" />
     <Compile Include="Model\LoginModel.cs" />
     <Compile Include="Model\MoneyModel.cs" />
     <Compile Include="Templates\NormalTopicModelTemplate.xaml.cs">
@@ -218,7 +217,6 @@
     <Compile Include="TupleModel\NodeInGroup.cs" />
     <Compile Include="Model\NodeModel.cs" />
     <Compile Include="Model\NotificationModel.cs" />
-    <Compile Include="TupleModel\PagesWithNodeModel.cs" />
     <Compile Include="Util\Converter.cs" />
     <Compile Include="Util\GetBitmapFromUrl.cs" />
     <Compile Include="Util\IncrementalLoadingCollection.cs" />
@@ -388,17 +386,14 @@
     <PackageReference Include="AngleSharp">
       <Version>0.9.9.1</Version>
     </PackageReference>
-    <PackageReference Include="Laojiu.WebApiClient">
-      <Version>1.1.4</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights">
-      <Version>2.4.0</Version>
+      <Version>2.5.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights.PersistenceChannel">
       <Version>1.2.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.6</Version>
+      <Version>6.0.7</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp">
       <Version>2.1.1</Version>
@@ -407,7 +402,7 @@
       <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.3</Version>
+      <Version>11.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>3.1.1</Version>

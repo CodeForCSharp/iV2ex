@@ -9,7 +9,10 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource AppBarItemPointerOverBackgroundThemeBrush}">
-        <TextBlock Text="V2EX" Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   FontSize="100" FontFamily="Microsoft YaHei UI" />
+        <TextBlock Text="V2EX"
+                   Foreground="WhiteSmoke"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"
+                   FontSize="100"/>
     </Grid>
 </toolkit:MtPage>

@@ -16,10 +16,9 @@ namespace iV2EX.Views
         public PeopleNodeView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var loadData = Observable.FromAsync(async x =>
             {
-                var html = await client.GetFavoriteNodes();
+                var html = await ApiClient.GetFavoriteNodes();
                 return new HtmlParser().Parse(html).GetElementById("MyNodes").GetElementsByClassName("grid_item")
                     .Select(
                         child =>

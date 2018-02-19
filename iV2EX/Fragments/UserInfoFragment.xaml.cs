@@ -24,10 +24,9 @@ namespace iV2EX.Fragments
         public UserInfoFragment()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var loadData = Observable.FromAsync(async x =>
             {
-                var html = await client.GetMainPage();
+                var html = await ApiClient.GetMainPage();
                 var right = new HtmlParser().Parse(html).GetElementById("Rightbar");
                 var tables = right.QuerySelectorAll("table");
                 var spans = tables[1].QuerySelectorAll("span.bigger");
@@ -50,11 +49,11 @@ namespace iV2EX.Fragments
             var checkIn = Observable.FromEventPattern<TappedRoutedEventArgs>(CheckInItem, nameof(CheckInItem.Tapped))
                 .Select(async x =>
                 {
-                    var html = await client.GetCheckInInformation();
+                    var html = await ApiClient.GetCheckInInformation();
                     var href = new HtmlParser().Parse(html).GetElementById("Main").QuerySelector("input")
                         .GetAttribute("onclick").Replace("location.href = '", "").Replace("';", "").Trim();
                     if (href.Contains("/balance")) return CheckInStatus.Gone;
-                    var r = await client.CheckIn($"https://www.v2ex.com{href}", $"https://www.v2ex.com{href}");
+                    var r = await ApiClient.CheckIn($"https://www.v2ex.com{href}", $"https://www.v2ex.com{href}");
                     return CheckInStatus.Success;
                 })
                 .Subscribe(async x =>

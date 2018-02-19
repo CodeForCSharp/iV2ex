@@ -19,9 +19,8 @@ namespace iV2EX.Views
         public WriteTopicView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var controls = new List<Control> {Option, Send, Title, Body};
-            var loadData = Observable.FromAsync(async x => await client.GetNodes()).Retry();
+            var loadData = Observable.FromAsync(async x => await ApiClient.GetNodes()).Retry();
             var load = Observable.FromEventPattern<RoutedEventArgs>(WrittenPage, nameof(WrittenPage.Loaded))
                 .Publish(x => loadData)
                 .Subscribe(x => Nodes.AddRange(x));
@@ -33,7 +32,7 @@ namespace iV2EX.Views
                     if (Body.Text.Length > 20000) return WrritenStatus.BodyLonger;
                     if (!Nodes.Exists(node => node.Title.Contains(Option.Text))) return WrritenStatus.NotExistNode;
                     var url = $"https://www.v2ex.com/new/{Option.Text}";
-                    var html = await client.OnlyGet(url);
+                    var html = await ApiClient.OnlyGet(url);
                     var once = new HtmlParser().Parse(html).QuerySelector("input[name='once']").GetAttribute("value");
                     var param = new Dictionary<string, string>
                     {
@@ -41,7 +40,7 @@ namespace iV2EX.Views
                         {"content", Body.Text},
                         {"title", Title.Text}
                     };
-                    await client.NewTopic(url, new FormUrlEncodedContent(param), Option.Text);
+                    await ApiClient.NewTopic(url, new FormUrlEncodedContent(param), Option.Text);
                     return WrritenStatus.Success;
                 })
                 .Subscribe(async x =>

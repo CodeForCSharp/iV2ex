@@ -18,8 +18,7 @@ namespace iV2EX.Fragments
         public NodesFragment()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
-            var loadData = Observable.FromAsync(async x => await client.GetNodes())
+            var loadData = Observable.FromAsync(async x => await ApiClient.GetNodes())
                 .Select(x =>
                 {
                     return x.GroupBy(y =>

@@ -15,7 +15,6 @@ namespace iV2EX.Views
         public PeopleTopicView()
         {
             InitializeComponent();
-            var client = ApiClient.Client;
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleTopicsList, nameof(PeopleTopicsList.ItemClick))
                 .ObserveOnDispatcher()
@@ -26,12 +25,12 @@ namespace iV2EX.Views
                 });
             NotifyData.LoadDataTask = async count =>
             {
-                var html = await client.GetFavoriteTopics(NotifyData.CurrentPage);
+                var html = await ApiClient.GetFavoriteTopics(NotifyData.CurrentPage);
                 var dom = new HtmlParser().Parse(html);
                 return new PagesBaseModel<TopicModel>
                 {
-                    Pages = V2ExManager.ParseMaxPage(dom),
-                    Entity = V2ExManager.ParseTopics(dom) ?? new List<TopicModel>()
+                    Pages = DomParse.ParseMaxPage(dom),
+                    Entity = DomParse.ParseTopics(dom) ?? new List<TopicModel>()
                 };
             };
         }
