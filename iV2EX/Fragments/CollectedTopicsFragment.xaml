@@ -15,9 +15,6 @@
     x:Name="NewsFragment">
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <templates:NormalTopicModelTemplate />
-            </ResourceDictionary.MergedDictionaries>
             <SolidColorBrush Color="#3F51B5" x:Key="BG" />
             <Style TargetType="GridViewItem" x:Key="SelectedGridViewItemStyle">
                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />

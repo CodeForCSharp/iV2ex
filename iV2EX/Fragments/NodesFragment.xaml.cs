@@ -37,7 +37,7 @@ namespace iV2EX.Fragments
                         .OrderBy(y => y.Key);
                 }).Retry(10);
             var loaded = Observable.FromEventPattern<RoutedEventArgs>(AllNodesFragment, nameof(AllNodesFragment.Loaded))
-                .Publish(x => loadData)
+                .SelectMany(x => loadData)
                 .ObserveOnDispatcher()
                 .Subscribe(x =>
                 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,12 +32,13 @@ namespace iV2EX.Controls
 
         private readonly DependencyProperty _textProperty = DependencyProperty.Register("Text", typeof(string),
             typeof(HtmlTextBlock), new PropertyMetadata("",
-                (d, e) =>
+                async (d, e) =>
                 {
                     var element = d as HtmlTextBlock;
                     if (element == null) return;
                     element.RichText.Blocks.Clear();
-                    element.RichText.Blocks.Add(new HandleHtml().HtmlToXaml(e.NewValue as string));
+                    var html = await new HandleHtml().HtmlToXaml(e.NewValue as string);
+                    element.RichText.Blocks.Add(html);
                     element.RichText.TextWrapping = TextWrapping.Wrap;
                 }));
 
@@ -63,20 +65,14 @@ namespace iV2EX.Controls
         private readonly Stack<INode> _elementList = new Stack<INode>();
         private readonly List<List<INode>> _renderList = new List<List<INode>>();
 
-        public Paragraph HtmlToXaml(string richText)
+        public async Task<Paragraph> HtmlToXaml(string richText)
         {
             const string baseUrl = "https://www.v2ex.com";
             const string unsafeUrl = "http://www.v2ex.com";
-            richText = richText.Replace("</p>", "\\r</p>")
-                .Replace("</li>", "\\r</li>")
-                .Replace("</h1>", "\\r</h1>")
-                .Replace("</h2>", "\\r</h2>")
-                .Replace("</h3>", "\\r</h3>")
-                .Replace("</h4>", "\\r</h4>")
-                .Replace("</h5>", "\\r</h5>")
-                .Replace("</h6>", "\\r</h6>");
-            var dom = new HtmlParser().Parse(richText);
-            GetElements(dom.Body);
+            richText = new[] {"</p>", "</h1>", "</h2>", "</h2>", "</h3>", "</h4>", "</h5>", "</h6>"}
+                .Aggregate(richText, (current, s) => current.Replace(s, $"\\r{s}"));
+            var dom = await new HtmlParser().ParseAsync(richText);
+            await Task.Run(() => GetElements(dom.Body));
             var paragraph = new Paragraph();
             foreach (var render in _renderList)
             {
@@ -201,7 +197,7 @@ namespace iV2EX.Controls
                 if (!isCode)
                     run.Text = run.Text.Replace("\n", "").Replace("\\r", "\n");
                 paragraph.Inlines.Add(inline);
-                Out: ;
+                Out:;
             }
 
             return paragraph;

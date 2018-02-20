@@ -57,11 +57,16 @@ namespace iV2EX.Views
                 if (NotifyData.MaxPage == 0)
                 {
                     var header = dom.GetElementById("Main").QuerySelector("div.node_header");
-                    Node.Topics = Convert.ToInt32(header.QuerySelector("strong").TextContent);
-                    Node.IsCollect = header.QuerySelector("a").TextContent;
-                    Node.Cover = header.QuerySelector("img") == null
-                        ? "ms-appx:///Assets/default.png"
-                        : $"https:{header.QuerySelector("img").GetAttribute("src")}";
+                    Node = new NodeModel
+                    {
+                        Topics = Convert.ToInt32(header.QuerySelector("strong").TextContent),
+                        IsCollect = header.QuerySelector("a").TextContent,
+                        Cover = header.QuerySelector("img") == null
+                            ? "ms-appx:///Assets/default.png"
+                            : $"https:{header.QuerySelector("img").GetAttribute("src")}",
+                        Title = Node.Title,
+                        Name = Node.Name                      
+                    };
                 }
 
                 var topics = dom.GetElementById("TopicsNode").Children.Select(node =>
