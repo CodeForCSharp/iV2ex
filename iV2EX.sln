@@ -18,6 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|Any CPU.Build.0 = Debug|x86
+		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|ARM.ActiveCfg = Debug|ARM
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|ARM.Build.0 = Debug|ARM
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -28,6 +30,8 @@ Global
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|x86.Build.0 = Debug|x86
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Debug|x86.Deploy.0 = Debug|x86
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Release|Any CPU.ActiveCfg = Release|x86
+		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Release|Any CPU.Build.0 = Release|x86
+		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Release|Any CPU.Deploy.0 = Release|x86
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Release|ARM.ActiveCfg = Release|ARM
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Release|ARM.Build.0 = Release|ARM
 		{6A1C7072-3881-4152-A4FC-65CB7C4938B1}.Release|ARM.Deploy.0 = Release|ARM
@@ -40,5 +44,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E53554DE-D1F5-4FB0-AA00-7397B7914915}
 	EndGlobalSection
 EndGlobal

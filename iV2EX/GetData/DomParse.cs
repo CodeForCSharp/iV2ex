@@ -42,7 +42,7 @@ namespace iV2EX.GetData
                     topic.LastUsername = $"{hrefs[4].TextContent}";
                     topic.Replies = int.Parse(hrefs[5].TextContent);
                     topic.LastReply =
-                        $"{node.GetElementsByClassName("small fade")[0].TextContent.Split('•')[2].Trim()}";
+                        $"{node.QuerySelector("span.topic_info").TextContent.Split('•')[2].Trim()}";
                 }
                 return topic;
             });

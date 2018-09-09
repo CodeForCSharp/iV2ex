@@ -8,6 +8,7 @@ using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using iV2EX.Views;
+using Windows.UI.Xaml.Input;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -60,6 +61,15 @@ namespace iV2EX.Fragments
                 {
                     var item = x.EventArgs.ClickedItem as TopicModel;
                     PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), item.Id);
+                });
+            var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
+                .SelectMany(x=>loadData)
+                .ObserveOnDispatcher()
+                .Subscribe(x =>
+                {
+                    News.Clear();
+                    foreach (var item in x)
+                        News.Add(item);
                 });
             LabelPanel.SelectedIndex = 0;
         }

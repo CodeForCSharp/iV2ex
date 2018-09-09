@@ -13,6 +13,7 @@ using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using iV2EX.Util;
 using iV2EX.Views;
+using AngleSharp;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -34,12 +35,13 @@ namespace iV2EX.Controls
             typeof(HtmlTextBlock), new PropertyMetadata("",
                 async (d, e) =>
                 {
-                    var element = d as HtmlTextBlock;
-                    if (element == null) return;
-                    element.RichText.Blocks.Clear();
-                    var html = await new HandleHtml().HtmlToXaml(e.NewValue as string);
-                    element.RichText.Blocks.Add(html);
-                    element.RichText.TextWrapping = TextWrapping.Wrap;
+                    if (d is HtmlTextBlock element)
+                    {
+                        element.RichText.Blocks.Clear();
+                        var html = await new HandleHtml().HtmlToXaml(e.NewValue as string);
+                        element.RichText.Blocks.Add(html);
+                        element.RichText.TextWrapping = TextWrapping.Wrap;
+                    }               
                 }));
 
         public HtmlTextBlock()
@@ -84,9 +86,18 @@ namespace iV2EX.Controls
                     {
                         case "IMG":
                             var img = element as IHtmlImageElement;
-                            var source = img.Source.StartsWith("about:")
-                                ? $"http:{img.Source.Replace("about:", "")}"
-                                : img.Source;
+                            //var source = img.Source.StartsWith("about:")
+                            //    ? $"http:{img.Source.Replace("about:", "")}"
+                            //    : img.Source;
+                            var source = img.Source;
+                            if (source.StartsWith("source:///"))
+                            {
+                                source = baseUrl + source.Replace("source://", "");
+                            }
+                            else if(source.StartsWith("source:"))
+                            {
+                                source = $"https{source.Replace("source:", "")}";
+                            }
                             if (!Uri.IsWellFormedUriString(source, UriKind.Absolute)) break;
                             var bitmap = new Image
                             {

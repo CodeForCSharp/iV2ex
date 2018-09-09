@@ -99,8 +99,7 @@ namespace iV2EX.Fragments
                 .FromEventPattern<TappedRoutedEventArgs>(CollectTopicItem, nameof(CollectTopicItem.Tapped))
                 .Subscribe(x =>
                     PageStack.Next("Left", "Right", typeof(PeopleTopicView), Convert.ToInt32(People.CollectedTopics)));
-            var collectNode = Observable
-                .FromEventPattern<TappedRoutedEventArgs>(CollectNodeItem, nameof(CollectNodeItem.Tapped))
+            var collectNode = Observable.FromEventPattern<TappedRoutedEventArgs>(CollectNodeItem, nameof(CollectNodeItem.Tapped))
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(PeopleNodeView), null));
             var message = Observable.FromEventPattern<TappedRoutedEventArgs>(MessageItem, nameof(MessageItem.Tapped))
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(PeopleNotificationView), null));
@@ -108,6 +107,10 @@ namespace iV2EX.Fragments
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(PeopleFollowerView), null));
             var loadInformation = Observable
                 .FromEventPattern<RoutedEventArgs>(UserInformationFragment, nameof(UserInformationFragment.Loaded))
+                .Publish(x => loadData)
+                .ObserveOnDispatcher()
+                .Subscribe(x => People = x);
+            var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
                 .Publish(x => loadData)
                 .ObserveOnDispatcher()
                 .Subscribe(x => People = x);

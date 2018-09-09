@@ -11,12 +11,5 @@ namespace iV2EX.Controls
         {
             InitializeComponent();
         }
-
-        public Action RefreshCommand { get; set; }
-
-        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            RefreshCommand();
-        }
     }
 }

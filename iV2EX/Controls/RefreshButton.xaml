@@ -13,8 +13,7 @@
         Height="60"
         Width="60"
         CornerRadius="30"
-        Background="#FFC107"
-        Tapped="Grid_Tapped">
+        Background="#FFC107">
         <SymbolIcon
             Symbol="Refresh"
             Foreground="White" />
