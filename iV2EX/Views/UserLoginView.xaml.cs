@@ -38,6 +38,11 @@ namespace iV2EX.Views
                 };
             }).Retry();
             var login = Observable.FromEventPattern<TappedRoutedEventArgs>(BtnLogin, nameof(BtnLogin.Tapped))
+                .Select(x=> 
+                {
+                    controls.ForEach(y => y.IsEnabled = false);
+                    return x;
+                })
                 .Select(async x =>
                 {
                     if (string.IsNullOrEmpty(TbUsername.Text)) return SignInStatus.UsernameEmpty;
@@ -58,7 +63,6 @@ namespace iV2EX.Views
                 })
                 .Subscribe(async x =>
                 {
-                    controls.ForEach(y => y.IsEnabled = false);
                     try
                     {
                         switch (await x)

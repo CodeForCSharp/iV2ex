@@ -33,13 +33,13 @@ namespace iV2EX.Views
                     if (!inputs.Any())
                         return new MemberModel
                         {
-                            Image = $"http:{cell.QuerySelector("img").GetAttribute("src")}",
+                            Image = $"https:{cell.QuerySelector("img").GetAttribute("src")}",
                             Username = cell.QuerySelector("h1").TextContent
                         };
                     return new MemberModel
                     {
-                        Image = $"http:{cell.QuerySelector("img").GetAttribute("src")}",
-                        Notice = "https://www.v2ex.com" + inputs[0].GetAttribute("onclick").Split('\'')[1],
+                        Image = $"https:{cell.QuerySelector("img").GetAttribute("src")}",
+                        Notice = "https://www.v2ex.com" + inputs[0].GetAttribute("onclick").Split('\'')[3],
                         IsNotice = inputs[0].GetAttribute("value"),
                         Block = "https://www.v2ex.com" + inputs[1].GetAttribute("onclick").Split('\'')[3],
                         IsBlock = inputs[1].GetAttribute("value"),
@@ -50,37 +50,15 @@ namespace iV2EX.Views
             var load = Observable.FromEventPattern<RoutedEventArgs>(MemberPage, nameof(MemberPage.Loaded))
                 .SelectMany(x => loadData)
                 .ObserveOnDispatcher()
-                .Subscribe(x => Member = x,
-                    x =>
-                    {
-                        var X = x;
-                    });
+                .Subscribe(x => Member = x,x => { });
             var notice = Observable.FromEventPattern<RoutedEventArgs>(Notice, nameof(Notice.Tapped))
+                .Select(async x => await ApiClient.OnlyGet(Member.Notice))
                 .ObserveOnDispatcher()
-                .Subscribe(async x =>
-                {
-                    try
-                    {
-                        await ApiClient.OnlyGet(Member.Notice);
-                        Member.IsNotice = "取消特别关注";
-                    }
-                    catch
-                    {
-                    }
-                });
+                .Subscribe(x => Member.IsNotice = "取消特别关注", (Exception ex) => { });
             var block = Observable.FromEventPattern<RoutedEventArgs>(Block, nameof(Block.Tapped))
+                .Select(async x => await ApiClient.OnlyGet(Member.Block))
                 .ObserveOnDispatcher()
-                .Subscribe(async x =>
-                {
-                    try
-                    {
-                        await ApiClient.OnlyGet(Member.Block);
-                        Member.IsBlock = "取消Block";
-                    }
-                    catch
-                    {
-                    }
-                });
+                .Subscribe(x => Member.IsBlock = "取消Block", (Exception ex) => { });
             var info = Observable.FromEventPattern<ItemClickEventArgs>(MemberInfoList, nameof(MemberInfoList.ItemClick))
                 .ObserveOnDispatcher()
                 .Subscribe(x =>
@@ -120,7 +98,7 @@ namespace iV2EX.Views
                     {
                         topic.LastUsername = $"最后回复者 :{hrefs[3].TextContent}";
                         topic.Replies = int.Parse(hrefs[4].TextContent);
-                        var last = node.GetElementsByClassName("small fade")[0].TextContent.Split('•')[2].Trim();
+                        var last = node.QuerySelector("span.topic_info").TextContent.Split('•')[2].Trim();
                         last = last.Contains("最后回复") ? "" : last;
                         topic.LastReply = $"时间 : {last.Trim()}";
                     }

@@ -45,7 +45,8 @@ namespace iV2EX.Fragments
                         .FirstOrDefault(),
                     IsNotChecked = right.QuerySelector("a[href='/mission/daily']") != null
                 };
-            }).Retry(10);
+            })
+            .Retry(10);
             var checkIn = Observable.FromEventPattern<TappedRoutedEventArgs>(CheckInItem, nameof(CheckInItem.Tapped))
                 .Select(async x =>
                 {
@@ -67,7 +68,7 @@ namespace iV2EX.Fragments
                                 break;
                             case CheckInStatus.Success:
                                 Toast.ShowTips("签到成功");
-                                loadData.ObserveOnDispatcher().Subscribe(y => People = y);
+                                loadData.SubscribeOnDispatcher().Subscribe(y => People = y);
                                 break;
                             case CheckInStatus.Failure:
                                 Toast.ShowTips("签到失败");
@@ -97,8 +98,7 @@ namespace iV2EX.Fragments
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(MoneyDetailView), null));
             var collectTopic = Observable
                 .FromEventPattern<TappedRoutedEventArgs>(CollectTopicItem, nameof(CollectTopicItem.Tapped))
-                .Subscribe(x =>
-                    PageStack.Next("Left", "Right", typeof(PeopleTopicView), Convert.ToInt32(People.CollectedTopics)));
+                .Subscribe(x => PageStack.Next("Left", "Right", typeof(PeopleTopicView), Convert.ToInt32(People.CollectedTopics)));
             var collectNode = Observable.FromEventPattern<TappedRoutedEventArgs>(CollectNodeItem, nameof(CollectNodeItem.Tapped))
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(PeopleNodeView), null));
             var message = Observable.FromEventPattern<TappedRoutedEventArgs>(MessageItem, nameof(MessageItem.Tapped))
@@ -107,11 +107,11 @@ namespace iV2EX.Fragments
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(PeopleFollowerView), null));
             var loadInformation = Observable
                 .FromEventPattern<RoutedEventArgs>(UserInformationFragment, nameof(UserInformationFragment.Loaded))
-                .Publish(x => loadData)
+                .SelectMany(x => loadData)
                 .ObserveOnDispatcher()
                 .Subscribe(x => People = x);
             var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
-                .Publish(x => loadData)
+                .SelectMany(x => loadData)
                 .ObserveOnDispatcher()
                 .Subscribe(x => People = x);
         }

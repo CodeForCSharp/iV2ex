@@ -34,6 +34,11 @@ namespace iV2EX.Views
             InitializeComponent();
             var controls = new List<Control> {Send, ReplyText};
             var send = Observable.FromEventPattern<RoutedEventArgs>(Send, nameof(Send.Click))
+                .Select(x =>
+                {
+                    controls.ForEach(c => c.IsEnabled = false);
+                    return x;
+                })
                 .Select(async x =>
                 {
                     var content = ReplyText.Text;
@@ -53,7 +58,6 @@ namespace iV2EX.Views
                 .ObserveOnDispatcher()
                 .Subscribe(async x =>
                 {
-                    controls.ForEach(c => c.IsEnabled = false);
                     try
                     {
                         switch (await x)

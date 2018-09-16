@@ -35,7 +35,6 @@ namespace iV2EX.Views
             };
         }
 
-        private IncrementalLoadingCollection<TopicModel> NotifyData { get; } =
-            new IncrementalLoadingCollection<TopicModel>();
+        private IncrementalLoadingCollection<TopicModel> NotifyData { get; } = new IncrementalLoadingCollection<TopicModel>();
     }
 }
