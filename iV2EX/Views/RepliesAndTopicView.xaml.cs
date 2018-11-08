@@ -17,7 +17,6 @@ using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using Microsoft.Toolkit.Uwp.UI.Controls;
-using MyToolkit.Paging;
 
 namespace iV2EX.Views
 {
@@ -212,17 +211,18 @@ namespace iV2EX.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected internal override void OnNavigatedTo(MtNavigationEventArgs e)
+        protected internal override void OnCreate(object parameter)
         {
-            if (e.Parameter is int i)
+            if (parameter is int i)
             {
                 _id = i;
             }
-            else if (e.Parameter is Tuple<int, int> tuple)
+            else if (parameter is Tuple<int, int> tuple)
             {
                 _id = tuple.Item1;
                 _replyfloor = tuple.Item2;
             }
+            base.OnCreate(parameter);
         }
 
         [NotifyPropertyChangedInvocator]

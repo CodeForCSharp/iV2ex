@@ -1,4 +1,4 @@
-﻿<toolkit:MtPage
+﻿<pagingex:Activity
     x:Name="MemberPage"
     x:Class="iV2EX.Views.MemberView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,13 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:iV2EX.Model"
     mc:Ignorable="d"
-    xmlns:toolkit="using:MyToolkit.Paging"
+    xmlns:pagingex="using:PagingEx"
     xmlns:local="using:iV2EX.Views"
     xmlns:converter="using:iV2EX.Util"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls">
-    <toolkit:MtPage.Resources>
+    <pagingex:Activity.Resources>
         <SolidColorBrush x:Name="ThemeColor" Color="#3F51B5" />
-    </toolkit:MtPage.Resources>
+    </pagingex:Activity.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="80" />
@@ -385,4 +385,4 @@
             </PivotItem>
         </Pivot>
     </Grid>
-</toolkit:MtPage>
+</pagingex:Activity>

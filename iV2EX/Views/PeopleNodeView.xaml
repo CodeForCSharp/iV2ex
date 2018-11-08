@@ -1,4 +1,4 @@
-﻿<toolkit:MtPage
+﻿<pagingex:Activity
     x:Name="PeopleNodePage"
     x:Class="iV2EX.Views.PeopleNodeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:iV2EX.Model"
     mc:Ignorable="d"
-    xmlns:toolkit="using:MyToolkit.Paging">
-    <toolkit:MtPage.Resources>
+    xmlns:pagingex="using:PagingEx">
+    <pagingex:Activity.Resources>
         <DataTemplate x:Name="NodesTemplate" x:DataType="data:NodeModel">
             <RelativePanel>
                 <Image
@@ -36,7 +36,7 @@
                     Foreground="Gray" />
             </RelativePanel>
         </DataTemplate>
-    </toolkit:MtPage.Resources>
+    </pagingex:Activity.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             Name="PeopleNodeList"
@@ -45,4 +45,4 @@
             SelectionMode="Single"
             ShowsScrollingPlaceholders="True" />
     </Grid>
-</toolkit:MtPage>
+</pagingex:Activity>

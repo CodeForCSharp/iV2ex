@@ -1,5 +1,5 @@
-﻿<toolkit:MtPage
-    xmlns:toolkit="using:MyToolkit.Paging"
+﻿<pagingex:Activity
+    xmlns:pagingex="using:PagingEx"
     xmlns:localcontrol="using:iV2EX.Controls"
     x:Class="iV2EX.Views.WriteTopicView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -55,4 +55,4 @@
             Grid.ColumnSpan="2" />
         <localcontrol:ToastTips Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" x:Name="Toast" />
     </Grid>
-</toolkit:MtPage>
+</pagingex:Activity>

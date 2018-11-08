@@ -1,4 +1,4 @@
-﻿<toolkit:MtPage
+﻿<pagingex:Activity
     x:Class="iV2EX.Views.OneNodeTopicsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,15 +6,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:templates="using:iV2EX.Templates"
     mc:Ignorable="d"
-    xmlns:toolkit="using:MyToolkit.Paging"
+    xmlns:pagingex="using:PagingEx"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:model="using:iV2EX.Model"
     x:Name="OneNodeTopicsPage">
-    <toolkit:MtPage.Resources>
+    <pagingex:Activity.Resources>
         <ResourceDictionary>
             <SolidColorBrush Color="#3F51B5" x:Key="BG" />
         </ResourceDictionary>
-    </toolkit:MtPage.Resources>
+    </pagingex:Activity.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             IsItemClickEnabled="True"
@@ -734,4 +734,4 @@
                 </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
-</toolkit:MtPage>
+</pagingex:Activity>

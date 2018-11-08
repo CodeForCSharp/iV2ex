@@ -11,7 +11,7 @@ using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
-using MyToolkit.Paging;
+using PagingEx;
 
 namespace iV2EX.Views
 {
@@ -90,8 +90,8 @@ namespace iV2EX.Views
                                     localSettings.Values.Add("Cookies", cookies);
                                 else
                                     localSettings.Values["Cookies"] = cookies;
-                                if (Window.Current.Content is MtFrame mtFrame)
-                                    await mtFrame.NavigateAsync(typeof(MainPage), null);
+                                if (Window.Current.Content is ActivityContainer mtFrame)
+                                    mtFrame.Navigate(typeof(MainPage));
                                 break;
                         }
                     }

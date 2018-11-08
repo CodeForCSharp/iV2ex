@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using iV2EX.Views;
-using MyToolkit.Paging;
+using PagingEx;
 
 namespace iV2EX.Util
 {
@@ -20,21 +20,21 @@ namespace iV2EX.Util
             }
             else if (from == "Left" && to == "Right")
             {
-                if (Window.Current.Content is MtFrame mtFrame && mtFrame.ActualWidth < 600)
+                if (Window.Current.Content is ActivityContainer mtFrame && mtFrame.ActualWidth < 600)
                 {
                     MainPage.LeftPart.Visibility = Visibility.Collapsed;
                     MainPage.RightPart.Visibility = Visibility.Visible;
                 }
 
                 PageContainer.Clear();
-                await MainPage.RightPart.GoHomeAsync();
+                await MainPage.RightPart.GoHome();
                 PageContainer.Push(new PageInformation {From = "Left", To = "Right", PageType = typeof(BlankPage)});
-                await MainPage.RightPart.NavigateAsync(page, param);
+                await MainPage.RightPart.Navigate(page, param);
                 PageContainer.Push(new PageInformation {From = "Left", To = "Right", PageType = page});
             }
             else if (from == "Right" && to == "Right")
             {
-                await MainPage.RightPart.NavigateAsync(page, param);
+                await MainPage.RightPart.Navigate(page, param);
                 PageContainer.Push(new PageInformation {From = from, To = to, PageType = page});
             }
 
@@ -43,17 +43,17 @@ namespace iV2EX.Util
                 : AppViewBackButtonVisibility.Collapsed;
         }
 
-        public static void Back()
+        public async static void Back()
         {
             var page = PageContainer.Peek();
-            if (Window.Current.Content is MtFrame mtFrame && mtFrame.ActualWidth < 600 && page.From == "Left" &&
+            if (Window.Current.Content is ActivityContainer mtFrame && mtFrame.ActualWidth < 600 && page.From == "Left" &&
                 page.To == "Right")
             {
                 MainPage.LeftPart.Visibility = Visibility.Visible;
                 MainPage.RightPart.Visibility = Visibility.Collapsed;
             }
 
-            MainPage.RightPart.GoBackAsync();
+            await MainPage.RightPart.GoBack();
             PageContainer.Pop();
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = CanGoBack
                 ? AppViewBackButtonVisibility.Visible

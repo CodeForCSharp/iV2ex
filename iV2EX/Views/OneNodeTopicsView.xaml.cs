@@ -12,7 +12,6 @@ using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
-using MyToolkit.Paging;
 
 namespace iV2EX.Views
 {
@@ -122,15 +121,14 @@ namespace iV2EX.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected internal override void OnNavigatedTo(MtNavigationEventArgs e)
+        protected internal override void OnCreate(object parameter)
         {
-            if (e.Parameter is NodeModel node)
+            if (parameter is NodeModel node)
             {
                 Node.Title = node.Title;
                 Node.Name = node.Name;
             }
-
-            base.OnNavigatedTo(e);
+            base.OnCreate(parameter);
         }
 
         [NotifyPropertyChangedInvocator]

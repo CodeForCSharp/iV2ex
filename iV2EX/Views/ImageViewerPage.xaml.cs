@@ -7,7 +7,6 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Microsoft.Toolkit.Uwp.UI;
-using MyToolkit.Paging;
 
 namespace iV2EX.Views
 {
@@ -54,13 +53,13 @@ namespace iV2EX.Views
                 .Subscribe(x => MenuItemPanel.ContextFlyout.ShowAt(MenuItemPanel));
         }
 
-        protected internal override async void OnNavigatedTo(MtNavigationEventArgs args)
+        protected internal override async void OnCreate(object parameter)
         {
-            _imageUrl = args.GetParameter<string>();
+            _imageUrl = parameter as string;
             ImagePanel.Source = _imageUrl;
             await ImageCache.Instance.PreCacheAsync(new Uri(_imageUrl));
             _file = await ImageCache.Instance.GetFileFromCacheAsync(new Uri(_imageUrl));
-            base.OnNavigatedTo(args);
+            base.OnCreate(parameter);
         }
     }
 }

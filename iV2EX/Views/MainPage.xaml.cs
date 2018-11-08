@@ -8,11 +8,11 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using iV2EX.Util;
-using MyToolkit.Paging;
+using PagingEx;
 
 namespace iV2EX.Views
 {
-    internal partial class MainPage : MtPage
+    internal partial class MainPage
     {
         public MainPage()
         {
@@ -60,7 +60,7 @@ namespace iV2EX.Views
                     else
                     {
                         LeftPivot.Width = double.NaN;
-                        if (RightFrame.IsFirstPage)
+                        if (RightFrame.CanGoBack)
                         {
                             LeftPivot.Visibility = Visibility.Visible;
                             RightFrame.Visibility = Visibility.Collapsed;
@@ -83,7 +83,7 @@ namespace iV2EX.Views
                 });
         }
 
-        public static MtFrame RightPart { get; private set; }
+        public static ActivityContainer RightPart { get; private set; }
         public static Pivot LeftPart { get; private set; }
 
         private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject

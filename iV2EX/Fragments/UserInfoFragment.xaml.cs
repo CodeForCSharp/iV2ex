@@ -11,7 +11,7 @@ using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using iV2EX.Views;
-using MyToolkit.Paging;
+using PagingEx;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -83,11 +83,11 @@ namespace iV2EX.Fragments
             var cancel = Observable.FromEventPattern<TappedRoutedEventArgs>(CancelItem, nameof(CancelItem.Tapped))
                 .Subscribe(async x =>
                 {
-                    if (Window.Current.Content is MtFrame frame)
+                    if (Window.Current.Content is ActivityContainer frame)
                     {
                         PageStack.Clear();
                         frame.ClearBackStack();
-                        await frame.NavigateAsync(typeof(UserLoginView), null);
+                        await frame.Navigate(typeof(UserLoginView),null);
                     }
                 });
             var write = Observable.FromEventPattern<TappedRoutedEventArgs>(WriteItem, nameof(WriteItem.Tapped))

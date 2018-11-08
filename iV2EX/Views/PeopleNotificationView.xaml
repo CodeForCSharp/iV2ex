@@ -1,4 +1,4 @@
-﻿<toolkit:MtPage
+﻿<pagingex:Activity
     x:Name="PeopleNotificationPage"
     xmlns:views="using:iV2EX.Views"
     x:Class="iV2EX.Views.PeopleNotificationView"
@@ -8,8 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:iV2EX.Model"
     mc:Ignorable="d"
-    xmlns:toolkit="using:MyToolkit.Paging">
-    <toolkit:MtPage.Resources>
+    xmlns:pagingex="using:PagingEx">
+    <pagingex:Activity.Resources>
         <DataTemplate x:Name="NotificationTemplate" x:DataType="data:NotificationModel">
             <RelativePanel>
                 <Image
@@ -45,7 +45,7 @@
                     Foreground="Gray" />
             </RelativePanel>
         </DataTemplate>
-    </toolkit:MtPage.Resources>
+    </pagingex:Activity.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             ItemTemplate="{StaticResource NotificationTemplate}"
@@ -60,4 +60,4 @@
             </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
-</toolkit:MtPage>
+</pagingex:Activity>

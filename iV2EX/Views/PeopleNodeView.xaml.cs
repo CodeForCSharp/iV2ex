@@ -7,11 +7,10 @@ using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
-using MyToolkit.Paging;
 
 namespace iV2EX.Views
 {
-    public sealed partial class PeopleNodeView : MtPage
+    public sealed partial class PeopleNodeView
     {
         public PeopleNodeView()
         {

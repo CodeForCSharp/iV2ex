@@ -1,4 +1,4 @@
-﻿<toolkit:MtPage
+﻿<pagingex:Activity
     xmlns:views="using:iV2EX.Views"
     x:Class="iV2EX.Views.RepliesAndTopicView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,17 +7,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:iV2EX.Model"
     mc:Ignorable="d"
-    xmlns:toolkit="using:MyToolkit.Paging"
+    xmlns:pagingex="using:PagingEx"
     xmlns:local="using:iV2EX.Views"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:localcontrol="using:iV2EX.Controls"
     x:Name="RepliesAndTopicPage">
-    <toolkit:MtPage.Resources>
+    <pagingex:Activity.Resources>
         <SolidColorBrush Color="#3F51B5" x:Key="BG" />
-    </toolkit:MtPage.Resources>
+    </pagingex:Activity.Resources>
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:ImageEx
-            Name="TImagePanel"
+            x:Name="TImagePanel"
             Source="{x:Bind Topic.Member.Image,Mode=OneWay}"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignTopWithPanel="True"
@@ -257,4 +257,4 @@
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignRightWithPanel="True" />
     </RelativePanel>
-</toolkit:MtPage>
+</pagingex:Activity>
