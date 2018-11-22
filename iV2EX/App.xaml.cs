@@ -157,7 +157,7 @@ namespace iV2EX
                         var r = new HtmlParser().Parse(html).GetElementById("Top").TextContent.Contains("登出");
                         rootFrame.Navigate(r ? typeof(MainPage) : typeof(UserLoginView));
                     }
-                    catch(Exception ex)
+                    catch
                     {
                         rootFrame.Navigate(typeof(UserLoginView));
                     }

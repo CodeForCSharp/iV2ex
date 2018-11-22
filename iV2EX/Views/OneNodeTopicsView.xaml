@@ -88,8 +88,7 @@
                             Height="50"
                             Width="50"
                             Margin="0,8,0,0"
-                            RelativePanel.AlignLeftWithPanel="True"
-                            CornerRadius="2" />
+                            RelativePanel.AlignLeftWithPanel="True"/>
                         <Grid
                             Name="ReplyNPanel"
                             Background="#7986CB"

@@ -130,9 +130,10 @@ namespace iV2EX.Views
                 });
             Replies.LoadDataTask = async count =>
             {
-                var html = await ApiClient.GetRepliesAndTopicContent(_id, 1);
+                var html = await ApiClient.GetRepliesAndTopicContent(_id, Replies.CurrentPage);
                 var main = new HtmlParser().Parse(html).GetElementById("Main");
                 if (Replies.MaxPage == 0)
+                {
                     try
                     {
                         var numberString = Regex.IsMatch(html, "([0-9]{1,}) 回复")
@@ -164,14 +165,15 @@ namespace iV2EX.Views
                     }
                     catch
                     {
-                        Toast.ShowTips("加载失败，没有权限");
+                        Toast.ShowTips("加载失败，可能无权访问该主题");
                         return new PagesBaseModel<ReplyModel>
                         {
                             Pages = 0,
                             Entity = new List<ReplyModel>()
                         };
                     }
-
+                }
+                
                 var replies = main.QuerySelectorAll("table").Where(table => table.ParentElement.Id != null)
                     .Select(table =>
                     {

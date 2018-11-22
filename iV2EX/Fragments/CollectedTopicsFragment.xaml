@@ -1198,8 +1198,7 @@
                             Height="40"
                             Width="40"
                             Margin="0,8,0,0"
-                            RelativePanel.AlignLeftWithPanel="True"
-                            CornerRadius="2" />
+                            RelativePanel.AlignLeftWithPanel="True"/>
                         <Grid
                             Background="#7986CB"
                             CornerRadius="9"

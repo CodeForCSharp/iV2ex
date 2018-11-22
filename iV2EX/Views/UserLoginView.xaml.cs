@@ -111,7 +111,7 @@ namespace iV2EX.Views
                 });
             var loadInformation = Observable
                 .FromEventPattern<RoutedEventArgs>(UserLoginPage, nameof(UserLoginPage.Loaded))
-                .Publish(x => loginData)
+                .SelectMany(x => loginData)
                 .ObserveOnDispatcher()
                 .Subscribe(async x =>
                 {
