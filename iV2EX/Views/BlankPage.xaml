@@ -2,17 +2,18 @@
     x:Class="iV2EX.Views.BlankPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:iV2EX"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:iV2EX"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pagingex="using:PagingEx"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource AppBarItemPointerOverBackgroundThemeBrush}">
-        <TextBlock Text="V2EX"
-                   Foreground="WhiteSmoke"
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"
-                   FontSize="100"/>
+        <TextBlock
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="100"
+            Foreground="WhiteSmoke"
+            Text="V2EX" />
     </Grid>
 </pagingex:Activity>

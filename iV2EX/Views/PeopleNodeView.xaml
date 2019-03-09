@@ -1,39 +1,39 @@
 ﻿<pagingex:Activity
-    x:Name="PeopleNodePage"
     x:Class="iV2EX.Views.PeopleNodeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:iV2EX.Model"
-    mc:Ignorable="d"
-    xmlns:pagingex="using:PagingEx">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pagingex="using:PagingEx"
+    x:Name="PeopleNodePage"
+    mc:Ignorable="d">
     <pagingex:Activity.Resources>
         <DataTemplate x:Name="NodesTemplate" x:DataType="data:NodeModel">
             <RelativePanel>
                 <Image
-                    RelativePanel.AlignLeftWithPanel="True"
                     Name="ImagePanel"
-                    Height="40"
                     Width="40"
-                    Source="{x:Bind Image}"
-                    Margin="5" />
+                    Height="40"
+                    Margin="5"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    Source="{x:Bind Image}" />
                 <TextBlock
                     Name="TitlePanel"
+                    Margin="10,5,0,0"
+                    FontSize="16"
+                    Foreground="#FF3D3D3D"
                     RelativePanel.RightOf="ImagePanel"
                     Text="{x:Bind Title}"
-                    Margin="10,5,0,0"
-                    TextWrapping="Wrap"
-                    FontSize="16"
-                    Foreground="#FF3D3D3D" />
+                    TextWrapping="Wrap" />
                 <TextBlock
+                    Margin="10,5,0,0"
+                    FontSize="14"
+                    Foreground="Gray"
                     RelativePanel.Below="TitlePanel"
                     RelativePanel.RightOf="ImagePanel"
                     Text="{x:Bind Topics}"
-                    Margin="10,5,0,0"
-                    TextWrapping="Wrap"
-                    FontSize="14"
-                    Foreground="Gray" />
+                    TextWrapping="Wrap" />
             </RelativePanel>
         </DataTemplate>
     </pagingex:Activity.Resources>

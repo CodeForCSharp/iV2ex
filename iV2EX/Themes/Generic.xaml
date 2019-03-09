@@ -7,9 +7,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="pagingEx:ActivityContainer">
-                    <ContentPresenter x:Name="InternalContentPresenter" Background="{TemplateBinding Background}"
-                                      Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"
-                                      ContentTransitions="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ContentTransitions}" />
+                    <ContentPresenter
+                        x:Name="InternalContentPresenter"
+                        Background="{TemplateBinding Background}"
+                        Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"
+                        ContentTransitions="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ContentTransitions}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

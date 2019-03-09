@@ -2,17 +2,20 @@
     x:Class="iV2EX.Fragments.NodesFragment"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:iV2EX.Fragments"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:data="using:iV2EX.Model"
+    xmlns:local="using:iV2EX.Fragments"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    xmlns:tuple="using:iV2EX.TupleModel"
+    x:Name="AllNodesFragment"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    xmlns:tuple="using:iV2EX.TupleModel"
-    xmlns:data="using:iV2EX.Model"
-    x:Name="AllNodesFragment">
+    mc:Ignorable="d">
     <UserControl.Resources>
-        <CollectionViewSource x:Name="SortNodesCVS" IsSourceGrouped="True" ItemsPath="NodeContent" />
+        <CollectionViewSource
+            x:Name="SortNodesCVS"
+            IsSourceGrouped="True"
+            ItemsPath="NodeContent" />
     </UserControl.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <SemanticZoom Grid.Row="0">
@@ -39,21 +42,21 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock
                                     Grid.Column="0"
-                                    Text="{x:Bind Title}"
                                     Margin="12,8,0,0"
-                                    TextWrapping="Wrap"
-                                    MaxLines="3"
                                     FontSize="16"
-                                    Foreground="#FF3D3D3D" />
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Grid.Row="1"
-                                    Text="{x:Bind Header}"
-                                    Margin="12,8,0,0"
-                                    TextWrapping="Wrap"
-                                    FontSize="14"
+                                    Foreground="#FF3D3D3D"
                                     MaxLines="3"
-                                    Foreground="Gray" />
+                                    Text="{x:Bind Title}"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="12,8,0,0"
+                                    FontSize="14"
+                                    Foreground="Gray"
+                                    MaxLines="3"
+                                    Text="{x:Bind Header}"
+                                    TextWrapping="Wrap" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
