@@ -7,10 +7,10 @@ using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -20,20 +20,20 @@ namespace iV2EX.Views
         {
             InitializeComponent();
             var controls = new List<Control> {Option, Send, Title, Body};
-            var loadData = Observable.FromAsync(async x => await ApiClient.GetNodes()).Retry();
             var load = Observable.FromEventPattern<RoutedEventArgs>(WrittenPage, nameof(WrittenPage.Loaded))
-                .Publish(x => loadData)
-                .Subscribe(x => Nodes.AddRange(x));
+                .SelectMany(x => ApiClient.GetNodes())
+                .Retry(10)
+                .Subscribe(x => _nodes.AddRange(x));
             var wrriten = Observable.FromEventPattern<TappedRoutedEventArgs>(Send, nameof(Send.Tapped))
                 .Select(async x =>
                 {
                     if (Title.Text.Length == 0) return WrritenStatus.TitleEmpty;
                     if (Title.Text.Length > 120) return WrritenStatus.TitleLonger;
                     if (Body.Text.Length > 20000) return WrritenStatus.BodyLonger;
-                    if (!Nodes.Exists(node => node.Title.Contains(Option.Text))) return WrritenStatus.NotExistNode;
+                    if (!_nodes.Exists(node => node.Title.Contains(Option.Text))) return WrritenStatus.NotExistNode;
                     var url = $"https://www.v2ex.com/new/{Option.Text}";
                     var html = await ApiClient.OnlyGet(url);
-                    var once = new HtmlParser().Parse(html).QuerySelector("input[name='once']").GetAttribute("value");
+                    var once = new HtmlParser().ParseDocument(html).QuerySelector("input[name='once']").GetAttribute("value");
                     var param = new Dictionary<string, string>
                     {
                         {"once", once},
@@ -76,7 +76,7 @@ namespace iV2EX.Views
             var type = Observable
                 .FromEventPattern<AutoSuggestBoxTextChangedEventArgs>(Option, nameof(Option.TextChanged))
                 .Throttle(TimeSpan.FromMilliseconds(300))
-                .Select(x => Nodes.Where(node => node.Title.Contains(Option.Text)))
+                .Select(x => _nodes.Where(node => node.Title.Contains(Option.Text)))
                 .ObserveOnDispatcher()
                 .Subscribe(x =>
                 {
@@ -87,9 +87,17 @@ namespace iV2EX.Views
                 .FromEventPattern<AutoSuggestBoxSuggestionChosenEventArgs>(Option, nameof(Option.SuggestionChosen))
                 .ObserveOnDispatcher()
                 .Subscribe(x => Option.Text = (x.EventArgs.SelectedItem as NodeModel).Title);
+
+            this.Unloaded += (s, e) =>
+            {
+                load.Dispose();
+                wrriten.Dispose();
+                type.Dispose();
+                choose.Dispose();
+            };
         }
 
-        private List<NodeModel> Nodes { get; } = new List<NodeModel>();
+        private List<NodeModel> _nodes = new List<NodeModel>();
 
         private ObservableCollection<NodeModel> Show { get; } = new ObservableCollection<NodeModel>();
     }

@@ -18,26 +18,26 @@ namespace iV2EX.Fragments
         public NodesFragment()
         {
             InitializeComponent();
-            var loadData = Observable.FromAsync(async x => await ApiClient.GetNodes())
+            var loaded = Observable.FromEventPattern<RoutedEventArgs>(AllNodesFragment, nameof(AllNodesFragment.Loaded))
+                .SelectMany(x => ApiClient.GetNodes())
+                .Retry(10)
                 .Select(x =>
                 {
                     return x.GroupBy(y =>
-                        {
-                            var begin = y.Title.Trim().First();
-                            if (begin >= 'A' && begin <= 'Z')
-                                return $"{begin}";
-                            if (begin >= 'a' && begin <= 'z')
-                                return $"{(char) (begin + 'A' - 'a')}";
-                            if (begin >= 0 && begin <= 256)
-                                return "0-9";
-                            var first = PinYin.GetFirstPinyin(begin.ToString());
-                            return string.IsNullOrEmpty(first) ? "其他" : first;
-                        })
-                        .Select(y => new NodeInGroup {Key = y.Key, NodeContent = y.ToList()})
+                    {
+                        var begin = y.Title.Trim().First();
+                        if (begin >= 'A' && begin <= 'Z')
+                            return $"{begin}";
+                        if (begin >= 'a' && begin <= 'z')
+                            return $"{(char)(begin + 'A' - 'a')}";
+                        if (begin >= 0 && begin <= 256)
+                            return "0-9";
+                        var first = PinYin.GetFirstPinyin(begin.ToString());
+                        return string.IsNullOrEmpty(first) ? "其他" : first;
+                    })
+                        .Select(y => new NodeInGroup { Key = y.Key, NodeContent = y.ToList() })
                         .OrderBy(y => y.Key);
-                }).Retry(10);
-            var loaded = Observable.FromEventPattern<RoutedEventArgs>(AllNodesFragment, nameof(AllNodesFragment.Loaded))
-                .SelectMany(x => loadData)
+                })
                 .ObserveOnDispatcher()
                 .Subscribe(x =>
                 {
@@ -46,12 +46,14 @@ namespace iV2EX.Fragments
                     InView.ItemsSource = SortNodesCVS.View;
                 });
             var click = Observable.FromEventPattern<ItemClickEventArgs>(InView, nameof(InView.ItemClick))
+                .Select(x => x.EventArgs.ClickedItem as NodeModel)
                 .ObserveOnDispatcher()
-                .Subscribe(x =>
-                {
-                    var item = x.EventArgs.ClickedItem as NodeModel;
-                    PageStack.Next("Left", "Right", typeof(OneNodeTopicsView), item);
-                });
+                .Subscribe(x => PageStack.Next("Left", "Right", typeof(OneNodeTopicsView), x));
+            this.Unloaded += (s, e) =>
+            {
+                loaded.Dispose();
+                click.Dispose();
+            };
         }
     }
 }

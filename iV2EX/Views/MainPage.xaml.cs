@@ -81,6 +81,11 @@ namespace iV2EX.Views
                         RightFrame.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
                     }
                 });
+            this.Unloaded += (s, e) =>
+            {
+                leftChanged.Dispose();
+                rightChanged.Dispose();
+            };
         }
 
         public static ActivityContainer RightPart { get; private set; }

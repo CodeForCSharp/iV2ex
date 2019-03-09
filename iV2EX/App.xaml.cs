@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Views;
 using Microsoft.Toolkit.Uwp.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Controls;
 using Windows.ApplicationModel;
 using PagingEx;
 using System.Reactive.Linq;
-using System.Reactive.Concurrency;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX
 {
@@ -154,7 +150,7 @@ namespace iV2EX
                     try
                     {
                         var html = await ApiClient.GetMainPage();
-                        var r = new HtmlParser().Parse(html).GetElementById("Top").TextContent.Contains("登出");
+                        var r = new HtmlParser().ParseDocument(html).GetElementById("Top").TextContent.Contains("登出");
                         rootFrame.Navigate(r ? typeof(MainPage) : typeof(UserLoginView));
                     }
                     catch

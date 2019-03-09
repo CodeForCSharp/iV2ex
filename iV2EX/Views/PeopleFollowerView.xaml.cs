@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reactive.Linq;
 using Windows.UI.Xaml.Controls;
-using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -17,7 +17,7 @@ namespace iV2EX.Views
             NotifyData.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetFollowerTopics(NotifyData.CurrentPage);
-                var dom = new HtmlParser().Parse(html);
+                var dom = new HtmlParser().ParseDocument(html);
                 return new PagesBaseModel<TopicModel>
                 {
                     Pages = DomParse.ParseMaxPage(dom),
@@ -26,15 +26,15 @@ namespace iV2EX.Views
             };
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleFollowerList, nameof(PeopleFollowerList.ItemClick))
+                .Select(x => x.EventArgs.ClickedItem as TopicModel)
                 .ObserveOnDispatcher()
-                .Subscribe(x =>
-                {
-                    var item = x.EventArgs.ClickedItem as TopicModel;
-                    PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), item.Id);
-                });
+                .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
+            this.Unloaded += (s, e) =>
+            {
+                click.Dispose();
+            };
         }
 
-        private IncrementalLoadingCollection<TopicModel> NotifyData { get; } =
-            new IncrementalLoadingCollection<TopicModel>();
+        private IncrementalLoadingCollection<TopicModel> NotifyData { get; } = new IncrementalLoadingCollection<TopicModel>();
     }
 }

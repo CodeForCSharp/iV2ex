@@ -10,13 +10,13 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using AngleSharp.Parser.Html;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -43,7 +43,7 @@ namespace iV2EX.Views
                     var content = ReplyText.Text;
                     if (string.IsNullOrEmpty(content)) return ReplyStatus.TextEmpty;
                     var html = await ApiClient.GetTopicInformation(_id);
-                    var once = new HtmlParser().Parse(html).QuerySelector("input[name='once']").GetAttribute("value");
+                    var once = new HtmlParser().ParseDocument(html).QuerySelector("input[name='once']").GetAttribute("value");
                     var pramas = new Dictionary<string, string>
                     {
                         {"content", content},
@@ -131,7 +131,7 @@ namespace iV2EX.Views
             Replies.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetRepliesAndTopicContent(_id, Replies.CurrentPage);
-                var main = new HtmlParser().Parse(html).GetElementById("Main");
+                var main = new HtmlParser().ParseDocument(html).GetElementById("Main");
                 if (Replies.MaxPage == 0)
                 {
                     try
@@ -196,10 +196,18 @@ namespace iV2EX.Views
                     Entity = replies
                 };
             };
+
+            this.Unloaded += (s, e) =>
+            {
+                send.Dispose();
+                at.Dispose();
+                collect.Dispose();
+                tImageTap.Dispose();
+                copyLink.Dispose();
+            };
         }
 
-        private IncrementalLoadingCollection<ReplyModel> Replies { get; } =
-            new IncrementalLoadingCollection<ReplyModel>();
+        private IncrementalLoadingCollection<ReplyModel> Replies { get; } = new IncrementalLoadingCollection<ReplyModel>();
 
         private TopicModel Topic
         {

@@ -9,11 +9,10 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
 using iV2EX.Util;
 using iV2EX.Views;
-using AngleSharp;
+using AngleSharp.Html.Parser;
+using AngleSharp.Html.Dom;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -73,7 +72,7 @@ namespace iV2EX.Controls
             const string unsafeUrl = "http://www.v2ex.com";
             richText = new[] {"</p>", "</h1>", "</h2>", "</h2>", "</h3>", "</h4>", "</h5>", "</h6>"}
                 .Aggregate(richText, (current, s) => current.Replace(s, $"\\r{s}"));
-            var dom = await new HtmlParser().ParseAsync(richText);
+            var dom = await new HtmlParser().ParseDocumentAsync(richText);
             await Task.Run(() => GetElements(dom.Body));
             var paragraph = new Paragraph();
             foreach (var render in _renderList)

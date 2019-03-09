@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
+using AngleSharp.Html.Dom;
 using iV2EX.Model;
 
 namespace iV2EX.GetData

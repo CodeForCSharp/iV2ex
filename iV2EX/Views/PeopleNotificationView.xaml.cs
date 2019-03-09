@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Reactive.Linq;
 using Windows.UI.Xaml.Controls;
-using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -17,17 +17,13 @@ namespace iV2EX.Views
             InitializeComponent();
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(NotificationList, nameof(NotificationList.ItemClick))
+                .Select(x => x.EventArgs.ClickedItem as NotificationModel)
                 .ObserveOnDispatcher()
-                .Subscribe(x =>
-                {
-                    var item = x.EventArgs.ClickedItem as NotificationModel;
-                    PageStack.Next("Right", "Right", typeof(RepliesAndTopicView),
-                        new Tuple<int, int>(item.Topic.Id, item.ReplyFloor));
-                });
+                .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), new Tuple<int, int>(x.Topic.Id, x.ReplyFloor)));
             NotifyData.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetNotifications(NotifyData.CurrentPage);
-                var dom = new HtmlParser().Parse(html);
+                var dom = new HtmlParser().ParseDocument(html);
                 var header = dom.GetElementById("Main").QuerySelector("div.header");
                 var messages = int.Parse(header.QuerySelector("strong.gray")?.TextContent ?? "0");
                 var pages = messages % 10 != 0 ? messages / 10 + 1 : messages / 10;
@@ -59,6 +55,10 @@ namespace iV2EX.Views
                     Pages = pages,
                     Entity = notifications
                 };
+            };
+            this.Unloaded += (s, e) =>
+            {
+                click.Dispose();
             };
         }
 

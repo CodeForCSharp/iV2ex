@@ -51,6 +51,13 @@ namespace iV2EX.Views
             var menu = Observable.FromEventPattern<TappedRoutedEventArgs>(MenuItemPanel, nameof(MenuItemPanel.Tapped))
                 .ObserveOnDispatcher()
                 .Subscribe(x => MenuItemPanel.ContextFlyout.ShowAt(MenuItemPanel));
+
+            this.Unloaded += (s,e) => 
+            {
+                share.Dispose();
+                save.Dispose();
+                menu.Dispose();
+            };
         }
 
         protected internal override async void OnCreate(object parameter)

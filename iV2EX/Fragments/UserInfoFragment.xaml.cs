@@ -5,13 +5,14 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
-using AngleSharp.Parser.Html;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using iV2EX.Views;
 using PagingEx;
+using System.Threading.Tasks;
+using AngleSharp.Html.Parser;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -24,10 +25,10 @@ namespace iV2EX.Fragments
         public UserInfoFragment()
         {
             InitializeComponent();
-            var loadData = Observable.FromAsync(async x =>
+            async Task<PersonCenterModel> loadData()
             {
                 var html = await ApiClient.GetMainPage();
-                var right = new HtmlParser().Parse(html).GetElementById("Rightbar");
+                var right = new HtmlParser().ParseDocument(html).GetElementById("Rightbar");
                 var tables = right.QuerySelectorAll("table");
                 var spans = tables[1].QuerySelectorAll("span.bigger");
                 return new PersonCenterModel
@@ -45,49 +46,44 @@ namespace iV2EX.Fragments
                         .FirstOrDefault(),
                     IsNotChecked = right.QuerySelector("a[href='/mission/daily']") != null
                 };
-            })
-            .Retry(10);
+            }
             var checkIn = Observable.FromEventPattern<TappedRoutedEventArgs>(CheckInItem, nameof(CheckInItem.Tapped))
-                .Select(async x =>
+                .SelectMany(async x =>
                 {
                     var html = await ApiClient.GetCheckInInformation();
-                    var href = new HtmlParser().Parse(html).GetElementById("Main").QuerySelector("input")
+                    var href = new HtmlParser().ParseDocument(html).GetElementById("Main").QuerySelector("input")
                         .GetAttribute("onclick").Replace("location.href = '", "").Replace("';", "").Trim();
                     if (href.Contains("/balance")) return CheckInStatus.Gone;
                     var r = await ApiClient.CheckIn($"https://www.v2ex.com{href}", $"https://www.v2ex.com{href}");
                     return CheckInStatus.Success;
                 })
-                .Subscribe(async x =>
+                .Subscribe(x =>
                 {
-                    try
+                    switch (x)
                     {
-                        switch (await x)
-                        {
-                            case CheckInStatus.Gone:
-                                Toast.ShowTips("已经签到");
-                                break;
-                            case CheckInStatus.Success:
-                                Toast.ShowTips("签到成功");
-                                loadData.SubscribeOnDispatcher().Subscribe(y => People = y);
-                                break;
-                            case CheckInStatus.Failure:
-                                Toast.ShowTips("签到失败");
-                                break;
-                        }
+                        case CheckInStatus.Gone:
+                            Toast.ShowTips("已经签到");
+                            break;
+                        case CheckInStatus.Success:
+                            Toast.ShowTips("签到成功");
+                            Observable.FromAsync(y => loadData())
+                            .Retry(10)
+                            .SubscribeOnDispatcher()
+                            .Subscribe(y => People = y);
+                            break;
+                        case CheckInStatus.Failure:
+                            Toast.ShowTips("签到失败");
+                            break;
                     }
-                    catch
-                    {
-                        Toast.ShowTips("签到失败");
-                    }
-                });
+                }, ex => Toast.ShowTips("签到失败"));
             var cancel = Observable.FromEventPattern<TappedRoutedEventArgs>(CancelItem, nameof(CancelItem.Tapped))
-                .Subscribe(async x =>
+                .Subscribe(x =>
                 {
                     if (Window.Current.Content is ActivityContainer frame)
                     {
                         PageStack.Clear();
                         frame.ClearBackStack();
-                        await frame.Navigate(typeof(UserLoginView),null);
+                        frame.Navigate(typeof(UserLoginView));
                     }
                 });
             var write = Observable.FromEventPattern<TappedRoutedEventArgs>(WriteItem, nameof(WriteItem.Tapped))
@@ -107,13 +103,30 @@ namespace iV2EX.Fragments
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(PeopleFollowerView), null));
             var loadInformation = Observable
                 .FromEventPattern<RoutedEventArgs>(UserInformationFragment, nameof(UserInformationFragment.Loaded))
-                .SelectMany(x => loadData)
+                .SelectMany(x => loadData())
+                .Retry(10)
                 .ObserveOnDispatcher()
                 .Subscribe(x => People = x);
             var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
-                .SelectMany(x => loadData)
+                .SelectMany(x => loadData())
+                .Retry(10)
                 .ObserveOnDispatcher()
                 .Subscribe(x => People = x);
+
+            this.Unloaded += (s, e) =>
+            {
+                checkIn.Dispose();
+                cancel.Dispose();
+                write.Dispose();
+                user.Dispose();
+                money.Dispose();
+                collectTopic.Dispose();
+                collectNode.Dispose();
+                message.Dispose();
+                follower.Dispose();
+                loadInformation.Dispose();
+                refresh.Dispose();
+            };
         }
 
         public PersonCenterModel People

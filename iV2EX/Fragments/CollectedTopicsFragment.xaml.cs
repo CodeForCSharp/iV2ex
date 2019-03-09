@@ -2,13 +2,15 @@
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using Windows.UI.Xaml.Controls;
-using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using iV2EX.Views;
 using Windows.UI.Xaml.Input;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using AngleSharp.Html.Parser;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -38,16 +40,17 @@ namespace iV2EX.Fragments
         {
             InitializeComponent();
             LabelPanel.ItemsSource = _tabs;
-            var loadData = Observable.FromAsync(async x =>
+            async Task<IEnumerable<TopicModel>> loadData()
             {
                 var model = LabelPanel.SelectedItem as CollectedListModel;
                 var html = await ApiClient.GetTopicsWithTab(model.Name);
-                var dom = new HtmlParser().Parse(html);
+                var dom = new HtmlParser().ParseDocument(html);
                 return DomParse.ParseTopics(dom);
-            }).Retry(10);
+            }
             var selectionChanged = Observable
                 .FromEventPattern<SelectionChangedEventArgs>(LabelPanel, nameof(LabelPanel.SelectionChanged))
-                .SelectMany(x => loadData)
+                .SelectMany(x => loadData())
+                .Retry(10)
                 .ObserveOnDispatcher()
                 .Subscribe(x =>
                 {
@@ -56,14 +59,12 @@ namespace iV2EX.Fragments
                         News.Add(item);
                 });
             var click = Observable.FromEventPattern<ItemClickEventArgs>(NewsList, nameof(NewsList.ItemClick))
+                .Select(x => x.EventArgs.ClickedItem as TopicModel)
                 .ObserveOnDispatcher()
-                .Subscribe(x =>
-                {
-                    var item = x.EventArgs.ClickedItem as TopicModel;
-                    PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), item.Id);
-                });
+                .Subscribe(x => PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), x.Id));
             var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
-                .SelectMany(x=>loadData)
+                .SelectMany(x => loadData())
+                .Retry(10)
                 .ObserveOnDispatcher()
                 .Subscribe(x =>
                 {
@@ -72,10 +73,14 @@ namespace iV2EX.Fragments
                         News.Add(item);
                 });
             LabelPanel.SelectedIndex = 0;
+            this.Unloaded += (s, e) =>
+            {
+                selectionChanged.Dispose();
+                click.Dispose();
+                refresh.Dispose();
+            };
         }
 
         public ObservableCollection<TopicModel> News { get; } = new ObservableCollection<TopicModel>();
-
-
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
@@ -19,7 +19,7 @@ namespace iV2EX.Views
             Moneys.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetMoneyDetail(Moneys.CurrentPage);
-                var dom = new HtmlParser().Parse(html);
+                var dom = new HtmlParser().ParseDocument(html);
                 var pages = int.Parse(dom.QuerySelector("input.page_input").GetAttribute("max"));
                 var moneys = dom.QuerySelector("table.data").QuerySelectorAll("tr").Skip(1).Select(e =>
                 {

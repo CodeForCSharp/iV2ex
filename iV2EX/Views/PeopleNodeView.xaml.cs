@@ -3,10 +3,12 @@ using System.Linq;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -15,10 +17,10 @@ namespace iV2EX.Views
         public PeopleNodeView()
         {
             InitializeComponent();
-            var loadData = Observable.FromAsync(async x =>
+            async Task<IEnumerable<NodeModel>> loadData()
             {
                 var html = await ApiClient.GetFavoriteNodes();
-                return new HtmlParser().Parse(html).GetElementById("MyNodes").GetElementsByClassName("grid_item")
+                return new HtmlParser().ParseDocument(html).GetElementById("MyNodes").GetElementsByClassName("grid_item")
                     .Select(
                         child =>
                         {
@@ -32,19 +34,21 @@ namespace iV2EX.Views
                                 Topics = int.Parse(strs.Last())
                             };
                         });
-            }).Retry();
+            }
             var load = Observable.FromEventPattern<RoutedEventArgs>(PeopleNodePage, nameof(PeopleNodePage.Loaded))
-                .Publish(x => loadData)
+                .SelectMany(x => loadData())
+                .Retry(10)
                 .ObserveOnDispatcher()
                 .Subscribe(x => PeopleNodeList.ItemsSource = x);
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleNodeList, nameof(PeopleNodeList.ItemClick))
+                .Select(x => x.EventArgs.ClickedItem as NodeModel)
                 .ObserveOnDispatcher()
-                .Subscribe(x =>
-                {
-                    var item = x.EventArgs.ClickedItem as NodeModel;
-                    PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), item);
-                });
+                .Subscribe(x => PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), x));
+            this.Unloaded += (s, e) =>
+            {
+                click.Dispose();
+            };
         }
     }
 }

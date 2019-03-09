@@ -7,12 +7,13 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using AngleSharp.Parser.Html;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
+using System.Threading.Tasks;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -24,30 +25,30 @@ namespace iV2EX.Views
         public MemberView()
         {
             InitializeComponent();
-            var loadData = Observable.FromAsync(async x =>
-                {
-                    var html = await ApiClient.GetMemberInformation(_username);
-                    var cell = new HtmlParser().Parse(html).GetElementById("Main").QuerySelector("div.cell");
-                    var inputs = cell.QuerySelectorAll("input");
-                    if (!inputs.Any())
-                        return new MemberModel
-                        {
-                            Image = $"https:{cell.QuerySelector("img").GetAttribute("src")}",
-                            Username = cell.QuerySelector("h1").TextContent
-                        };
+            async Task<MemberModel> loadData()
+            {
+                var html = await ApiClient.GetMemberInformation(_username);
+                var cell = new HtmlParser().ParseDocument(html).GetElementById("Main").QuerySelector("div.cell");
+                var inputs = cell.QuerySelectorAll("input");
+                if (!inputs.Any())
                     return new MemberModel
                     {
                         Image = $"https:{cell.QuerySelector("img").GetAttribute("src")}",
-                        Notice = "https://www.v2ex.com" + inputs[0].GetAttribute("onclick").Split('\'')[3],
-                        IsNotice = inputs[0].GetAttribute("value"),
-                        Block = "https://www.v2ex.com" + inputs[1].GetAttribute("onclick").Split('\'')[3],
-                        IsBlock = inputs[1].GetAttribute("value"),
                         Username = cell.QuerySelector("h1").TextContent
                     };
-                })
-                .Retry(10);
+                return new MemberModel
+                {
+                    Image = $"https:{cell.QuerySelector("img").GetAttribute("src")}",
+                    Notice = "https://www.v2ex.com" + inputs[0].GetAttribute("onclick").Split('\'')[3],
+                    IsNotice = inputs[0].GetAttribute("value"),
+                    Block = "https://www.v2ex.com" + inputs[1].GetAttribute("onclick").Split('\'')[3],
+                    IsBlock = inputs[1].GetAttribute("value"),
+                    Username = cell.QuerySelector("h1").TextContent
+                };
+            }
             var load = Observable.FromEventPattern<RoutedEventArgs>(MemberPage, nameof(MemberPage.Loaded))
-                .SelectMany(x => loadData)
+                .SelectMany(x => loadData())
+                .Retry(10)
                 .ObserveOnDispatcher()
                 .Subscribe(x => Member = x,x => { });
             var notice = Observable.FromEventPattern<RoutedEventArgs>(Notice, nameof(Notice.Tapped))
@@ -78,7 +79,7 @@ namespace iV2EX.Views
                     };
                 }
 
-                var dom = new HtmlParser().Parse(html);
+                var dom = new HtmlParser().ParseDocument(html);
                 var pages = DomParse.ParseMaxPage(dom);
                 var topics = dom.GetElementById("Main").GetElementsByClassName("cell item").Select(node =>
                 {
@@ -113,7 +114,7 @@ namespace iV2EX.Views
             Notifications.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetRepliesByUsername(_username, Notifications.CurrentPage);
-                var dom = new HtmlParser().Parse(html);
+                var dom = new HtmlParser().ParseDocument(html);
                 var main = dom.GetElementById("Main");
                 var nodes = main.QuerySelectorAll("div.dock_area");
                 var replies = main.QuerySelectorAll("div.reply_content");
@@ -135,6 +136,13 @@ namespace iV2EX.Views
                     Pages = pages,
                     Entity = notifications
                 };
+            };
+            this.Unloaded += (s, e) =>
+            {
+                load.Dispose();
+                notice.Dispose();
+                block.Dispose();
+                info.Dispose();
             };
         }
 

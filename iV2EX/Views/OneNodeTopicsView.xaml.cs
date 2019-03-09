@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using AngleSharp.Parser.Html;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -24,12 +24,9 @@ namespace iV2EX.Views
             InitializeComponent();
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(NodeTopcisList, nameof(NodeTopcisList.ItemClick))
+                .Select(x => x.EventArgs.ClickedItem as TopicModel)
                 .ObserveOnDispatcher()
-                .Subscribe(x =>
-                {
-                    var item = x.EventArgs.ClickedItem as TopicModel;
-                    PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), item.Id);
-                });
+                .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
             var collect = Observable.FromEventPattern<TappedRoutedEventArgs>(CollectNode, nameof(CollectNode.Tapped))
                 .ObserveOnDispatcher()
                 .Subscribe(async x =>
@@ -52,7 +49,7 @@ namespace iV2EX.Views
             NotifyData.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetTopicsWithPageN(Node.Name, NotifyData.CurrentPage);
-                var dom = new HtmlParser().Parse(html);
+                var dom = new HtmlParser().ParseDocument(html);
                 if (NotifyData.MaxPage == 0)
                 {
                     var header = dom.GetElementById("Main").QuerySelector("div.node_header");
@@ -103,6 +100,11 @@ namespace iV2EX.Views
                     Pages = Node.Topics % 20 == 0 ? Node.Topics / 20 : Node.Topics / 20 + 1,
                     Entity = topics
                 };
+            };
+            this.Unloaded += (s, e) =>
+            {
+                click.Dispose();
+                collect.Dispose();
             };
         }
 

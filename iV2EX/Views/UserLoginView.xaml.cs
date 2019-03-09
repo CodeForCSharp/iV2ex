@@ -7,11 +7,12 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using AngleSharp.Parser.Html;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using PagingEx;
+using System.Threading.Tasks;
+using AngleSharp.Html.Parser;
 
 namespace iV2EX.Views
 {
@@ -22,11 +23,10 @@ namespace iV2EX.Views
         public UserLoginView()
         {
             InitializeComponent();
-            var controls = new List<Control> {TbPassword, TbUsername, BtnLogin, TbCaptcha};
-            var loginData = Observable.FromAsync(async x =>
+            async Task<LoginModel> loginData()
             {
                 var html = await ApiClient.GetSignInInformation();
-                var form = new HtmlParser().Parse(html).QuerySelector("form[action='/signin']");
+                var form = new HtmlParser().ParseDocument(html).QuerySelector("form[action='/signin']");
                 var inputs = form.QuerySelectorAll("input");
                 return new LoginModel
                 {
@@ -36,9 +36,10 @@ namespace iV2EX.Views
                     Once = inputs[3].GetAttribute("value"),
                     CImage = $"https://www.v2ex.com/_captcha?once={inputs[3]?.GetAttribute("value")}"
                 };
-            }).Retry();
+            }
+            var controls = new List<Control> { TbPassword, TbUsername, BtnLogin, TbCaptcha };
             var login = Observable.FromEventPattern<TappedRoutedEventArgs>(BtnLogin, nameof(BtnLogin.Tapped))
-                .Select(x=> 
+                .Select(x =>
                 {
                     controls.ForEach(y => y.IsEnabled = false);
                     return x;
@@ -97,7 +98,8 @@ namespace iV2EX.Views
                     }
                     catch
                     {
-                        loginData.ObserveOnDispatcher()
+                        Observable.FromAsync(y => loginData())
+                        .ObserveOnDispatcher()
                             .Subscribe(async y =>
                             {
                                 _data = y;
@@ -111,13 +113,19 @@ namespace iV2EX.Views
                 });
             var loadInformation = Observable
                 .FromEventPattern<RoutedEventArgs>(UserLoginPage, nameof(UserLoginPage.Loaded))
-                .SelectMany(x => loginData)
+                .SelectMany(x => loginData())
+                .Retry(100)
                 .ObserveOnDispatcher()
                 .Subscribe(async x =>
                 {
                     _data = x;
                     CaptchaImage.Source = await GetBitmapFromUrl.GetBitmapFromStream(_data.CImage);
                 });
+            this.Unloaded += (s, e) =>
+            {
+                login.Dispose();
+                loadInformation.Dispose();
+            };
         }
     }
 }
