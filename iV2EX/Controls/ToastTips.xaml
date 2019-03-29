@@ -24,7 +24,7 @@
                     </Flyout.FlyoutPresenterStyle>
                     <Grid Width="160" Background="#3F51B5">
                         <TextBlock
-                            Name="Container"
+                            x:Name="Container"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Foreground="White" />

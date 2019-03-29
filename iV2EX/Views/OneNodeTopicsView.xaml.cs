@@ -12,12 +12,15 @@ using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
+using System.Collections.Generic;
 
 namespace iV2EX.Views
 {
     public partial class OneNodeTopicsView : INotifyPropertyChanged
     {
         private NodeModel _node = new NodeModel();
+
+        private List<IDisposable> _events;
 
         public OneNodeTopicsView()
         {
@@ -46,6 +49,7 @@ namespace iV2EX.Views
                     {
                     }
                 });
+
             NotifyData.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetTopicsWithPageN(Node.Name, NotifyData.CurrentPage);
@@ -101,15 +105,17 @@ namespace iV2EX.Views
                     Entity = topics
                 };
             };
-            this.Unloaded += (s, e) =>
-            {
-                click.Dispose();
-                collect.Dispose();
-            };
+
+            _events = new List<IDisposable> { collect, click };
         }
 
-        public IncrementalLoadingCollection<TopicModel> NotifyData { get; } =
-            new IncrementalLoadingCollection<TopicModel>();
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
+        }
+
+        public IncrementalLoadingCollection<TopicModel> NotifyData { get; } = new IncrementalLoadingCollection<TopicModel>();
 
         public NodeModel Node
         {

@@ -20,6 +20,7 @@ namespace iV2EX.Views
     {
         private LoginModel _data;
 
+        private List<IDisposable> _events;
         public UserLoginView()
         {
             InitializeComponent();
@@ -121,11 +122,14 @@ namespace iV2EX.Views
                     _data = x;
                     CaptchaImage.Source = await GetBitmapFromUrl.GetBitmapFromStream(_data.CImage);
                 });
-            this.Unloaded += (s, e) =>
-            {
-                login.Dispose();
-                loadInformation.Dispose();
-            };
+
+            _events = new List<IDisposable> { loadInformation, login };
+        }
+
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
         }
     }
 }

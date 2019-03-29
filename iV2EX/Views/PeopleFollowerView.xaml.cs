@@ -6,11 +6,13 @@ using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
+using System.Collections.Generic;
 
 namespace iV2EX.Views
 {
     public sealed partial class PeopleFollowerView
     {
+        private List<IDisposable> _events;
         public PeopleFollowerView()
         {
             InitializeComponent();
@@ -29,10 +31,8 @@ namespace iV2EX.Views
                 .Select(x => x.EventArgs.ClickedItem as TopicModel)
                 .ObserveOnDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
-            this.Unloaded += (s, e) =>
-            {
-                click.Dispose();
-            };
+
+            _events = new List<IDisposable> { click };
         }
 
         private IncrementalLoadingCollection<TopicModel> NotifyData { get; } = new IncrementalLoadingCollection<TopicModel>();

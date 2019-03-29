@@ -48,7 +48,7 @@ namespace iV2EX.Fragments
                 };
             }
             var checkIn = Observable.FromEventPattern<TappedRoutedEventArgs>(CheckInItem, nameof(CheckInItem.Tapped))
-                .SelectMany(async x =>
+                .Select(async x =>
                 {
                     var html = await ApiClient.GetCheckInInformation();
                     var href = new HtmlParser().ParseDocument(html).GetElementById("Main").QuerySelector("input")
@@ -58,9 +58,9 @@ namespace iV2EX.Fragments
                     return CheckInStatus.Success;
                 })
                 .SubscribeOnDispatcher()
-                .Subscribe(x =>
+                .Subscribe(async x =>
                 {
-                    switch (x)
+                    switch (await x)
                     {
                         case CheckInStatus.Gone:
                             Toast.ShowTips("已经签到");

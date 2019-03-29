@@ -14,6 +14,7 @@ namespace iV2EX.Views
 {
     public sealed partial class PeopleNodeView
     {
+        private List<IDisposable> _events;
         public PeopleNodeView()
         {
             InitializeComponent();
@@ -45,10 +46,14 @@ namespace iV2EX.Views
                 .Select(x => x.EventArgs.ClickedItem as NodeModel)
                 .ObserveOnDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), x));
-            this.Unloaded += (s, e) =>
-            {
-                click.Dispose();
-            };
+
+            _events = new List<IDisposable> { load, click };
+        }
+
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
         }
     }
 }

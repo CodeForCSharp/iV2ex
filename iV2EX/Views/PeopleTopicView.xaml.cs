@@ -12,6 +12,7 @@ namespace iV2EX.Views
 {
     public partial class PeopleTopicView
     {
+        private List<IDisposable> _events;
         public PeopleTopicView()
         {
             InitializeComponent();
@@ -30,10 +31,14 @@ namespace iV2EX.Views
                     Entity = DomParse.ParseTopics(dom) ?? new List<TopicModel>()
                 };
             };
-            this.Unloaded += (s, e) =>
-            {
-                click.Dispose();
-            };
+
+            _events = new List<IDisposable> { click };
+        }
+
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
         }
 
         private IncrementalLoadingCollection<TopicModel> NotifyData { get; } = new IncrementalLoadingCollection<TopicModel>();

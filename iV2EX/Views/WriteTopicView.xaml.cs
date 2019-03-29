@@ -16,6 +16,12 @@ namespace iV2EX.Views
 {
     public partial class WriteTopicView
     {
+
+        private List<NodeModel> _nodes = new List<NodeModel>();
+
+        private ObservableCollection<NodeModel> Show { get; } = new ObservableCollection<NodeModel>();
+
+        private List<IDisposable> _events;
         public WriteTopicView()
         {
             InitializeComponent();
@@ -88,17 +94,13 @@ namespace iV2EX.Views
                 .ObserveOnDispatcher()
                 .Subscribe(x => Option.Text = (x.EventArgs.SelectedItem as NodeModel).Title);
 
-            this.Unloaded += (s, e) =>
-            {
-                load.Dispose();
-                wrriten.Dispose();
-                type.Dispose();
-                choose.Dispose();
-            };
+            _events = new List<IDisposable> { load, wrriten, type, choose };
         }
 
-        private List<NodeModel> _nodes = new List<NodeModel>();
-
-        private ObservableCollection<NodeModel> Show { get; } = new ObservableCollection<NodeModel>();
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
+        }
     }
 }

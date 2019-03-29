@@ -21,6 +21,7 @@ namespace iV2EX.Views
     {
         private MemberModel _member = new MemberModel();
         private string _username;
+        private List<IDisposable> _events;
 
         public MemberView()
         {
@@ -137,13 +138,14 @@ namespace iV2EX.Views
                     Entity = notifications
                 };
             };
-            this.Unloaded += (s, e) =>
-            {
-                load.Dispose();
-                notice.Dispose();
-                block.Dispose();
-                info.Dispose();
-            };
+
+            _events = new List<IDisposable> { load, notice, block, info };
+        }
+
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
         }
 
         private MemberModel Member

@@ -81,15 +81,18 @@ namespace iV2EX.Views
                         RightFrame.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
                     }
                 });
-            this.Unloaded += (s, e) =>
-            {
-                leftChanged.Dispose();
-                rightChanged.Dispose();
-            };
-        }
 
+            _events = new List<IDisposable> { leftChanged, rightChanged };
+        }
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
+        }
         public static ActivityContainer RightPart { get; private set; }
         public static Pivot LeftPart { get; private set; }
+
+        private List<IDisposable> _events;
 
         private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {

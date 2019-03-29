@@ -7,6 +7,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Microsoft.Toolkit.Uwp.UI;
+using System.Collections.Generic;
 
 namespace iV2EX.Views
 {
@@ -14,6 +15,7 @@ namespace iV2EX.Views
     {
         private StorageFile _file;
         private string _imageUrl;
+        private List<IDisposable> _events;
 
         public ImageViewerPage()
         {
@@ -52,12 +54,13 @@ namespace iV2EX.Views
                 .ObserveOnDispatcher()
                 .Subscribe(x => MenuItemPanel.ContextFlyout.ShowAt(MenuItemPanel));
 
-            this.Unloaded += (s,e) => 
-            {
-                share.Dispose();
-                save.Dispose();
-                menu.Dispose();
-            };
+            _events = new List<IDisposable> { share, save, menu };
+        }
+
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
         }
 
         protected internal override async void OnCreate(object parameter)

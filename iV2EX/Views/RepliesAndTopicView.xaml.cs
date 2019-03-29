@@ -28,6 +28,7 @@ namespace iV2EX.Views
 
         private TopicModel _topic = new TopicModel();
 
+        private List<IDisposable> _events;
         public RepliesAndTopicView()
         {
             InitializeComponent();
@@ -197,14 +198,13 @@ namespace iV2EX.Views
                 };
             };
 
-            this.Unloaded += (s, e) =>
-            {
-                send.Dispose();
-                at.Dispose();
-                collect.Dispose();
-                tImageTap.Dispose();
-                copyLink.Dispose();
-            };
+            _events = new List<IDisposable> { send, at, collect, tImageTap, copyLink };
+        }
+
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
         }
 
         private IncrementalLoadingCollection<ReplyModel> Replies { get; } = new IncrementalLoadingCollection<ReplyModel>();

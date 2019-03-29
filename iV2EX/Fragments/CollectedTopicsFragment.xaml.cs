@@ -73,6 +73,7 @@ namespace iV2EX.Fragments
                         News.Add(item);
                 });
             LabelPanel.SelectedIndex = 0;
+
             this.Unloaded += (s, e) =>
             {
                 selectionChanged.Dispose();

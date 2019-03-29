@@ -7,11 +7,15 @@ using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
+using System.Collections.Generic;
 
 namespace iV2EX.Views
 {
     public partial class PeopleNotificationView
     {
+        private List<IDisposable> _events;
+
+        public IncrementalLoadingCollection<NotificationModel> NotifyData { get; } = new IncrementalLoadingCollection<NotificationModel>();
         public PeopleNotificationView()
         {
             InitializeComponent();
@@ -56,13 +60,14 @@ namespace iV2EX.Views
                     Entity = notifications
                 };
             };
-            this.Unloaded += (s, e) =>
-            {
-                click.Dispose();
-            };
+
+            _events = new List<IDisposable> { click };
         }
 
-        public IncrementalLoadingCollection<NotificationModel> NotifyData { get; } =
-            new IncrementalLoadingCollection<NotificationModel>();
+        protected internal override void OnDestroy()
+        {
+            base.OnDestroy();
+            _events.ForEach(x => x.Dispose());
+        }
     }
 }
