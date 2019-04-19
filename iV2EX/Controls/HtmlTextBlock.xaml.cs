@@ -70,8 +70,11 @@ namespace iV2EX.Controls
         {
             const string baseUrl = "https://www.v2ex.com";
             const string unsafeUrl = "http://www.v2ex.com";
-            richText = new[] {"</p>", "</h1>", "</h2>", "</h2>", "</h3>", "</h4>", "</h5>", "</h6>"}
-                .Aggregate(richText, (current, s) => current.Replace(s, $"\\r{s}"));
+            var blocks = new[] { "</p>", "</h1>", "</h2>", "</h2>", "</h3>", "</h4>", "</h5>", "</h6>","</li>", "</blockquote>" };
+            foreach(var block in blocks)
+            {
+                richText = richText.Replace(block, $"\\r{block}");
+            }
             var dom = await new HtmlParser().ParseDocumentAsync(richText);
             await Task.Run(() => GetElements(dom.Body));
             var paragraph = new Paragraph();
@@ -89,13 +92,13 @@ namespace iV2EX.Controls
                             //    ? $"http:{img.Source.Replace("about:", "")}"
                             //    : img.Source;
                             var source = img.Source;
-                            if (source.StartsWith("source:///"))
+                            if (source.StartsWith("about:///"))
                             {
-                                source = baseUrl + source.Replace("source://", "");
+                                source = baseUrl + source.Replace("about://", "");
                             }
-                            else if(source.StartsWith("source:"))
+                            else if(source.StartsWith("about:"))
                             {
-                                source = $"https{source.Replace("source:", "")}";
+                                source = $"https:{source.Replace("about:", "")}";
                             }
                             if (!Uri.IsWellFormedUriString(source, UriKind.Absolute)) break;
                             var bitmap = new Image

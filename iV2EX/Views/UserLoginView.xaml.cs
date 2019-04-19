@@ -63,6 +63,7 @@ namespace iV2EX.Views
                     if (r.Contains("登出")) return SignInStatus.Success;
                     return SignInStatus.NetworkError;
                 })
+                .ObserveOnDispatcher()
                 .Subscribe(async x =>
                 {
                     try

@@ -57,7 +57,7 @@ namespace iV2EX.Fragments
                     var r = await ApiClient.CheckIn($"https://www.v2ex.com{href}", $"https://www.v2ex.com{href}");
                     return CheckInStatus.Success;
                 })
-                .SubscribeOnDispatcher()
+                .ObserveOnDispatcher()
                 .Subscribe(async x =>
                 {
                     switch (await x)
@@ -69,7 +69,7 @@ namespace iV2EX.Fragments
                             Toast.ShowTips("签到成功");
                             Observable.FromAsync(y => loadData())
                             .Retry(10)
-                            .SubscribeOnDispatcher()
+                            .ObserveOnDispatcher()
                             .Subscribe(y => People = y);
                             break;
                         case CheckInStatus.Failure:
@@ -78,7 +78,7 @@ namespace iV2EX.Fragments
                     }
                 }, ex => Toast.ShowTips("签到失败"));
             var cancel = Observable.FromEventPattern<TappedRoutedEventArgs>(CancelItem, nameof(CancelItem.Tapped))
-                .SubscribeOnDispatcher()
+                .ObserveOnDispatcher()
                 .Subscribe(x =>
                 {
                     if (Window.Current.Content is ActivityContainer frame)

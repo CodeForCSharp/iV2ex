@@ -49,6 +49,7 @@ namespace iV2EX.Views
                     await ApiClient.NewTopic(url, new FormUrlEncodedContent(param), Option.Text);
                     return WrritenStatus.Success;
                 })
+                .ObserveOnDispatcher()
                 .Subscribe(async x =>
                 {
                     controls.ForEach(y => y.IsEnabled = false);

@@ -10,13 +10,17 @@
     xmlns:pagingex="using:PagingEx"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Name="WrapPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer
             HorizontalScrollBarVisibility="Auto"
             HorizontalScrollMode="Auto"
             MaxZoomFactor="10"
+            MinZoomFactor="1"
             ZoomMode="Enabled">
-            <controls:ImageEx x:Name="ImagePanel" />
+            <controls:ImageEx
+                x:Name="ImagePanel"
+                Width="{x:Bind WrapPanel.Width}"
+                Height="{x:Bind WrapPanel.Height}" />
         </ScrollViewer>
         <Grid
             Name="MenuItemPanel"

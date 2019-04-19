@@ -591,6 +591,7 @@
                         RelativePanel.RightOf="CoinIconPanel"
                         Text="铜币" />
                     <localcontrol:HtmlTextBlock
+                        Height="18"
                         RelativePanel.AlignRightWithPanel="True"
                         RelativePanel.AlignVerticalCenterWithPanel="True"
                         Text="{x:Bind People.Money, Mode=OneWay}" />

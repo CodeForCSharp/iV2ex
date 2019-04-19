@@ -31,24 +31,19 @@ namespace iV2EX.Views
                 .ObserveOnDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
             var collect = Observable.FromEventPattern<TappedRoutedEventArgs>(CollectNode, nameof(CollectNode.Tapped))
-                .ObserveOnDispatcher()
-                .Subscribe(async x =>
+                .SelectMany(x => ApiClient.GetNodeInformation(Node.Name))
+                .Select(html =>
                 {
-                    try
-                    {
-                        var html = await ApiClient.GetNodeInformation(Node.Name);
-                        var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
-                        var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
-                        var url = "";
-                        if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
-                        if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
-                        await ApiClient.OnlyGet($"https://www.v2ex.com{url}");
-                        Node.IsCollect = Node.IsCollect == "加入收藏" ? "取消收藏" : "加入收藏";
-                    }
-                    catch
-                    {
-                    }
-                });
+                    var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
+                    var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
+                    var url = "";
+                    if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
+                    if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
+                    return url;
+                })
+                .SelectMany(url => ApiClient.OnlyGet($"https://www.v2ex.com{url}"))
+                .ObserveOnDispatcher()
+                .Subscribe(x =>Node.IsCollect = Node.IsCollect == "加入收藏" ? "取消收藏" : "加入收藏", ex => { });
 
             NotifyData.LoadDataTask = async count =>
             {
