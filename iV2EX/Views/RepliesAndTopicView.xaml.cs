@@ -147,7 +147,7 @@ namespace iV2EX.Views
                             Id = _id,
                             Member = new MemberModel
                             {
-                                Image = $"http:{node.QuerySelector("img").GetAttribute("src")}",
+                                Image = node.QuerySelector("img").GetAttribute("src"),
                                 Username = node.QuerySelector("a").GetAttribute("href").Split('/')[2]
                             },
                             Title = node.QuerySelector("h1").TextContent,
@@ -182,7 +182,7 @@ namespace iV2EX.Views
                         return new ReplyModel
                         {
                             Id = int.Parse(table.ParentElement.Id.Replace("r_", "")),
-                            Avater = $"http:{table.QuerySelector("img").GetAttribute("src")}",
+                            Avater = table.QuerySelector("img").GetAttribute("src"),
                             Username = table.QuerySelector("strong").TextContent,
                             Content = table.QuerySelector("div.reply_content").InnerHtml.Trim(),
                             Thanks = spans.Length == 3 ? int.Parse(spans[2].TextContent.Replace("♥ ", "")) : 0,

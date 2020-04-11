@@ -45,7 +45,7 @@ namespace iV2EX.Views
                                 },
                                 Member = new MemberModel
                                 {
-                                    Image = $"http:{node.QuerySelector("img").GetAttribute("src")}"
+                                    Image = node.QuerySelector("img").GetAttribute("src")
                                 },
                                 Id = int.Parse(node.Id.Replace("n_", "")),
                                 Title = node.QuerySelector("span.fade").TextContent,

@@ -34,12 +34,12 @@ namespace iV2EX.Views
                 if (!inputs.Any())
                     return new MemberModel
                     {
-                        Image = $"https:{cell.QuerySelector("img").GetAttribute("src")}",
+                        Image = cell.QuerySelector("img").GetAttribute("src"),
                         Username = cell.QuerySelector("h1").TextContent
                     };
                 return new MemberModel
                 {
-                    Image = $"https:{cell.QuerySelector("img").GetAttribute("src")}",
+                    Image = cell.QuerySelector("img").GetAttribute("src"),
                     Notice = "https://www.v2ex.com" + inputs[0].GetAttribute("onclick").Split('\'')[3],
                     IsNotice = inputs[0].GetAttribute("value"),
                     Block = "https://www.v2ex.com" + inputs[1].GetAttribute("onclick").Split('\'')[3],

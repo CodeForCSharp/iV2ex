@@ -33,7 +33,7 @@ namespace iV2EX.GetData
                     Member = new MemberModel
                     {
                         Username = hrefs[3].TextContent,
-                        Image = $"http:{imgs.GetAttribute("src")}"
+                        Image = imgs.GetAttribute("src")
                     },
                     Id = int.Parse(hrefs[1].GetAttribute("href").Split('/', '#')[2])
                 };

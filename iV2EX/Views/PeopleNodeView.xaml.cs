@@ -21,7 +21,7 @@ namespace iV2EX.Views
             async Task<IEnumerable<NodeModel>> loadData()
             {
                 var html = await ApiClient.GetFavoriteNodes();
-                return new HtmlParser().ParseDocument(html).GetElementById("MyNodes").GetElementsByClassName("grid_item")
+                return new HtmlParser().ParseDocument(html).GetElementById("my-nodes").GetElementsByClassName("grid_item")
                     .Select(
                         child =>
                         {
@@ -30,7 +30,7 @@ namespace iV2EX.Views
                             {
                                 Id = int.Parse(child.Id.Replace("n_", "")),
                                 Name = child.GetAttribute("href").Replace("/go/", ""),
-                                Image = $"http:{child.QuerySelector("img").GetAttribute("src")}",
+                                Image = child.QuerySelector("img").GetAttribute("src"),
                                 Title = string.Join("", strs.Take(strs.Length - 1)),
                                 Topics = int.Parse(strs.Last())
                             };

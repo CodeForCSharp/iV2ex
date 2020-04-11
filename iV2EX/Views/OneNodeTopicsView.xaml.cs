@@ -58,7 +58,7 @@ namespace iV2EX.Views
                         IsCollect = header.QuerySelector("a").TextContent,
                         Cover = header.QuerySelector("img") == null
                             ? "ms-appx:///Assets/default.png"
-                            : $"https:{header.QuerySelector("img").GetAttribute("src")}",
+                            : header.QuerySelector("img").GetAttribute("src"),
                         Title = Node.Title,
                         Name = Node.Name                      
                     };
@@ -74,7 +74,7 @@ namespace iV2EX.Views
                         Member = new MemberModel
                         {
                             Username = hrefs[2].TextContent,
-                            Image = $"https:{imgs.GetAttribute("src")}"
+                            Image = imgs.GetAttribute("src")
                         },
                         Id = int.Parse(node.ClassName.Split('_').Last())
                     };
@@ -82,7 +82,7 @@ namespace iV2EX.Views
                     {
                         topic.LastUsername = $"最后回复者 :{hrefs[3].TextContent}";
                         topic.Replies = int.Parse(hrefs[4].TextContent);
-                        var last = node.GetElementsByClassName("small fade").First().TextContent.Split('•')[1].Trim();
+                        var last = node.GetElementsByClassName("topic_info").First().TextContent.Split('•')[1].Trim();
                         if (last.Length > 12)
                         {
                             var timeSpan = DateTime.Now - DateTime.Parse(last.Insert(10, " "));
