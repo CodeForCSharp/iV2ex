@@ -50,18 +50,18 @@ namespace iV2EX.Views
             var load = Observable.FromEventPattern<RoutedEventArgs>(MemberPage, nameof(MemberPage.Loaded))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => Member = x,x => { });
             var notice = Observable.FromEventPattern<RoutedEventArgs>(Notice, nameof(Notice.Tapped))
                 .Select(async x => await ApiClient.OnlyGet(Member.Notice))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => Member.IsNotice = "取消特别关注", (Exception ex) => { });
             var block = Observable.FromEventPattern<RoutedEventArgs>(Block, nameof(Block.Tapped))
                 .Select(async x => await ApiClient.OnlyGet(Member.Block))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => Member.IsBlock = "取消Block", (Exception ex) => { });
             var info = Observable.FromEventPattern<ItemClickEventArgs>(MemberInfoList, nameof(MemberInfoList.ItemClick))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     var item = x.EventArgs.ClickedItem as TopicModel;

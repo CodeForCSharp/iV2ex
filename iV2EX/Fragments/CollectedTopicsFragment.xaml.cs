@@ -51,7 +51,7 @@ namespace iV2EX.Fragments
                 .FromEventPattern<SelectionChangedEventArgs>(LabelPanel, nameof(LabelPanel.SelectionChanged))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     News.Clear();
@@ -60,12 +60,12 @@ namespace iV2EX.Fragments
                 });
             var click = Observable.FromEventPattern<ItemClickEventArgs>(NewsList, nameof(NewsList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), x.Id));
             var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     News.Clear();

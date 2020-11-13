@@ -55,7 +55,7 @@ namespace iV2EX.Views
                     if (text.Contains("你回复过于频繁了")) return ReplyStatus.Ban;
                     return ReplyStatus.Success;
                 })
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(async x =>
                 {
                     try
@@ -84,11 +84,11 @@ namespace iV2EX.Views
                     }
                 });
             var at = Observable.FromEventPattern<TappedRoutedEventArgs>(UsernamePanel, nameof(UsernamePanel.Tapped))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => ReplyText.Text += $"@{(string) (x.Sender as TextBlock).Tag} ");
             var collect = Observable
                 .FromEventPattern<TappedRoutedEventArgs>(CollectedPanel, nameof(CollectedPanel.Tapped))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(async x =>
                 {
                     try
@@ -117,11 +117,11 @@ namespace iV2EX.Views
                     }
                 });
             var tImageTap = Observable.FromEventPattern<TappedRoutedEventArgs>(TImagePanel, nameof(TImagePanel.Tapped))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(MemberView), TImagePanel.Tag));
             var copyLink = Observable
                 .FromEventPattern<TappedRoutedEventArgs>(CopyLinkPanel, nameof(CopyLinkPanel.Tapped))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     var clipBoardText = new DataPackage();

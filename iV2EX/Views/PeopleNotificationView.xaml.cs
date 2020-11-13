@@ -22,7 +22,7 @@ namespace iV2EX.Views
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(NotificationList, nameof(NotificationList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as NotificationModel)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), new Tuple<int, int>(x.Topic.Id, x.ReplyFloor)));
             NotifyData.LoadDataTask = async count =>
             {

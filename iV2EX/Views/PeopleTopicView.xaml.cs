@@ -19,7 +19,7 @@ namespace iV2EX.Views
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleTopicsList, nameof(PeopleTopicsList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
             NotifyData.LoadDataTask = async count =>
             {

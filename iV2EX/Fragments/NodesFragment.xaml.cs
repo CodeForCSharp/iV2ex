@@ -39,7 +39,7 @@ namespace iV2EX.Fragments
                         .Select(y => new NodeInGroup { Key = y.Key, NodeContent = y.ToList() })
                         .OrderBy(y => y.Key);
                 })
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     SortNodesCVS.Source = x;
@@ -48,7 +48,7 @@ namespace iV2EX.Fragments
                 });
             var click = Observable.FromEventPattern<ItemClickEventArgs>(InView, nameof(InView.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as NodeModel)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(OneNodeTopicsView), x));
             this.Unloaded += (s, e) =>
             {

@@ -27,13 +27,13 @@ namespace iV2EX.Views
                 e.Request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(_file));
             };
             var share = Observable.FromEventPattern<RoutedEventArgs>(ShareImage, nameof(ShareImage.Click))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     if (DataTransferManager.IsSupported()) DataTransferManager.ShowShareUI();
                 });
             var save = Observable.FromEventPattern<RoutedEventArgs>(SaveImage, nameof(SaveImage.Click))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(async x =>
                 {
                     try
@@ -51,7 +51,7 @@ namespace iV2EX.Views
                     }
                 });
             var menu = Observable.FromEventPattern<TappedRoutedEventArgs>(MenuItemPanel, nameof(MenuItemPanel.Tapped))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => MenuItemPanel.ContextFlyout.ShowAt(MenuItemPanel));
 
             _events = new List<IDisposable> { share, save, menu };

@@ -49,7 +49,7 @@ namespace iV2EX.Views
                     await ApiClient.NewTopic(url, new FormUrlEncodedContent(param), Option.Text);
                     return WrritenStatus.Success;
                 })
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(async x =>
                 {
                     controls.ForEach(y => y.IsEnabled = false);
@@ -84,7 +84,7 @@ namespace iV2EX.Views
                 .FromEventPattern<AutoSuggestBoxTextChangedEventArgs>(Option, nameof(Option.TextChanged))
                 .Throttle(TimeSpan.FromMilliseconds(300))
                 .Select(x => _nodes.Where(node => node.Title.Contains(Option.Text)))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     foreach (var node in x)
@@ -92,7 +92,7 @@ namespace iV2EX.Views
                 });
             var choose = Observable
                 .FromEventPattern<AutoSuggestBoxSuggestionChosenEventArgs>(Option, nameof(Option.SuggestionChosen))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => Option.Text = (x.EventArgs.SelectedItem as NodeModel).Title);
 
             _events = new List<IDisposable> { load, wrriten, type, choose };

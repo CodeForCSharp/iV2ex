@@ -27,7 +27,7 @@ namespace iV2EX.Views
             };
             var leftChanged = Observable
                 .FromEventPattern<SizeChangedEventArgs>(LeftPivot, nameof(LeftPivot.SizeChanged))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     var headerpanel = FindVisualChildren<PivotHeaderPanel>(LeftPivot).ToList();
@@ -39,7 +39,7 @@ namespace iV2EX.Views
                 });
             var rightChanged = Observable
                 .FromEventPattern<SizeChangedEventArgs>(RightFrame, nameof(RightFrame.SizeChanged))
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
                     if (RootGrid.ActualWidth > 600)

@@ -29,7 +29,7 @@ namespace iV2EX.Views
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleFollowerList, nameof(PeopleFollowerList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
 
             _events = new List<IDisposable> { click };

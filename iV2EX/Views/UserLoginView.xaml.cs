@@ -63,7 +63,7 @@ namespace iV2EX.Views
                     if (r.Contains("登出")) return SignInStatus.Success;
                     return SignInStatus.NetworkError;
                 })
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(async x =>
                 {
                     try
@@ -101,7 +101,7 @@ namespace iV2EX.Views
                     catch
                     {
                         Observable.FromAsync(y => loginData())
-                        .ObserveOnDispatcher()
+                        .ObserveOnCoreDispatcher()
                             .Subscribe(async y =>
                             {
                                 _data = y;
@@ -117,7 +117,7 @@ namespace iV2EX.Views
                 .FromEventPattern<RoutedEventArgs>(UserLoginPage, nameof(UserLoginPage.Loaded))
                 .SelectMany(x => loginData())
                 .Retry(100)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(async x =>
                 {
                     _data = x;

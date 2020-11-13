@@ -39,12 +39,12 @@ namespace iV2EX.Views
             var load = Observable.FromEventPattern<RoutedEventArgs>(PeopleNodePage, nameof(PeopleNodePage.Loaded))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PeopleNodeList.ItemsSource = x);
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleNodeList, nameof(PeopleNodeList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as NodeModel)
-                .ObserveOnDispatcher()
+                .ObserveOnCoreDispatcher()
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), x));
 
             _events = new List<IDisposable> { load, click };
