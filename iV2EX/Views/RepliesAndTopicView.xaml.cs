@@ -137,10 +137,9 @@ namespace iV2EX.Views
                 {
                     try
                     {
-                        var numberString = Regex.IsMatch(html, "([0-9]{1,}) 回复")
-                            ? Regex.Match(html, "([0-9]{1,}) 回复").Groups[1].Value
-                            : "0";
-                        var maxReply = int.Parse(numberString);
+                        var match = Regex.Match(html, "([0-9]{1,}) 条回复");
+                        var replyString = match.Success ? match.Groups[1].Value : "0";
+                        var maxReply = int.Parse(replyString);
                         var node = main.QuerySelector("div.header");
                         var topic = new TopicModel
                         {

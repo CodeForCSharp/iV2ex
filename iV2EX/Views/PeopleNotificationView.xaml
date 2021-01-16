@@ -33,6 +33,7 @@
                     FontSize="14"
                     RelativePanel.Below="TitlePanel"
                     RelativePanel.RightOf="ImagePanel"
+                    TextWrapping="Wrap"
                     Text="{x:Bind Content}" />
                 <TextBlock
                     Margin="5"
