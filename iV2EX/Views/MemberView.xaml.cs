@@ -14,6 +14,7 @@ using iV2EX.TupleModel;
 using iV2EX.Util;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using Windows.UI.Xaml.Navigation;
 
 namespace iV2EX.Views
 {
@@ -142,9 +143,9 @@ namespace iV2EX.Views
             _events = new List<IDisposable> { load, notice, block, info };
         }
 
-        protected internal override void OnDestroy()
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnDestroy();
+            base.OnNavigatedFrom(e);
             _events.ForEach(x => x.Dispose());
         }
 
@@ -172,10 +173,11 @@ namespace iV2EX.Views
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected internal override void OnCreate(object parameter)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
+            var parameter = e.Parameter;
             if (parameter is string s) _username = s;
-            base.OnCreate(parameter);
         }
     }
 }

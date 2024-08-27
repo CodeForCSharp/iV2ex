@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using iV2EX.Views;
-using PagingEx;
+using Windows.UI.Xaml.Controls;
 
 namespace iV2EX.Util
 {
@@ -13,28 +13,31 @@ namespace iV2EX.Util
 
         public static bool CanGoBack => PageContainer.Count > 1;
 
-        public static async void Next(string from, string to, Type page, object param)
+        public static void Next(string from, string to, Type page, object param)
         {
             if (from == "Left" && to == "Left")
             {
             }
             else if (from == "Left" && to == "Right")
             {
-                if (Window.Current.Content is ActivityContainer mtFrame && mtFrame.ActualWidth < 600)
+                if (Window.Current.Content is Frame mtFrame && mtFrame.ActualWidth < 600)
                 {
                     MainPage.LeftPart.Visibility = Visibility.Collapsed;
                     MainPage.RightPart.Visibility = Visibility.Visible;
                 }
 
                 PageContainer.Clear();
-                await MainPage.RightPart.GoHome();
+                while (MainPage.RightPart.CanGoBack)
+                {
+                    MainPage.RightPart.GoBack();
+                }
                 PageContainer.Push(new PageInformation {From = "Left", To = "Right", PageType = typeof(BlankPage)});
-                await MainPage.RightPart.Navigate(page, param);
+                MainPage.RightPart.Navigate(page, param);
                 PageContainer.Push(new PageInformation {From = "Left", To = "Right", PageType = page});
             }
             else if (from == "Right" && to == "Right")
             {
-                await MainPage.RightPart.Navigate(page, param);
+                MainPage.RightPart.Navigate(page, param);
                 PageContainer.Push(new PageInformation {From = from, To = to, PageType = page});
             }
 
@@ -43,17 +46,17 @@ namespace iV2EX.Util
                 : AppViewBackButtonVisibility.Collapsed;
         }
 
-        public async static void Back()
+        public static void Back()
         {
             var page = PageContainer.Peek();
-            if (Window.Current.Content is ActivityContainer mtFrame && mtFrame.ActualWidth < 600 && page.From == "Left" &&
+            if (Window.Current.Content is Frame mtFrame && mtFrame.ActualWidth < 600 && page.From == "Left" &&
                 page.To == "Right")
             {
                 MainPage.LeftPart.Visibility = Visibility.Visible;
                 MainPage.RightPart.Visibility = Visibility.Collapsed;
             }
 
-            await MainPage.RightPart.GoBack();
+            MainPage.RightPart.GoBack();
             PageContainer.Pop();
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = CanGoBack
                 ? AppViewBackButtonVisibility.Visible

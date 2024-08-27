@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using iV2EX.Util;
-using PagingEx;
+using Windows.UI.Xaml.Navigation;
 
 namespace iV2EX.Views
 {
@@ -84,12 +84,14 @@ namespace iV2EX.Views
 
             _events = new List<IDisposable> { leftChanged, rightChanged };
         }
-        protected internal override void OnDestroy()
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnDestroy();
+            base.OnNavigatedFrom(e);
             _events.ForEach(x => x.Dispose());
         }
-        public static ActivityContainer RightPart { get; private set; }
+
+        public static Frame RightPart { get; private set; }
         public static Pivot LeftPart { get; private set; }
 
         private List<IDisposable> _events;

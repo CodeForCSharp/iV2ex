@@ -17,6 +17,7 @@ using iV2EX.TupleModel;
 using iV2EX.Util;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using AngleSharp.Html.Parser;
+using Windows.UI.Xaml.Navigation;
 
 namespace iV2EX.Views
 {
@@ -200,9 +201,9 @@ namespace iV2EX.Views
             _events = new List<IDisposable> { send, at, collect, tImageTap, copyLink };
         }
 
-        protected internal override void OnDestroy()
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnDestroy();
+            base.OnNavigatedFrom(e);
             _events.ForEach(x => x.Dispose());
         }
 
@@ -220,8 +221,10 @@ namespace iV2EX.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected internal override void OnCreate(object parameter)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
+            var parameter = e.Parameter;
             if (parameter is int i)
             {
                 _id = i;
@@ -231,7 +234,6 @@ namespace iV2EX.Views
                 _id = tuple.Item1;
                 _replyfloor = tuple.Item2;
             }
-            base.OnCreate(parameter);
         }
 
         [NotifyPropertyChangedInvocator]

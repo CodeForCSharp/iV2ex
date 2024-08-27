@@ -10,9 +10,9 @@ using Windows.UI.Xaml.Input;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
-using PagingEx;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using Windows.UI.Xaml.Navigation;
 
 namespace iV2EX.Views
 {
@@ -93,7 +93,7 @@ namespace iV2EX.Views
                                     localSettings.Values.Add("Cookies", cookies);
                                 else
                                     localSettings.Values["Cookies"] = cookies;
-                                if (Window.Current.Content is ActivityContainer mtFrame)
+                                if (Window.Current.Content is Frame mtFrame)
                                     mtFrame.Navigate(typeof(MainPage));
                                 break;
                         }
@@ -127,9 +127,9 @@ namespace iV2EX.Views
             _events = new List<IDisposable> { loadInformation, login };
         }
 
-        protected internal override void OnDestroy()
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnDestroy();
+            base.OnNavigatedFrom(e);
             _events.ForEach(x => x.Dispose());
         }
     }

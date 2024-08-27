@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="3c5f657a-a8e2-4783-bf37-b743f30996de" Publisher="CN=45813" Version="1.0.0.0" />
+  <Identity Name="3c5f657a-a8e2-4783-bf37-b743f30996de" Publisher="CN=Jialong" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="3c5f657a-a8e2-4783-bf37-b743f30996de" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>iV2EX</DisplayName>

@@ -1,4 +1,4 @@
-﻿<pagingex:Activity
+﻿<Page
     x:Class="iV2EX.Views.OneNodeTopicsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,11 +10,11 @@
     xmlns:templates="using:iV2EX.Templates"
     x:Name="OneNodeTopicsPage"
     mc:Ignorable="d">
-    <pagingex:Activity.Resources>
+    <Page.Resources>
         <ResourceDictionary>
             <SolidColorBrush x:Key="BG" Color="#3F51B5" />
         </ResourceDictionary>
-    </pagingex:Activity.Resources>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             Name="NodeTopcisList"
@@ -700,4 +700,4 @@
             </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
-</pagingex:Activity>
+</Page>

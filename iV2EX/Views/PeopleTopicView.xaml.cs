@@ -7,6 +7,7 @@ using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
+using Windows.UI.Xaml.Navigation;
 
 namespace iV2EX.Views
 {
@@ -35,9 +36,9 @@ namespace iV2EX.Views
             _events = new List<IDisposable> { click };
         }
 
-        protected internal override void OnDestroy()
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnDestroy();
+            base.OnNavigatedFrom(e);
             _events.ForEach(x => x.Dispose());
         }
 

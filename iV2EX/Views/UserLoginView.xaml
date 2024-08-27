@@ -1,4 +1,4 @@
-﻿<pagingex:Activity
+﻿<Page
     x:Class="iV2EX.Views.UserLoginView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -70,4 +70,4 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top" />
     </Grid>
-</pagingex:Activity>
+</Page>

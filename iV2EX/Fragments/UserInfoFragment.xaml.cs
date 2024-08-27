@@ -10,9 +10,9 @@ using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using iV2EX.Views;
-using PagingEx;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using Windows.UI.Xaml.Controls;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -81,10 +81,10 @@ namespace iV2EX.Fragments
                 .ObserveOnCoreDispatcher()
                 .Subscribe(x =>
                 {
-                    if (Window.Current.Content is ActivityContainer frame)
+                    if (Window.Current.Content is Frame frame)
                     {
                         PageStack.Clear();
-                        frame.ClearBackStack();
+                        frame.BackStack.Clear();
                         frame.Navigate(typeof(UserLoginView));
                     }
                 });

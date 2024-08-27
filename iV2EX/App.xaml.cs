@@ -11,9 +11,8 @@ using Microsoft.Toolkit.Uwp.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel;
-using PagingEx;
-using System.Reactive.Linq;
 using AngleSharp.Html.Parser;
+using Windows.UI.Xaml.Controls;
 
 namespace iV2EX
 {
@@ -123,14 +122,14 @@ namespace iV2EX
                     container.Add(new Uri("https://www.v2ex.com"), new Cookie(name, value));
                 }
             }
-            var rootFrame = Window.Current.Content as ActivityContainer;
+            var rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
             // 只需确保窗口处于活动状态
             if (rootFrame == null)
             {
                 // 创建要充当导航上下文的框架，并导航到第一页
-                rootFrame = new ActivityContainer();
+                rootFrame = new Frame();
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
                     //TODO: 从之前挂起的应用程序加载状态

@@ -1,4 +1,4 @@
-﻿<pagingex:Activity
+﻿<Page
     x:Class="iV2EX.Views.PeopleNotificationView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,7 @@
     xmlns:views="using:iV2EX.Views"
     x:Name="PeopleNotificationPage"
     mc:Ignorable="d">
-    <pagingex:Activity.Resources>
+    <Page.Resources>
         <DataTemplate x:Name="NotificationTemplate" x:DataType="data:NotificationModel">
             <RelativePanel>
                 <Image
@@ -46,7 +46,7 @@
                     Text="{x:Bind ReplyDate}" />
             </RelativePanel>
         </DataTemplate>
-    </pagingex:Activity.Resources>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             Name="NotificationList"
@@ -61,4 +61,4 @@
             </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
-</pagingex:Activity>
+</Page>

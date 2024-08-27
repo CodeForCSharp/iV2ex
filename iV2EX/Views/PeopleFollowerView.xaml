@@ -1,4 +1,4 @@
-﻿<pagingex:Activity
+﻿<Page
     x:Class="iV2EX.Views.PeopleFollowerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,13 +7,13 @@
     xmlns:pagingex="using:PagingEx"
     xmlns:templates="using:iV2EX.Templates"
     mc:Ignorable="d">
-    <pagingex:Activity.Resources>
+    <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <templates:NormalTopicModelTemplate />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </pagingex:Activity.Resources>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             Name="PeopleFollowerList"
@@ -21,4 +21,4 @@
             ItemTemplate="{StaticResource TopicModelNormalTemplate}"
             ItemsSource="{x:Bind NotifyData}" />
     </Grid>
-</pagingex:Activity>
+</Page>

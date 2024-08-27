@@ -1,4 +1,4 @@
-﻿<pagingex:Activity
+﻿<Page
     x:Class="iV2EX.Views.MoneyDetailView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -56,4 +56,4 @@
             </ListView.ItemTemplate>
         </ListView>
     </Grid>
-</pagingex:Activity>
+</Page>

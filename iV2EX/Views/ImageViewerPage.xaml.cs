@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Microsoft.Toolkit.Uwp.UI;
 using System.Collections.Generic;
+using Windows.UI.Xaml.Navigation;
 
 namespace iV2EX.Views
 {
@@ -57,19 +58,20 @@ namespace iV2EX.Views
             _events = new List<IDisposable> { share, save, menu };
         }
 
-        protected internal override void OnDestroy()
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnDestroy();
+            base.OnNavigatedFrom(e);
             _events.ForEach(x => x.Dispose());
         }
 
-        protected internal override async void OnCreate(object parameter)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
+            var parameter = e.Parameter;
             _imageUrl = parameter as string;
             ImagePanel.Source = _imageUrl;
             await ImageCache.Instance.PreCacheAsync(new Uri(_imageUrl));
             _file = await ImageCache.Instance.GetFileFromCacheAsync(new Uri(_imageUrl));
-            base.OnCreate(parameter);
         }
     }
 }

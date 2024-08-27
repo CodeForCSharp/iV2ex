@@ -13,6 +13,7 @@ using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
 using System.Collections.Generic;
+using Windows.UI.Xaml.Navigation;
 
 namespace iV2EX.Views
 {
@@ -104,9 +105,9 @@ namespace iV2EX.Views
             _events = new List<IDisposable> { collect, click };
         }
 
-        protected internal override void OnDestroy()
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnDestroy();
+            base.OnNavigatedFrom(e);
             _events.ForEach(x => x.Dispose());
         }
 
@@ -124,14 +125,15 @@ namespace iV2EX.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected internal override void OnCreate(object parameter)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
+            var parameter = e.Parameter;
             if (parameter is NodeModel node)
             {
                 Node.Title = node.Title;
                 Node.Name = node.Name;
             }
-            base.OnCreate(parameter);
         }
 
         [NotifyPropertyChangedInvocator]

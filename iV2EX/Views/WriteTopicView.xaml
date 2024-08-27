@@ -1,4 +1,4 @@
-﻿<pagingex:Activity
+﻿<Page
     x:Class="iV2EX.Views.WriteTopicView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,7 +6,6 @@
     xmlns:data="using:iV2EX.Model"
     xmlns:localcontrol="using:iV2EX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pagingex="using:PagingEx"
     x:Name="WrittenPage"
     mc:Ignorable="d">
 
@@ -59,4 +58,4 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top" />
     </Grid>
-</pagingex:Activity>
+</Page>
