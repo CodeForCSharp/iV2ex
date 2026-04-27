@@ -1,6 +1,6 @@
-﻿using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using Color = Windows.UI.Color;
 
 namespace iV2EX.Util
 {

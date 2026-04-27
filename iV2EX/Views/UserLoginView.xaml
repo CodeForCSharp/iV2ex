@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localcontrol="using:iV2EX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pagingex="using:PagingEx"
     x:Name="UserLoginPage"
     mc:Ignorable="d">
 
@@ -67,7 +66,7 @@
         </Grid>
         <localcontrol:ToastTips
             x:Name="Toast"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Top" />
     </Grid>
 </Page>

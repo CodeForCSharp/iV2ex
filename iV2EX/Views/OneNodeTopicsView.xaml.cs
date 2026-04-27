@@ -4,8 +4,8 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -13,7 +13,8 @@ using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -29,7 +30,7 @@ namespace iV2EX.Views
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(NodeTopcisList, nameof(NodeTopcisList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
             var collect = Observable.FromEventPattern<TappedRoutedEventArgs>(CollectNode, nameof(CollectNode.Tapped))
                 .SelectMany(x => ApiClient.GetNodeInformation(Node.Name))
@@ -43,7 +44,7 @@ namespace iV2EX.Views
                     return url;
                 })
                 .SelectMany(url => ApiClient.OnlyGet($"https://www.v2ex.com{url}"))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>Node.IsCollect = Node.IsCollect == "加入收藏" ? "取消收藏" : "加入收藏", ex => { });
 
             NotifyData.LoadDataTask = async count =>

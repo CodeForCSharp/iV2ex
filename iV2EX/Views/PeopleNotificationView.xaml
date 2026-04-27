@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="using:iV2EX.Model"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pagingex="using:PagingEx"
     xmlns:views="using:iV2EX.Views"
     x:Name="PeopleNotificationPage"
     mc:Ignorable="d">

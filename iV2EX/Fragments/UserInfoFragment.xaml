@@ -737,6 +737,7 @@
         <localcontrol:ToastTips
             x:Name="Toast"
             RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True" />
         <localcontrol:RefreshButton
             x:Name="Refresh"

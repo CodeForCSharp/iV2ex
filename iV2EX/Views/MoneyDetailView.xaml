@@ -7,7 +7,6 @@
     xmlns:local="using:iV2EX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="using:iV2EX.Model"
-    xmlns:pagingex="using:PagingEx"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using iV2EX.Util;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -20,14 +20,9 @@ namespace iV2EX.Views
             RightPart = RightFrame;
             LeftPart = LeftPivot;
             PageStack.Next("Right", "Right", typeof(BlankPage), null);
-            SystemNavigationManager.GetForCurrentView().BackRequested += (sender, el) =>
-            {
-                el.Handled = true;
-                if (PageStack.CanGoBack) PageStack.Back();
-            };
             var leftChanged = Observable
                 .FromEventPattern<SizeChangedEventArgs>(LeftPivot, nameof(LeftPivot.SizeChanged))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
                     var headerpanel = FindVisualChildren<PivotHeaderPanel>(LeftPivot).ToList();
@@ -39,7 +34,7 @@ namespace iV2EX.Views
                 });
             var rightChanged = Observable
                 .FromEventPattern<SizeChangedEventArgs>(RightFrame, nameof(RightFrame.SizeChanged))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
                     if (RootGrid.ActualWidth > 600)

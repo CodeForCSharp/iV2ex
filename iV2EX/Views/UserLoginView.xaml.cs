@@ -4,15 +4,16 @@ using System.Net;
 using System.Net.Http;
 using System.Reactive.Linq;
 using Windows.Storage;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -63,7 +64,7 @@ namespace iV2EX.Views
                     if (r.Contains("登出")) return SignInStatus.Success;
                     return SignInStatus.NetworkError;
                 })
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(async x =>
                 {
                     try
@@ -93,15 +94,14 @@ namespace iV2EX.Views
                                     localSettings.Values.Add("Cookies", cookies);
                                 else
                                     localSettings.Values["Cookies"] = cookies;
-                                if (Window.Current.Content is Frame mtFrame)
-                                    mtFrame.Navigate(typeof(MainPage));
+                                App.Window.PageFrame.Navigate(typeof(MainPage));
                                 break;
                         }
                     }
                     catch
                     {
                         Observable.FromAsync(y => loginData())
-                        .ObserveOnCoreDispatcher()
+                        .ObserveOn(DispatcherQueueScheduler.Current)
                             .Subscribe(async y =>
                             {
                                 _data = y;
@@ -117,7 +117,7 @@ namespace iV2EX.Views
                 .FromEventPattern<RoutedEventArgs>(UserLoginPage, nameof(UserLoginPage.Loaded))
                 .SelectMany(x => loginData())
                 .Retry(100)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(async x =>
                 {
                     _data = x;

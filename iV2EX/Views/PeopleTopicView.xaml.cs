@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -20,7 +21,7 @@ namespace iV2EX.Views
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleTopicsList, nameof(PeopleTopicsList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
             NotifyData.LoadDataTask = async count =>
             {

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "iV2EX (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "iV2EX (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

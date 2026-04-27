@@ -2,11 +2,9 @@
     x:Class="iV2EX.Views.OneNodeTopicsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="using:iV2EX.Model"
-    xmlns:pagingex="using:PagingEx"
     xmlns:templates="using:iV2EX.Templates"
     x:Name="OneNodeTopicsPage"
     mc:Ignorable="d">
@@ -22,8 +20,8 @@
             ItemsSource="{x:Bind NotifyData}">
             <ListView.Header>
                 <RelativePanel>
-                    <controls:ImageEx
-                        Name="CoverPanel"
+                    <Image
+                        x:Name="CoverPanel"
                         Width="40"
                         Height="40"
                         Margin="10"
@@ -82,7 +80,7 @@
                             RelativePanel.Below="TitlePanel"
                             Text="{x:Bind LastReply}"
                             TextWrapping="Wrap" />
-                        <controls:ImageEx
+                        <Image
                             Name="ImagePanel"
                             Width="50"
                             Height="50"

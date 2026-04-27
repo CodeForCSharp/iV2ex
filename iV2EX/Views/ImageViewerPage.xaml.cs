@@ -1,14 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Input;
-using Microsoft.Toolkit.Uwp.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
+using Microsoft.UI.Xaml.Media;
 
 namespace iV2EX.Views
 {
@@ -21,20 +23,27 @@ namespace iV2EX.Views
         public ImageViewerPage()
         {
             InitializeComponent();
-            DataTransferManager.GetForCurrentView().DataRequested += (s, e) =>
-            {
-                e.Request.Data.Properties.Title = "分享自iV2EX";
-                e.Request.Data.SetText(_imageUrl);
-                e.Request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(_file));
-            };
+
             var share = Observable.FromEventPattern<RoutedEventArgs>(ShareImage, nameof(ShareImage.Click))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
-                    if (DataTransferManager.IsSupported()) DataTransferManager.ShowShareUI();
+                    if (DataTransferManager.IsSupported())
+                    {
+                        var interop = DataTransferManager.As<IDataTransferManagerInterop>();
+                        var riid = typeof(DataTransferManager).GUID;
+                        var manager = interop.GetForWindow(App.WindowHandle, riid);
+                        manager.DataRequested += (s, e) =>
+                        {
+                            e.Request.Data.Properties.Title = "分享自iV2EX";
+                            e.Request.Data.SetText(_imageUrl);
+                            e.Request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(_file));
+                        };
+                        interop.ShowShareUIForWindow(App.WindowHandle);
+                    }
                 });
             var save = Observable.FromEventPattern<RoutedEventArgs>(SaveImage, nameof(SaveImage.Click))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(async x =>
                 {
                     try
@@ -52,7 +61,7 @@ namespace iV2EX.Views
                     }
                 });
             var menu = Observable.FromEventPattern<TappedRoutedEventArgs>(MenuItemPanel, nameof(MenuItemPanel.Tapped))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => MenuItemPanel.ContextFlyout.ShowAt(MenuItemPanel));
 
             _events = new List<IDisposable> { share, save, menu };
@@ -69,9 +78,15 @@ namespace iV2EX.Views
             base.OnNavigatedTo(e);
             var parameter = e.Parameter;
             _imageUrl = parameter as string;
-            ImagePanel.Source = _imageUrl;
-            await ImageCache.Instance.PreCacheAsync(new Uri(_imageUrl));
-            _file = await ImageCache.Instance.GetFileFromCacheAsync(new Uri(_imageUrl));
         }
+    }
+
+    [ComImport]
+    [Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    interface IDataTransferManagerInterop
+    {
+        DataTransferManager GetForWindow(IntPtr appWindow, [In] ref Guid riid);
+        void ShowShareUIForWindow(IntPtr appWindow);
     }
 }

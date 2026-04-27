@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using iV2EX.Views;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Input;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using AngleSharp.Html.Parser;
+using System.Reactive.Concurrency;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -51,7 +52,7 @@ namespace iV2EX.Fragments
                 .FromEventPattern<SelectionChangedEventArgs>(LabelPanel, nameof(LabelPanel.SelectionChanged))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
                     News.Clear();
@@ -60,12 +61,12 @@ namespace iV2EX.Fragments
                 });
             var click = Observable.FromEventPattern<ItemClickEventArgs>(NewsList, nameof(NewsList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), x.Id));
             var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
                     News.Clear();

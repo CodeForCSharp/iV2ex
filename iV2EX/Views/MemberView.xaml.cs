@@ -5,8 +5,8 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -14,7 +14,8 @@ using iV2EX.TupleModel;
 using iV2EX.Util;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -32,7 +33,7 @@ namespace iV2EX.Views
                 var html = await ApiClient.GetMemberInformation(_username);
                 var cell = new HtmlParser().ParseDocument(html).GetElementById("Main").QuerySelector("div.cell");
                 var inputs = cell.QuerySelectorAll("input");
-                if (!inputs.Any())
+                if (inputs.Length == 0)
                     return new MemberModel
                     {
                         Image = cell.QuerySelector("img").GetAttribute("src"),
@@ -51,18 +52,18 @@ namespace iV2EX.Views
             var load = Observable.FromEventPattern<RoutedEventArgs>(MemberPage, nameof(MemberPage.Loaded))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => Member = x,x => { });
             var notice = Observable.FromEventPattern<RoutedEventArgs>(Notice, nameof(Notice.Tapped))
                 .Select(async x => await ApiClient.OnlyGet(Member.Notice))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => Member.IsNotice = "取消特别关注", (Exception ex) => { });
             var block = Observable.FromEventPattern<RoutedEventArgs>(Block, nameof(Block.Tapped))
                 .Select(async x => await ApiClient.OnlyGet(Member.Block))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => Member.IsBlock = "取消Block", (Exception ex) => { });
             var info = Observable.FromEventPattern<ItemClickEventArgs>(MemberInfoList, nameof(MemberInfoList.ItemClick))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
                     var item = x.EventArgs.ClickedItem as TopicModel;

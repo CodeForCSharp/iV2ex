@@ -1,7 +1,5 @@
 ﻿using System;
-using Windows.UI.Xaml;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+using Microsoft.UI.Xaml;
 
 namespace iV2EX.Controls
 {
@@ -15,11 +13,12 @@ namespace iV2EX.Controls
         public void ShowTips(string content)
         {
             Container.Text = content;
-            Small.ContextFlyout.ShowAt(Small);
-            var timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1500)};
-            timer.Tick += (sender, e) =>
+            ToastTransform.TranslateY = -8;
+            ToastRoot.Visibility = Visibility.Visible;
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) };
+            timer.Tick += (s, e) =>
             {
-                Small.ContextFlyout.Hide();
+                ToastRoot.Visibility = Visibility.Collapsed;
                 timer.Stop();
             };
             timer.Start();

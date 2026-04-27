@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fragments="using:iV2EX.Fragments"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pagingex="using:PagingEx"
     mc:Ignorable="d">
     <Page.Resources>
         <SolidColorBrush x:Key="BG" Color="#3F51B5" />

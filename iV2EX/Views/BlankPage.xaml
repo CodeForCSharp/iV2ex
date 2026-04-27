@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:iV2EX"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pagingex="using:PagingEx"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource AppBarItemPointerOverBackgroundThemeBrush}">

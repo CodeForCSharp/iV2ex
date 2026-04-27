@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -12,7 +12,8 @@ using iV2EX.Util;
 using iV2EX.Views;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
+using System.Reactive.Concurrency;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -57,7 +58,7 @@ namespace iV2EX.Fragments
                     var r = await ApiClient.CheckIn($"https://www.v2ex.com{href}", $"https://www.v2ex.com{href}");
                     return CheckInStatus.Success;
                 })
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(async x =>
                 {
                     switch (await x)
@@ -69,7 +70,7 @@ namespace iV2EX.Fragments
                             Toast.ShowTips("签到成功");
                             Observable.FromAsync(y => loadData())
                             .Retry(10)
-                            .ObserveOnCoreDispatcher()
+                            .ObserveOn(DispatcherQueueScheduler.Current)
                             .Subscribe(y => People = y);
                             break;
                         case CheckInStatus.Failure:
@@ -78,15 +79,12 @@ namespace iV2EX.Fragments
                     }
                 }, ex => Toast.ShowTips("签到失败"));
             var cancel = Observable.FromEventPattern<TappedRoutedEventArgs>(CancelItem, nameof(CancelItem.Tapped))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
-                    if (Window.Current.Content is Frame frame)
-                    {
-                        PageStack.Clear();
-                        frame.BackStack.Clear();
-                        frame.Navigate(typeof(UserLoginView));
-                    }
+                    PageStack.Clear();
+                    App.Window.PageFrame.BackStack.Clear();
+                    App.Window.PageFrame.Navigate(typeof(UserLoginView));
                 });
             var write = Observable.FromEventPattern<TappedRoutedEventArgs>(WriteItem, nameof(WriteItem.Tapped))
                 .Subscribe(x => PageStack.Next("Left", "Right", typeof(WriteTopicView), null));
@@ -107,12 +105,12 @@ namespace iV2EX.Fragments
                 .FromEventPattern<RoutedEventArgs>(UserInformationFragment, nameof(UserInformationFragment.Loaded))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => People = x);
             var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => People = x);
 
             this.Unloaded += (s, e) =>

@@ -7,17 +7,17 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
-using Microsoft.Toolkit.Uwp.UI.Controls;
 using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -56,7 +56,7 @@ namespace iV2EX.Views
                     if (text.Contains("你回复过于频繁了")) return ReplyStatus.Ban;
                     return ReplyStatus.Success;
                 })
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(async x =>
                 {
                     try
@@ -85,11 +85,11 @@ namespace iV2EX.Views
                     }
                 });
             var at = Observable.FromEventPattern<TappedRoutedEventArgs>(UsernamePanel, nameof(UsernamePanel.Tapped))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => ReplyText.Text += $"@{(string) (x.Sender as TextBlock).Tag} ");
             var collect = Observable
                 .FromEventPattern<TappedRoutedEventArgs>(CollectedPanel, nameof(CollectedPanel.Tapped))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(async x =>
                 {
                     try
@@ -118,11 +118,11 @@ namespace iV2EX.Views
                     }
                 });
             var tImageTap = Observable.FromEventPattern<TappedRoutedEventArgs>(TImagePanel, nameof(TImagePanel.Tapped))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(MemberView), TImagePanel.Tag));
             var copyLink = Observable
                 .FromEventPattern<TappedRoutedEventArgs>(CopyLinkPanel, nameof(CopyLinkPanel.Tapped))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
                     var clipBoardText = new DataPackage();
@@ -244,7 +244,9 @@ namespace iV2EX.Views
 
         private void ImagePanel_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            PageStack.Next("Right", "Right", typeof(MemberView), (string) (sender as ImageEx).Tag);
+            var username = (sender as FrameworkElement)?.Tag as string;
+            if (!string.IsNullOrEmpty(username))
+                PageStack.Next("Right", "Right", typeof(MemberView), username);
         }
 
         private void UsernamePanel_Tapped(object sender, TappedRoutedEventArgs e)

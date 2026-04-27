@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -40,12 +41,12 @@ namespace iV2EX.Views
             var load = Observable.FromEventPattern<RoutedEventArgs>(PeopleNodePage, nameof(PeopleNodePage.Loaded))
                 .SelectMany(x => loadData())
                 .Retry(10)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => PeopleNodeList.ItemsSource = x);
             var click = Observable
                 .FromEventPattern<ItemClickEventArgs>(PeopleNodeList, nameof(PeopleNodeList.ItemClick))
                 .Select(x => x.EventArgs.ClickedItem as NodeModel)
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), x));
 
             _events = new List<IDisposable> { load, click };

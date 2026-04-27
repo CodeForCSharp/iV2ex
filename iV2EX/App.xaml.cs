@@ -1,189 +1,82 @@
-﻿using System;
-using System.Net;
-using System.Text.RegularExpressions;
-using Windows.ApplicationModel.Activation;
-using Windows.Storage;
-using Windows.UI;
-using Windows.UI.ViewManagement;
-using iV2EX.GetData;
-using iV2EX.Views;
-using Microsoft.Toolkit.Uwp.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
-using Windows.ApplicationModel;
-using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Shapes;
+using Microsoft.Windows.AppLifecycle;
+using System;
+using System.Diagnostics;
+using iV2EX;
+
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace iV2EX
 {
-    //    /// <summary>
-    //    ///     提供特定于应用程序的行为，以补充默认的应用程序类。
-    //    /// </summary>
-    //    public sealed partial class App
-    //    {
-    //        public App()
-    //        {
-    //            InitializeComponent();
-
-    //#if DEBUG
-    //            if (Debugger.IsAttached)
-    //                DebugSettings.EnableFrameRateCounter = true;
-    //#endif
-    //        }
-
-    //        public override async Task<Type> GetStartPageTypeAsync()
-    //        {
-    //            var localSettings = ApplicationData.Current.LocalSettings;
-    //            if (localSettings.Values["Cookies"] != null)
-    //            {
-    //                var cookiesHeader = (string) localSettings.Values["Cookies"];
-    //                var container = ApiClient.Handler.CookieContainer;
-    //                foreach (var item in Regex.Split(cookiesHeader, "; "))
-    //                {
-    //                    var index = item.IndexOf('=');
-    //                    if (index < 0) continue;
-    //                    var name = item.Substring(0, index);
-    //                    var value = item.Substring(index + 1);
-    //                    container.Add(new Uri("https://www.v2ex.com"), new Cookie(name, value));
-    //                }
-    //            }
-
-    //            try
-    //            {
-    //                var content = await ApiClient.GetMainPage();
-    //                var b = new HtmlParser().Parse(content).GetElementById("Top").TextContent.Contains("登出");
-    //                return b? typeof(MainPage) : typeof(UserLoginView);
-    //            }
-    //            catch
-    //            {
-    //                return typeof(UserLoginView);
-    //            }
-    //        }
-
-    //        public override Task OnInitializedAsync(MtFrame frame, ApplicationExecutionState e)
-    //        {
-    //            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-    //            titleBar.BackgroundColor = Color.FromArgb(255, 63, 81, 181);
-    //            titleBar.InactiveBackgroundColor = Color.FromArgb(255, 63, 81, 181);
-    //            titleBar.ButtonForegroundColor = Colors.White;
-    //            titleBar.ButtonBackgroundColor = Color.FromArgb(255, 63, 81, 181);
-    //            titleBar.ButtonInactiveBackgroundColor = Color.FromArgb(255, 63, 81, 181);
-    //            titleBar.ForegroundColor = Colors.White;
-    //            ImageCache.Instance.CacheDuration = TimeSpan.FromDays(7);
-    //            ImageCache.Instance.InitializeAsync(ApplicationData.Current.TemporaryFolder,
-    //                "CachePics").Wait();
-    //            // TODO: Called when the app is started (not resumed)
-    //            return null;
-    //        }
-    //    }
     /// <summary>
-    /// 提供特定于应用程序的行为，以补充默认的应用程序类。
+    /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    public partial class App : Application
     {
         /// <summary>
-        /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
-        /// 已执行，逻辑上等同于 main() 或 WinMain()。
+        /// Initializes the singleton application object.  This is the first line of authored code
+        /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
             this.InitializeComponent();
-            this.Suspending += OnSuspending;
         }
 
         /// <summary>
-        /// 在应用程序由最终用户正常启动时进行调用。
-        /// 将在启动应用程序以打开特定文件等情况下使用。
+        /// Invoked when the application is launched normally by the end user.  Other entry points
+        /// will be used such as when the application is launched to open a specific file.
         /// </summary>
-        /// <param name="e">有关启动请求和过程的详细信息。</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        /// <param name="args">Details about the launch request and process.</param>
+        protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
         {
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.BackgroundColor = Color.FromArgb(255, 63, 81, 181);
-            titleBar.InactiveBackgroundColor = Color.FromArgb(255, 63, 81, 181);
-            titleBar.ButtonForegroundColor = Colors.White;
-            titleBar.ButtonBackgroundColor = Color.FromArgb(255, 63, 81, 181);
-            titleBar.ButtonInactiveBackgroundColor = Color.FromArgb(255, 63, 81, 181);
-            titleBar.ForegroundColor = Colors.White;
-            ImageCache.Instance.CacheDuration = TimeSpan.FromDays(7);
-            ImageCache.Instance.InitializeAsync(ApplicationData.Current.TemporaryFolder,
-                "CachePics").Wait();
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["Cookies"] != null)
-            {
-                var cookiesHeader = (string)localSettings.Values["Cookies"];
-                var container = ApiClient.Handler.CookieContainer;
-                foreach (var item in Regex.Split(cookiesHeader, "; "))
-                {
-                    var index = item.IndexOf('=');
-                    if (index < 0) continue;
-                    var name = item.Substring(0, index);
-                    var value = item.Substring(index + 1);
-                    container.Add(new Uri("https://www.v2ex.com"), new Cookie(name, value));
-                }
-            }
-            var rootFrame = Window.Current.Content as Frame;
+            // TODO This code defaults the app to a single instance app. If you need multi instance app, remove this part.
+            // Read: https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/applifecycle#single-instancing-in-applicationonlaunched
+            // If this is the first instance launched, then register it as the "main" instance.
+            // If this isn't the first instance launched, then "main" will already be registered,
+            // so retrieve it.
+            var mainInstance = Microsoft.Windows.AppLifecycle.AppInstance.FindOrRegisterForKey("main");
+            var activatedEventArgs = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().GetActivatedEventArgs();
 
-            // 不要在窗口已包含内容时重复应用程序初始化，
-            // 只需确保窗口处于活动状态
-            if (rootFrame == null)
+            // If the instance that's executing the OnLaunched handler right now
+            // isn't the "main" instance.
+            if (!mainInstance.IsCurrent)
             {
-                // 创建要充当导航上下文的框架，并导航到第一页
-                rootFrame = new Frame();
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: 从之前挂起的应用程序加载状态
-                }
-
-                // 将框架放在当前窗口中
-                Window.Current.Content = rootFrame;
+                // Redirect the activation (and args) to the "main" instance, and exit.
+                await mainInstance.RedirectActivationToAsync(activatedEventArgs);
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+                return;
             }
 
-            if (e.PrelaunchActivated == false)
+            // TODO This code handles app activation types. Add any other activation kinds you want to handle.
+            // Read: https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/applifecycle#file-type-association
+            if (activatedEventArgs.Kind == ExtendedActivationKind.File)
             {
-                if (rootFrame.Content == null)
-                {
-                    // 当导航堆栈尚未还原时，导航到第一页，
-                    // 并通过将所需信息作为导航参数传入来配置
-                    // 参数
-                    try
-                    {
-                        var html = await ApiClient.GetMainPage();
-                        var r = new HtmlParser().ParseDocument(html).GetElementById("Top").TextContent.Contains("登出");
-                        rootFrame.Navigate(r ? typeof(MainPage) : typeof(UserLoginView));
-                    }
-                    catch
-                    {
-                        rootFrame.Navigate(typeof(UserLoginView));
-                    }
-                }
-                // 确保当前窗口处于活动状态
-                Window.Current.Activate();
+                OnFileActivated(activatedEventArgs);
             }
+
+            // Initialize MainWindow here
+            Window = new MainWindow();
+            Window.Activate();
+            WindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(Window);
         }
 
-        /// <summary>
-        /// 导航到特定页失败时调用
-        /// </summary>
-        ///<param name="sender">导航失败的框架</param>
-        ///<param name="e">有关导航失败的详细信息</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        // TODO This is an example method for the case when app is activated through a file.
+        // Feel free to remove this if you do not need this.
+        public void OnFileActivated(AppActivationArguments activatedEventArgs)
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+
         }
 
-        /// <summary>
-        /// 在将要挂起应用程序执行时调用。  在不知道应用程序
-        /// 无需知道应用程序会被终止还是会恢复，
-        /// 并让内存内容保持不变。
-        /// </summary>
-        /// <param name="sender">挂起的请求的源。</param>
-        /// <param name="e">有关挂起请求的详细信息。</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: 保存应用程序状态并停止任何后台活动
-            deferral.Complete();
-        }
+        public static MainWindow Window { get; private set; }
+
+        public static IntPtr WindowHandle { get; private set; }
     }
 }

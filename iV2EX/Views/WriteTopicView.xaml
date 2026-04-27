@@ -42,7 +42,7 @@
             </AutoSuggestBox.ItemTemplate>
         </AutoSuggestBox>
         <TextBox
-            Name="Title"
+            Name="TitleText"
             Grid.Row="1"
             Grid.ColumnSpan="2"
             PlaceholderText="标题,不超过120字" />
@@ -55,7 +55,7 @@
         <localcontrol:ToastTips
             x:Name="Toast"
             Grid.Row="0"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Top" />
     </Grid>
 </Page>

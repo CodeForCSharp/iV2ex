@@ -4,14 +4,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Reactive.Linq;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
+using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -26,7 +27,7 @@ namespace iV2EX.Views
         public WriteTopicView()
         {
             InitializeComponent();
-            var controls = new List<Control> {Option, Send, Title, Body};
+            var controls = new List<Control> {Option, Send, TitleText, Body};
             var load = Observable.FromEventPattern<RoutedEventArgs>(WrittenPage, nameof(WrittenPage.Loaded))
                 .SelectMany(x => ApiClient.GetNodes())
                 .Retry(10)
@@ -34,8 +35,8 @@ namespace iV2EX.Views
             var wrriten = Observable.FromEventPattern<TappedRoutedEventArgs>(Send, nameof(Send.Tapped))
                 .Select(async x =>
                 {
-                    if (Title.Text.Length == 0) return WrritenStatus.TitleEmpty;
-                    if (Title.Text.Length > 120) return WrritenStatus.TitleLonger;
+                    if (TitleText.Text.Length == 0) return WrritenStatus.TitleEmpty;
+                    if (TitleText.Text.Length > 120) return WrritenStatus.TitleLonger;
                     if (Body.Text.Length > 20000) return WrritenStatus.BodyLonger;
                     if (!_nodes.Exists(node => node.Title.Contains(Option.Text))) return WrritenStatus.NotExistNode;
                     var url = $"https://www.v2ex.com/new/{Option.Text}";
@@ -45,12 +46,12 @@ namespace iV2EX.Views
                     {
                         {"once", once},
                         {"content", Body.Text},
-                        {"title", Title.Text}
+                        {"title", TitleText.Text}
                     };
                     await ApiClient.NewTopic(url, new FormUrlEncodedContent(param), Option.Text);
                     return WrritenStatus.Success;
                 })
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(async x =>
                 {
                     controls.ForEach(y => y.IsEnabled = false);
@@ -85,7 +86,7 @@ namespace iV2EX.Views
                 .FromEventPattern<AutoSuggestBoxTextChangedEventArgs>(Option, nameof(Option.TextChanged))
                 .Throttle(TimeSpan.FromMilliseconds(300))
                 .Select(x => _nodes.Where(node => node.Title.Contains(Option.Text)))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x =>
                 {
                     foreach (var node in x)
@@ -93,7 +94,7 @@ namespace iV2EX.Views
                 });
             var choose = Observable
                 .FromEventPattern<AutoSuggestBoxSuggestionChosenEventArgs>(Option, nameof(Option.SuggestionChosen))
-                .ObserveOnCoreDispatcher()
+                .ObserveOn(DispatcherQueueScheduler.Current)
                 .Subscribe(x => Option.Text = (x.EventArgs.SelectedItem as NodeModel).Title);
 
             _events = new List<IDisposable> { load, wrriten, type, choose };
