@@ -11,6 +11,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <converter:StringToImageSourceConverter x:Key="ImageConverter" />
+    </UserControl.Resources>
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             RelativePanel.AlignBottomWithPanel="True"
@@ -534,19 +537,23 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListViewItem Name="UserItem">
-                <RelativePanel>
+                <RelativePanel MinHeight="48">
                     <Ellipse
                         Name="AvaterPanel"
-                        Width="30"
-                        Height="30">
+                        Width="36"
+                        Height="36"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignVerticalCenterWithPanel="True">
                         <Ellipse.Fill>
-                            <ImageBrush ImageSource="{x:Bind People.Member.Image, Mode=OneWay}" />
+                            <ImageBrush
+                                Stretch="UniformToFill"
+                                ImageSource="{x:Bind People.Member.Image, Converter={StaticResource ImageConverter}, Mode=OneWay}" />
                         </Ellipse.Fill>
                     </Ellipse>
                     <TextBlock
                         Margin="10,0,0,0"
                         Foreground="Black"
-                        RelativePanel.AlignVerticalCenterWith="AvaterPanel"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
                         RelativePanel.RightOf="AvaterPanel"
                         Text="{x:Bind People.Member.Username, Mode=OneWay}" />
                 </RelativePanel>

@@ -111,8 +111,9 @@ namespace iV2EX.Controls
                                 Child = bitmap,
                                 StretchDirection = StretchDirection.DownOnly
                             };
-                            viewBox.Tapped += (v, s) =>
+                            bitmap.Tapped += (v, s) =>
                             {
+                                s.Handled = true;
                                 PageStack.Next("Right", "Right", typeof(ImageViewerPage), source);
                             };
                             paragraph.Inlines.Add(new InlineUIContainer {Child = viewBox});

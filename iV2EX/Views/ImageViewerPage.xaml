@@ -17,8 +17,8 @@
             ZoomMode="Enabled">
             <Image
                 x:Name="ImagePanel"
-                Width="{x:Bind WrapPanel.Width}"
-                Height="{x:Bind WrapPanel.Height}" />
+                Width="{x:Bind WrapPanel.Width, Mode=OneWay}"
+                Height="{x:Bind WrapPanel.Height, Mode=OneWay}" />
         </ScrollViewer>
         <Grid
             Name="MenuItemPanel"

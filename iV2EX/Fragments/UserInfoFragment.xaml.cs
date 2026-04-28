@@ -37,7 +37,7 @@ namespace iV2EX.Fragments
                     Member = new MemberModel
                     {
                         Image = tables[0].QuerySelector("img").GetAttribute("src"),
-                        Username = tables[0].QuerySelector("span.bigger").TextContent
+                        Username = tables[0].QuerySelector("span.bigger").QuerySelector("a").TextContent,
                     },
                     CollectedNodes = spans[0].TextContent,
                     CollectedTopics = spans[1].TextContent,

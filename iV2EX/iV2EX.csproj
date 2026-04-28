@@ -3,6 +3,8 @@
     <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
     <PublishAot>true</PublishAot>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>WinExe</OutputType>
     <DefaultLanguage>zh-CN</DefaultLanguage>
@@ -90,7 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Properties\Default.rd.xml" />
+    <RdXmlFile Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

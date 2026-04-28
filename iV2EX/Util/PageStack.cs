@@ -39,18 +39,9 @@ namespace iV2EX.Util
                 MainPage.RightPart.Navigate(page, param);
                 PageContainer.Push(new PageInformation {From = from, To = to, PageType = page});
             }
-            /*
-                TODO WinUI3 应用中不存在标题栏中的默认后退按钮。
-               该工具已在 MainWindow.xaml.cs 文件中生成自定义后退按钮。
-               你可以随意编辑其位置、行为并改用自定义后退按钮。
-               读取: https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/case-study-1#restoring-back-button-functionality
-            */
 
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = CanGoBack
-            //    ? AppViewBackButtonVisibility.Visible
-            //    : AppViewBackButtonVisibility.Collapsed;
             MainWindow window = App.Window;
-            window.BackButton.Visibility = CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            window.UpdateBackButton();
         }
 
         public static void Back()
@@ -66,14 +57,14 @@ namespace iV2EX.Util
             MainPage.RightPart.GoBack();
             PageContainer.Pop();
             MainWindow window = App.Window;
-            window.BackButton.Visibility = CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            window.UpdateBackButton();
         }
 
         public static void Clear()
         {
             PageContainer.Clear();
             MainWindow window = App.Window;
-            window.BackButton.Visibility = CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            window.UpdateBackButton();
         }
     }
 }

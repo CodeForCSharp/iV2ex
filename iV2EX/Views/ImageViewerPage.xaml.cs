@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml.Navigation;
 using System.Reactive.Concurrency;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace iV2EX.Views
 {
@@ -78,6 +79,12 @@ namespace iV2EX.Views
             base.OnNavigatedTo(e);
             var parameter = e.Parameter;
             _imageUrl = parameter as string;
+            if (!string.IsNullOrEmpty(_imageUrl))
+            {
+                if (_imageUrl.StartsWith("//"))
+                    _imageUrl = "https:" + _imageUrl;
+                ImagePanel.Source = new BitmapImage(new Uri(_imageUrl));
+            }
         }
     }
 

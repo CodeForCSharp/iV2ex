@@ -2,6 +2,7 @@ using iV2EX.GetData;
 using iV2EX.Util;
 using iV2EX.Views;
 using Microsoft.UI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -48,7 +49,6 @@ namespace iV2EX
                 AppTitleBar.SizeChanged += AppTitleBar_SizeChanged;
 
                 BackButton.Click += OnBackClicked;
-                BackButton.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -62,6 +62,22 @@ namespace iV2EX
         }
 
         public Button BackButton => AppTitleBarBackButton;
+
+        public void UpdateBackButton()
+        {
+            if (PageStack.CanGoBack)
+            {
+                BackButton.Visibility = Visibility.Visible;
+                IconColumn.Width = new GridLength(48);
+                TitleTextBlock.Margin = new Thickness(4, 0, 0, 0);
+            }
+            else
+            {
+                BackButton.Visibility = Visibility.Collapsed;
+                IconColumn.Width = new GridLength(0);
+                TitleTextBlock.Margin = new Thickness(12, 0, 0, 0);
+            }
+        }
 
         private void AppTitleBar_Loaded(object sender, RoutedEventArgs e)
         {
@@ -84,6 +100,7 @@ namespace iV2EX
             }
 
             PageFrame.Navigate(hasCookies ? typeof(MainPage) : typeof(UserLoginView));
+            UpdateBackButton();
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
@@ -96,6 +113,21 @@ namespace iV2EX
             if (PageStack.CanGoBack)
             {
                 PageStack.Back();
+                UpdateBackButton();
+            }
+        }
+
+        private void RootGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var point = e.GetCurrentPoint(RootGrid);
+            if (point.Properties.IsXButton1Pressed)
+            {
+                e.Handled = true;
+                if (PageStack.CanGoBack)
+                {
+                    PageStack.Back();
+                    UpdateBackButton();
+                }
             }
         }
 

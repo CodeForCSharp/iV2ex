@@ -6,71 +6,28 @@
     xmlns:data="using:iV2EX.Model"
     xmlns:local="using:iV2EX.Fragments"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:tuple="using:iV2EX.TupleModel"
     x:Name="AllNodesFragment"
     d:DesignHeight="300"
     d:DesignWidth="400"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <CollectionViewSource
-            x:Name="SortNodesCVS"
-            IsSourceGrouped="True"
-            ItemsPath="NodeContent" />
-    </UserControl.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <SemanticZoom Grid.Row="0">
-            <SemanticZoom.ZoomedInView>
-                <ListView Name="InView" IsItemClickEnabled="True">
-                    <ListView.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate x:DataType="tuple:NodeInGroup">
-                                    <TextBlock Text="{x:Bind Key}" />
-                                </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </ListView.GroupStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="data:NodeModel">
-                            <Grid Name="NodeItem">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Margin="12,8,0,0"
-                                    FontSize="16"
-                                    Foreground="#FF3D3D3D"
-                                    MaxLines="3"
-                                    Text="{x:Bind Title}"
-                                    TextWrapping="Wrap" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Margin="12,8,0,0"
-                                    FontSize="14"
-                                    Foreground="Gray"
-                                    MaxLines="3"
-                                    Text="{x:Bind Header}"
-                                    TextWrapping="Wrap" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </SemanticZoom.ZoomedInView>
-            <SemanticZoom.ZoomedOutView>
-                <GridView Name="OutView" VerticalAlignment="Center">
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Group.Key}" />
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-            </SemanticZoom.ZoomedOutView>
-        </SemanticZoom>
+        <ListView Name="InView" IsItemClickEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="data:NodeModel">
+                    <StackPanel Margin="12,8">
+                        <TextBlock
+                            FontSize="16"
+                            Foreground="#FF3D3D3D"
+                            MaxLines="1"
+                            Text="{x:Bind Title}" />
+                        <TextBlock
+                            FontSize="14"
+                            Foreground="Gray"
+                            MaxLines="1"
+                            Text="{x:Bind Header}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </UserControl>
