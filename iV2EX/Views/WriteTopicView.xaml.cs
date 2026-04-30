@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
-using System.Reactive.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -12,7 +11,6 @@ using iV2EX.Model;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
 using Microsoft.UI.Xaml.Navigation;
-using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -23,22 +21,26 @@ namespace iV2EX.Views
 
         private ObservableCollection<NodeModel> Show { get; } = new ObservableCollection<NodeModel>();
 
-        private List<IDisposable> _events;
         public WriteTopicView()
         {
             InitializeComponent();
             var controls = new List<Control> {Option, Send, TitleText, Body};
-            var load = Observable.FromEventPattern<RoutedEventArgs>(WrittenPage, nameof(WrittenPage.Loaded))
-                .SelectMany(x => ApiClient.GetNodes())
-                .Retry(10)
-                .Subscribe(x => _nodes.AddRange(x));
-            var wrriten = Observable.FromEventPattern<TappedRoutedEventArgs>(Send, nameof(Send.Tapped))
-                .Select(async x =>
+
+            WrittenPage.Loaded += async (s, e) =>
+            {
+                _nodes.AddRange(await AsyncHelper.RetryAsync(() => ApiClient.GetNodes(), 5));
+            };
+
+            Send.Tapped += async (s, e) =>
+            {
+                if (TitleText.Text.Length == 0) { Toast.ShowTips("标题字数不能为0"); return; }
+                if (TitleText.Text.Length > 120) { Toast.ShowTips("标题字数不能超过120"); return; }
+                if (Body.Text.Length > 20000) { Toast.ShowTips("正文字数不能超过20000"); return; }
+                if (!_nodes.Exists(node => node.Title.Contains(Option.Text))) { Toast.ShowTips("节点不存在"); return; }
+
+                controls.ForEach(y => y.IsEnabled = false);
+                try
                 {
-                    if (TitleText.Text.Length == 0) return WrritenStatus.TitleEmpty;
-                    if (TitleText.Text.Length > 120) return WrritenStatus.TitleLonger;
-                    if (Body.Text.Length > 20000) return WrritenStatus.BodyLonger;
-                    if (!_nodes.Exists(node => node.Title.Contains(Option.Text))) return WrritenStatus.NotExistNode;
                     var url = $"https://www.v2ex.com/new/{Option.Text}";
                     var html = await ApiClient.OnlyGet(url);
                     var once = new HtmlParser().ParseDocument(html).QuerySelector("input[name='once']").GetAttribute("value");
@@ -49,61 +51,33 @@ namespace iV2EX.Views
                         {"title", TitleText.Text}
                     };
                     await ApiClient.NewTopic(url, new FormUrlEncodedContent(param), Option.Text);
-                    return WrritenStatus.Success;
-                })
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(async x =>
+                    Toast.ShowTips("发表成功");
+                    PageStack.Back();
+                }
+                catch
                 {
-                    controls.ForEach(y => y.IsEnabled = false);
-                    try
-                    {
-                        switch (await x)
-                        {
-                            case WrritenStatus.NotExistNode:
-                                Toast.ShowTips("节点不存在");
-                                break;
-                            case WrritenStatus.TitleEmpty:
-                                Toast.ShowTips("标题字数不能为0");
-                                break;
-                            case WrritenStatus.TitleLonger:
-                                Toast.ShowTips("标题字数不能超过120");
-                                break;
-                            case WrritenStatus.BodyLonger:
-                                Toast.ShowTips("正文字数不能超过20000");
-                                break;
-                            case WrritenStatus.Success:
-                                Toast.ShowTips("发表成功");
-                                PageStack.Back();
-                                break;
-                        }
-                    }
-                    catch
-                    {
-                        Toast.ShowTips("发表失败");
-                    }
-                });
-            var type = Observable
-                .FromEventPattern<AutoSuggestBoxTextChangedEventArgs>(Option, nameof(Option.TextChanged))
-                .Throttle(TimeSpan.FromMilliseconds(300))
-                .Select(x => _nodes.Where(node => node.Title.Contains(Option.Text)))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x =>
+                    Toast.ShowTips("发表失败");
+                }
+                finally
                 {
-                    foreach (var node in x)
-                        Show.Add(node);
-                });
-            var choose = Observable
-                .FromEventPattern<AutoSuggestBoxSuggestionChosenEventArgs>(Option, nameof(Option.SuggestionChosen))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => Option.Text = (x.EventArgs.SelectedItem as NodeModel).Title);
+                    controls.ForEach(y => y.IsEnabled = true);
+                }
+            };
 
-            _events = new List<IDisposable> { load, wrriten, type, choose };
-        }
+            var debouncedSearch = AsyncHelper.Debounce<AutoSuggestBoxTextChangedEventArgs>(e =>
+            {
+                var filtered = _nodes.Where(node => node.Title.Contains(Option.Text));
+                Show.Clear();
+                foreach (var node in filtered)
+                    Show.Add(node);
+            }, TimeSpan.FromMilliseconds(300));
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            _events.ForEach(x => x.Dispose());
+            Option.TextChanged += (_, e) => { debouncedSearch(e); };
+
+            Option.SuggestionChosen += (s, e) =>
+            {
+                Option.Text = (e.SelectedItem as NodeModel)?.Title;
+            };
         }
     }
 }

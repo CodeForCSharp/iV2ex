@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Reactive.Linq;
 using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
-using System.Collections.Generic;
-using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
     public sealed partial class PeopleFollowerView
     {
-        private List<IDisposable> _events;
         public PeopleFollowerView()
         {
             InitializeComponent();
@@ -27,13 +23,11 @@ namespace iV2EX.Views
                     Entity = DomParse.ParseTopics(dom)
                 };
             };
-            var click = Observable
-                .FromEventPattern<ItemClickEventArgs>(PeopleFollowerList, nameof(PeopleFollowerList.ItemClick))
-                .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
-
-            _events = new List<IDisposable> { click };
+            PeopleFollowerList.ItemClick += (s, e) =>
+            {
+                if (e.ClickedItem is TopicModel item)
+                    PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), item.Id);
+            };
         }
 
         private IncrementalLoadingCollection<TopicModel> NotifyData { get; } = new IncrementalLoadingCollection<TopicModel>();

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.UI.Xaml;
@@ -15,7 +14,6 @@ using iV2EX.Util;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using Microsoft.UI.Xaml.Navigation;
-using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -23,7 +21,6 @@ namespace iV2EX.Views
     {
         private MemberModel _member = new MemberModel();
         private string _username;
-        private List<IDisposable> _events;
 
         public MemberView()
         {
@@ -49,26 +46,30 @@ namespace iV2EX.Views
                     Username = cell.QuerySelector("h1").TextContent
                 };
             }
-            var load = Observable.FromEventPattern<RoutedEventArgs>(MemberPage, nameof(MemberPage.Loaded))
-                .SelectMany(x => loadData())
-                .Retry(10)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => Member = x,x => { });
-            var notice = Observable.FromEventPattern<RoutedEventArgs>(Notice, nameof(Notice.Tapped))
-                .Select(async x => await ApiClient.OnlyGet(Member.Notice))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => Member.IsNotice = "取消特别关注", (Exception ex) => { });
-            var block = Observable.FromEventPattern<RoutedEventArgs>(Block, nameof(Block.Tapped))
-                .Select(async x => await ApiClient.OnlyGet(Member.Block))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => Member.IsBlock = "取消Block", (Exception ex) => { });
-            var info = Observable.FromEventPattern<ItemClickEventArgs>(MemberInfoList, nameof(MemberInfoList.ItemClick))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x =>
-                {
-                    var item = x.EventArgs.ClickedItem as TopicModel;
+
+            MemberPage.Loaded += async (s, e) =>
+            {
+                Member = await AsyncHelper.RetryAsync(() => loadData(), 5);
+            };
+
+            Notice.Tapped += async (s, e) =>
+            {
+                await ApiClient.OnlyGet(Member.Notice);
+                Member.IsNotice = "取消特别关注";
+            };
+
+            Block.Tapped += async (s, e) =>
+            {
+                await ApiClient.OnlyGet(Member.Block);
+                Member.IsBlock = "取消Block";
+            };
+
+            MemberInfoList.ItemClick += (s, e) =>
+            {
+                if (e.ClickedItem is TopicModel item)
                     PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), item.Id);
-                });
+            };
+
             Topics.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetTopicsByUsername(_username, Topics.CurrentPage);
@@ -140,14 +141,6 @@ namespace iV2EX.Views
                     Entity = notifications
                 };
             };
-
-            _events = new List<IDisposable> { load, notice, block, info };
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            _events.ForEach(x => x.Dispose());
         }
 
         private MemberModel Member

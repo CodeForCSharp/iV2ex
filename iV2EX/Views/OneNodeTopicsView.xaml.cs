@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.UI.Xaml.Controls;
@@ -14,7 +13,6 @@ using iV2EX.Util;
 using AngleSharp.Html.Parser;
 using System.Collections.Generic;
 using Microsoft.UI.Xaml.Navigation;
-using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -22,30 +20,27 @@ namespace iV2EX.Views
     {
         private NodeModel _node = new NodeModel();
 
-        private List<IDisposable> _events;
-
         public OneNodeTopicsView()
         {
             InitializeComponent();
-            var click = Observable
-                .FromEventPattern<ItemClickEventArgs>(NodeTopcisList, nameof(NodeTopcisList.ItemClick))
-                .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), x.Id));
-            var collect = Observable.FromEventPattern<TappedRoutedEventArgs>(CollectNode, nameof(CollectNode.Tapped))
-                .SelectMany(x => ApiClient.GetNodeInformation(Node.Name))
-                .Select(html =>
-                {
-                    var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
-                    var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
-                    var url = "";
-                    if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
-                    if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
-                    return url;
-                })
-                .SelectMany(url => ApiClient.OnlyGet($"https://www.v2ex.com{url}"))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x =>Node.IsCollect = Node.IsCollect == "加入收藏" ? "取消收藏" : "加入收藏", ex => { });
+
+            NodeTopcisList.ItemClick += (s, e) =>
+            {
+                if (e.ClickedItem is TopicModel item)
+                    PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), item.Id);
+            };
+
+            CollectNode.Tapped += async (s, e) =>
+            {
+                var html = await ApiClient.GetNodeInformation(Node.Name);
+                var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
+                var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
+                var url = "";
+                if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
+                if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
+                await ApiClient.OnlyGet($"https://www.v2ex.com{url}");
+                Node.IsCollect = Node.IsCollect == "加入收藏" ? "取消收藏" : "加入收藏";
+            };
 
             NotifyData.LoadDataTask = async count =>
             {
@@ -62,7 +57,7 @@ namespace iV2EX.Views
                             ? "ms-appx:///Assets/default.png"
                             : header.QuerySelector("img").GetAttribute("src"),
                         Title = Node.Title,
-                        Name = Node.Name                      
+                        Name = Node.Name
                     };
                 }
 
@@ -102,14 +97,6 @@ namespace iV2EX.Views
                     Entity = topics
                 };
             };
-
-            _events = new List<IDisposable> { collect, click };
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            _events.ForEach(x => x.Dispose());
         }
 
         public IncrementalLoadingCollection<TopicModel> NotifyData { get; } = new IncrementalLoadingCollection<TopicModel>();

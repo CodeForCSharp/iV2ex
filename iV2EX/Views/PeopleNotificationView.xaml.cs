@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reactive.Linq;
 using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -8,24 +7,20 @@ using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
 using System.Collections.Generic;
-using Microsoft.UI.Xaml.Navigation;
-using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
     public partial class PeopleNotificationView
     {
-        private List<IDisposable> _events;
-
         public IncrementalLoadingCollection<NotificationModel> NotifyData { get; } = new IncrementalLoadingCollection<NotificationModel>();
         public PeopleNotificationView()
         {
             InitializeComponent();
-            var click = Observable
-                .FromEventPattern<ItemClickEventArgs>(NotificationList, nameof(NotificationList.ItemClick))
-                .Select(x => x.EventArgs.ClickedItem as NotificationModel)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), new Tuple<int, int>(x.Topic.Id, x.ReplyFloor)));
+            NotificationList.ItemClick += (s, e) =>
+            {
+                if (e.ClickedItem is NotificationModel item)
+                    PageStack.Next("Right", "Right", typeof(RepliesAndTopicView), new Tuple<int, int>(item.Topic.Id, item.ReplyFloor));
+            };
             NotifyData.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetNotifications(NotifyData.CurrentPage);
@@ -62,15 +57,6 @@ namespace iV2EX.Views
                     Entity = notifications
                 };
             };
-
-            _events = new List<IDisposable> { click };
         }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            _events.ForEach(x => x.Dispose());
-        }
-
     }
 }

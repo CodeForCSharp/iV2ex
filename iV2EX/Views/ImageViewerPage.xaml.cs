@@ -1,15 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
-using System.Collections.Generic;
-using Microsoft.UI.Xaml.Navigation;
-using System.Reactive.Concurrency;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -19,62 +15,52 @@ namespace iV2EX.Views
     {
         private StorageFile _file;
         private string _imageUrl;
-        private List<IDisposable> _events;
 
         public ImageViewerPage()
         {
             InitializeComponent();
 
-            var share = Observable.FromEventPattern<RoutedEventArgs>(ShareImage, nameof(ShareImage.Click))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x =>
+            ShareImage.Click += (s, e) =>
+            {
+                if (DataTransferManager.IsSupported())
                 {
-                    if (DataTransferManager.IsSupported())
+                    var interop = DataTransferManager.As<IDataTransferManagerInterop>();
+                    var riid = typeof(DataTransferManager).GUID;
+                    var manager = interop.GetForWindow(App.WindowHandle, riid);
+                    manager.DataRequested += (_, args) =>
                     {
-                        var interop = DataTransferManager.As<IDataTransferManagerInterop>();
-                        var riid = typeof(DataTransferManager).GUID;
-                        var manager = interop.GetForWindow(App.WindowHandle, riid);
-                        manager.DataRequested += (s, e) =>
-                        {
-                            e.Request.Data.Properties.Title = "分享自iV2EX";
-                            e.Request.Data.SetText(_imageUrl);
-                            e.Request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(_file));
-                        };
-                        interop.ShowShareUIForWindow(App.WindowHandle);
-                    }
-                });
-            var save = Observable.FromEventPattern<RoutedEventArgs>(SaveImage, nameof(SaveImage.Click))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(async x =>
-                {
-                    try
-                    {
-                        var library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
-                        var path = await library.SaveFolder.CreateFolderAsync("iV2EX",
-                            CreationCollisionOption.OpenIfExists);
-                        await _file.CopyAsync(path, _file.Name + Path.GetExtension(_imageUrl),
-                            NameCollisionOption.ReplaceExisting);
-                        ToastTips.ShowTips("已经保存到图片库");
-                    }
-                    catch
-                    {
-                        ToastTips.ShowTips("保存失败");
-                    }
-                });
-            var menu = Observable.FromEventPattern<TappedRoutedEventArgs>(MenuItemPanel, nameof(MenuItemPanel.Tapped))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => MenuItemPanel.ContextFlyout.ShowAt(MenuItemPanel));
+                        args.Request.Data.Properties.Title = "分享自iV2EX";
+                        args.Request.Data.SetText(_imageUrl);
+                        args.Request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(_file));
+                    };
+                    interop.ShowShareUIForWindow(App.WindowHandle);
+                }
+            };
 
-            _events = new List<IDisposable> { share, save, menu };
+            SaveImage.Click += async (s, e) =>
+            {
+                try
+                {
+                    var library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+                    var path = await library.SaveFolder.CreateFolderAsync("iV2EX",
+                        CreationCollisionOption.OpenIfExists);
+                    await _file.CopyAsync(path, _file.Name + Path.GetExtension(_imageUrl),
+                        NameCollisionOption.ReplaceExisting);
+                    ToastTips.ShowTips("已经保存到图片库");
+                }
+                catch
+                {
+                    ToastTips.ShowTips("保存失败");
+                }
+            };
+
+            MenuItemPanel.Tapped += (s, e) =>
+            {
+                MenuItemPanel.ContextFlyout.ShowAt(MenuItemPanel);
+            };
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            _events.ForEach(x => x.Dispose());
-        }
-
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             var parameter = e.Parameter;

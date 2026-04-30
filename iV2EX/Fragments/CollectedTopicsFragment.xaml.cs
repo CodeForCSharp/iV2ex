@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using iV2EX.Views;
-using Microsoft.UI.Xaml.Input;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using AngleSharp.Html.Parser;
-using System.Reactive.Concurrency;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace iV2EX.Fragments
 {
@@ -48,39 +43,25 @@ namespace iV2EX.Fragments
                 var dom = new HtmlParser().ParseDocument(html);
                 return DomParse.ParseTopics(dom);
             }
-            var selectionChanged = Observable
-                .FromEventPattern<SelectionChangedEventArgs>(LabelPanel, nameof(LabelPanel.SelectionChanged))
-                .SelectMany(x => loadData())
-                .Retry(10)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x =>
-                {
-                    News.Clear();
-                    foreach (var item in x)
-                        News.Add(item);
-                });
-            var click = Observable.FromEventPattern<ItemClickEventArgs>(NewsList, nameof(NewsList.ItemClick))
-                .Select(x => x.EventArgs.ClickedItem as TopicModel)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), x.Id));
-            var refresh = Observable.FromEventPattern<TappedRoutedEventArgs>(Refresh, nameof(Refresh.Tapped))
-                .SelectMany(x => loadData())
-                .Retry(10)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x =>
-                {
-                    News.Clear();
-                    foreach (var item in x)
-                        News.Add(item);
-                });
-            LabelPanel.SelectedIndex = 0;
 
-            this.Unloaded += (s, e) =>
+            async void LoadTopics()
             {
-                selectionChanged.Dispose();
-                click.Dispose();
-                refresh.Dispose();
+                var topics = await AsyncHelper.RetryAsync(() => loadData(), 5);
+                News.Clear();
+                foreach (var item in topics)
+                    News.Add(item);
+            }
+
+            LabelPanel.SelectionChanged += (s, e) => { LoadTopics(); };
+            Refresh.Tapped += (s, e) => { LoadTopics(); };
+
+            NewsList.ItemClick += (s, e) =>
+            {
+                if (e.ClickedItem is TopicModel item)
+                    PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), item.Id);
             };
+
+            LabelPanel.SelectedIndex = 0;
         }
 
         public ObservableCollection<TopicModel> News { get; } = new ObservableCollection<TopicModel>();

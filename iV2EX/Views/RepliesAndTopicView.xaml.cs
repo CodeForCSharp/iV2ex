@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
-using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.DataTransfer;
@@ -17,7 +16,6 @@ using iV2EX.TupleModel;
 using iV2EX.Util;
 using AngleSharp.Html.Parser;
 using Microsoft.UI.Xaml.Navigation;
-using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
@@ -29,21 +27,23 @@ namespace iV2EX.Views
 
         private TopicModel _topic = new TopicModel();
 
-        private List<IDisposable> _events;
         public RepliesAndTopicView()
         {
             InitializeComponent();
             var controls = new List<Control> {Send, ReplyText};
-            var send = Observable.FromEventPattern<RoutedEventArgs>(Send, nameof(Send.Click))
-                .Select(x =>
+
+            Send.Click += async (s, e) =>
+            {
+                var content = ReplyText.Text;
+                if (string.IsNullOrEmpty(content))
                 {
-                    controls.ForEach(c => c.IsEnabled = false);
-                    return x;
-                })
-                .Select(async x =>
+                    Toast.ShowTips("内容不能为空");
+                    return;
+                }
+
+                controls.ForEach(c => c.IsEnabled = false);
+                try
                 {
-                    var content = ReplyText.Text;
-                    if (string.IsNullOrEmpty(content)) return ReplyStatus.TextEmpty;
                     var html = await ApiClient.GetTopicInformation(_id);
                     var once = new HtmlParser().ParseDocument(html).QuerySelector("input[name='once']").GetAttribute("value");
                     var pramas = new Dictionary<string, string>
@@ -53,83 +53,70 @@ namespace iV2EX.Views
                     };
                     var text = await ApiClient.ReplyTopic($"https://www.v2ex.com/t{_id}",
                         new FormUrlEncodedContent(pramas), _id);
-                    if (text.Contains("你回复过于频繁了")) return ReplyStatus.Ban;
-                    return ReplyStatus.Success;
-                })
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(async x =>
+                    if (text.Contains("你回复过于频繁了"))
+                        Toast.ShowTips("您被禁言1800秒");
+                    else
+                    {
+                        Toast.ShowTips("回复成功");
+                        ReplyText.Text = "";
+                    }
+                }
+                catch
                 {
-                    try
-                    {
-                        switch (await x)
-                        {
-                            case ReplyStatus.Ban:
-                                Toast.ShowTips("您被禁言1800秒");
-                                break;
-                            case ReplyStatus.TextEmpty:
-                                Toast.ShowTips("内容不能为空");
-                                break;
-                            case ReplyStatus.Success:
-                                Toast.ShowTips("回复成功");
-                                ReplyText.Text = "";
-                                break;
-                        }
-                    }
-                    catch
-                    {
-                        Toast.ShowTips("回复失败");
-                    }
-                    finally
-                    {
-                        controls.ForEach(c => c.IsEnabled = true);
-                    }
-                });
-            var at = Observable.FromEventPattern<TappedRoutedEventArgs>(UsernamePanel, nameof(UsernamePanel.Tapped))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => ReplyText.Text += $"@{(string) (x.Sender as TextBlock).Tag} ");
-            var collect = Observable
-                .FromEventPattern<TappedRoutedEventArgs>(CollectedPanel, nameof(CollectedPanel.Tapped))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(async x =>
+                    Toast.ShowTips("回复失败");
+                }
+                finally
                 {
-                    try
-                    {
-                        var html = await ApiClient.GetTopicInformation(_id);
-                        var url = "";
-                        var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
-                        var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
-                        if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
-                        if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
-                        await ApiClient.OnlyGet($"https://www.v2ex.com{url}");
-                        if (Topic.Collect == "加入\n收藏")
-                        {
-                            Topic.Collect = "已\n收藏";
-                            Toast.ShowTips("收藏成功");
-                        }
-                        else
-                        {
-                            Topic.Collect = "加入\n收藏";
-                            Toast.ShowTips("取消收藏成功");
-                        }
-                    }
-                    catch
-                    {
-                        Toast.ShowTips("操作失败");
-                    }
-                });
-            var tImageTap = Observable.FromEventPattern<TappedRoutedEventArgs>(TImagePanel, nameof(TImagePanel.Tapped))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => PageStack.Next("Right", "Right", typeof(MemberView), TImagePanel.Tag));
-            var copyLink = Observable
-                .FromEventPattern<TappedRoutedEventArgs>(CopyLinkPanel, nameof(CopyLinkPanel.Tapped))
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x =>
+                    controls.ForEach(c => c.IsEnabled = true);
+                }
+            };
+
+            UsernamePanel.Tapped += (s, e) =>
+            {
+                ReplyText.Text += $"@{(string)(s as TextBlock)?.Tag} ";
+            };
+
+            CollectedPanel.Tapped += async (s, e) =>
+            {
+                try
                 {
-                    var clipBoardText = new DataPackage();
-                    clipBoardText.SetText(Topic.Url);
-                    Clipboard.SetContent(clipBoardText);
-                    Toast.ShowTips("已复制到剪贴板");
-                });
+                    var html = await ApiClient.GetTopicInformation(_id);
+                    var url = "";
+                    var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
+                    var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
+                    if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
+                    if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
+                    await ApiClient.OnlyGet($"https://www.v2ex.com{url}");
+                    if (Topic.Collect == "加入\n收藏")
+                    {
+                        Topic.Collect = "已\n收藏";
+                        Toast.ShowTips("收藏成功");
+                    }
+                    else
+                    {
+                        Topic.Collect = "加入\n收藏";
+                        Toast.ShowTips("取消收藏成功");
+                    }
+                }
+                catch
+                {
+                    Toast.ShowTips("操作失败");
+                }
+            };
+
+            TImagePanel.Tapped += (s, e) =>
+            {
+                PageStack.Next("Right", "Right", typeof(MemberView), TImagePanel.Tag);
+            };
+
+            CopyLinkPanel.Tapped += (s, e) =>
+            {
+                var clipBoardText = new DataPackage();
+                clipBoardText.SetText(Topic.Url);
+                Clipboard.SetContent(clipBoardText);
+                Toast.ShowTips("已复制到剪贴板");
+            };
+
             Replies.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetRepliesAndTopicContent(_id, Replies.CurrentPage);
@@ -174,7 +161,7 @@ namespace iV2EX.Views
                         };
                     }
                 }
-                
+
                 var replies = main.QuerySelectorAll("table").Where(table => table.ParentElement.Id != null)
                     .Select(table =>
                     {
@@ -197,14 +184,6 @@ namespace iV2EX.Views
                     Entity = replies
                 };
             };
-
-            _events = new List<IDisposable> { send, at, collect, tImageTap, copyLink };
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            _events.ForEach(x => x.Dispose());
         }
 
         private IncrementalLoadingCollection<ReplyModel> Replies { get; } = new IncrementalLoadingCollection<ReplyModel>();
@@ -251,7 +230,7 @@ namespace iV2EX.Views
 
         private void UsernamePanel_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            ReplyText.Text += $"@{(string) (sender as TextBlock).Tag} ";
+            ReplyText.Text += $"@{(string)(sender as TextBlock)?.Tag} ";
         }
     }
 }

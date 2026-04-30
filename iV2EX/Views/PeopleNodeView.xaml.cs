@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reactive.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
@@ -9,14 +8,11 @@ using iV2EX.Util;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using Microsoft.UI.Xaml.Navigation;
-using System.Reactive.Concurrency;
 
 namespace iV2EX.Views
 {
     public sealed partial class PeopleNodeView
     {
-        private List<IDisposable> _events;
         public PeopleNodeView()
         {
             InitializeComponent();
@@ -38,24 +34,17 @@ namespace iV2EX.Views
                             };
                         });
             }
-            var load = Observable.FromEventPattern<RoutedEventArgs>(PeopleNodePage, nameof(PeopleNodePage.Loaded))
-                .SelectMany(x => loadData())
-                .Retry(10)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => PeopleNodeList.ItemsSource = x);
-            var click = Observable
-                .FromEventPattern<ItemClickEventArgs>(PeopleNodeList, nameof(PeopleNodeList.ItemClick))
-                .Select(x => x.EventArgs.ClickedItem as NodeModel)
-                .ObserveOn(DispatcherQueueScheduler.Current)
-                .Subscribe(x => PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), x));
 
-            _events = new List<IDisposable> { load, click };
-        }
+            PeopleNodePage.Loaded += async (s, e) =>
+            {
+                PeopleNodeList.ItemsSource = await AsyncHelper.RetryAsync(() => loadData(), 5);
+            };
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            _events.ForEach(x => x.Dispose());
+            PeopleNodeList.ItemClick += (s, e) =>
+            {
+                if (e.ClickedItem is NodeModel item)
+                    PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), item);
+            };
         }
     }
 }
