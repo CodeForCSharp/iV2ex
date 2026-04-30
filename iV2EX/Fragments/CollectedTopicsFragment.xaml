@@ -25,7 +25,7 @@
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="Margin" Value="0" />
-                <Setter Property="MinWidth" Value="0" />
+                <Setter Property="MinWidth" Value="65" />
                 <Setter Property="MinHeight" Value="0" />
                 <Setter Property="AllowDrop" Value="False" />
                 <Setter Property="UseSystemFocusVisuals" Value="True" />

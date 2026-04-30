@@ -4,10 +4,17 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using iV2EX.Model;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace iV2EX.GetData
 {
+    [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
+    [JsonSerializable(typeof(List<NodeModel>))]
+    internal partial class ApiClientJsonContext : JsonSerializerContext
+    {
+    }
+
     internal static class ApiClient
     {
         public const string Host = "https://www.v2ex.com";
@@ -86,7 +93,7 @@ namespace iV2EX.GetData
         public static async Task<List<NodeModel>> GetNodes()
         {
             var json = await Client.GetStringAsync($"{Host}/api/nodes/all.json");
-            return JsonConvert.DeserializeObject<List<NodeModel>>(json);
+            return JsonSerializer.Deserialize(json, ApiClientJsonContext.Default.ListNodeModel);
         }
 
         public static async Task<string> GetTopicsWithPageN(string nodeName, int p) => await Client.GetStringAsync($"{Host}/go/{nodeName}?p={p}");

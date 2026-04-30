@@ -1,20 +1,20 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace iV2EX.Model
 {
     public class NodeModel
     {
-        [JsonProperty("id")] public int Id { get; set; }
+        [JsonPropertyName("id")] public int Id { get; set; }
 
-        [JsonProperty("name")] public string Name { get; set; }
+        [JsonPropertyName("name")] public string Name { get; set; }
 
-        [JsonProperty("title")] public string Title { get; set; }
+        [JsonPropertyName("title")] public string Title { get; set; }
 
-        public int Topics { get; set; }
+        [JsonPropertyName("topics")] public int Topics { get; set; }
 
-        [JsonProperty("header")] public string Header { get; set; }
+        [JsonPropertyName("header")] public string Header { get; set; }
 
-        [JsonProperty("footer")] public string Footer { get; set; }
+        [JsonPropertyName("footer")] public string Footer { get; set; }
 
         public string Image { get; set; }
 

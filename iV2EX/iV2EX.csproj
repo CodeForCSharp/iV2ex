@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
     <PublishAot>true</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
@@ -92,7 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
-    <RdXmlFile Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
@@ -110,7 +109,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260416003" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+
   </ItemGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>

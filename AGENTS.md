@@ -1,7 +1,7 @@
 # iV2EX — Agent Guide
 
 ## Project
-V2EX community client for Windows. WinUI 3 desktop app, single `.sln` project, target `net9.0-windows10.0.22621.0`, AOT-compiled.
+V2EX community client for Windows. WinUI 3 desktop app, single `.sln` project, target `net10.0-windows10.0.22621.0`, AOT-compiled.
 
 ## Build & Run
 ```bash
