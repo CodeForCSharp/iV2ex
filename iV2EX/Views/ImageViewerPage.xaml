@@ -8,41 +8,107 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Name="WrapPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="WrapPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="WrapPanel_SizeChanged">
         <ScrollViewer
+            x:Name="ImageScrollViewer"
             HorizontalScrollBarVisibility="Auto"
-            HorizontalScrollMode="Auto"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollMode="Enabled"
+            VerticalScrollMode="Enabled"
             MaxZoomFactor="10"
-            MinZoomFactor="1"
-            ZoomMode="Enabled">
-            <Image
-                x:Name="ImagePanel"
-                Width="{x:Bind WrapPanel.Width, Mode=OneWay}"
-                Height="{x:Bind WrapPanel.Height, Mode=OneWay}" />
+            MinZoomFactor="0.1"
+            ZoomMode="Enabled"
+            ViewChanged="ImageScrollViewer_ViewChanged">
+            <Grid x:Name="ImageContainer">
+                <Image
+                    x:Name="ImagePanel"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Stretch="Uniform" />
+            </Grid>
         </ScrollViewer>
-        <Grid
-            Name="MenuItemPanel"
-            Width="40"
-            Height="40"
-            Margin="0,0,20,20"
-            HorizontalAlignment="Right"
+
+        <!-- Floating toolbar at bottom center -->
+        <Border
+            Name="ToolBarPanel"
+            Height="44"
+            Margin="0,0,0,12"
+            Padding="8,0"
+            HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
             Background="#DD2F2F2F"
-            CornerRadius="3">
-            <TextBlock
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                FontSize="24"
-                Foreground="White"
-                Text="&#xe73a;" />
-            <Grid.ContextFlyout>
-                <MenuFlyout Placement="Top">
-                    <MenuFlyoutItem Name="ShareImage" Text="分享" />
-                    <MenuFlyoutItem Name="SaveImage" Text="保存" />
-                </MenuFlyout>
-            </Grid.ContextFlyout>
-        </Grid>
+            CornerRadius="8">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <!-- Zoom In (+) -->
+                <Button
+                    Width="36"
+                    Height="36"
+                    Padding="0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    Click="ZoomInButton_Click"
+                    Content="+"
+                    FontSize="20"
+                    Foreground="White" />
+                <!-- Zoom Percentage -->
+                <TextBlock
+                    x:Name="ZoomPercentageText"
+                    Width="52"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Foreground="White"
+                    Text="100%"
+                    TextAlignment="Center" />
+                <!-- Zoom Out (-) -->
+                <Button
+                    Width="36"
+                    Height="36"
+                    Padding="0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    Click="ZoomOutButton_Click"
+                    Content="&#x2212;"
+                    FontSize="20"
+                    Foreground="White" />
+                <!-- Separator -->
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="4,0"
+                    VerticalAlignment="Center"
+                    Background="#44FFFFFF" />
+                <!-- Copy to Clipboard -->
+                <Button
+                    Width="36"
+                    Height="36"
+                    Padding="0"
+                    Background="Transparent"
+                    Click="CopyButton_Click"
+                    ToolTipService.ToolTip="复制到剪贴板">
+                    <FontIcon
+                        FontSize="15"
+                        Foreground="White"
+                        Glyph="&#xE8C8;" />
+                </Button>
+                <!-- Save to Gallery -->
+                <Button
+                    Width="36"
+                    Height="36"
+                    Padding="0"
+                    Background="Transparent"
+                    Click="SaveButton_Click"
+                    ToolTipService.ToolTip="保存到图库">
+                    <FontIcon
+                        FontSize="15"
+                        Foreground="White"
+                        Glyph="&#xE105;" />
+                </Button>
+            </StackPanel>
+        </Border>
+
         <control:ToastTips x:Name="ToastTips" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
     </Grid>
 </Page>
