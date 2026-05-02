@@ -18,7 +18,7 @@ namespace iV2EX.Views
 {
     public partial class OneNodeTopicsView : INotifyPropertyChanged
     {
-        private NodeModel _node = new NodeModel();
+        private NodeModel _node = new NodeModel() { Cover = "ms-appx:///Assets/default.png" };
 
         public OneNodeTopicsView()
         {
@@ -48,20 +48,30 @@ namespace iV2EX.Views
                 var dom = new HtmlParser().ParseDocument(html);
                 if (NotifyData.MaxPage == 0)
                 {
-                    var header = dom.GetElementById("Main").QuerySelector("div.node_header");
-                    Node = new NodeModel
+                    var main = dom.GetElementById("Main");
+                    var header = main?.QuerySelector("div.node-header");
+                    if (header != null)
                     {
-                        Topics = Convert.ToInt32(header.QuerySelector("strong").TextContent),
-                        IsCollect = header.QuerySelector("a").TextContent,
-                        Cover = header.QuerySelector("img") == null
-                            ? "ms-appx:///Assets/default.png"
-                            : header.QuerySelector("img").GetAttribute("src"),
-                        Title = Node.Title,
-                        Name = Node.Name
-                    };
+                        var topicCount = header.QuerySelector("span.topic-count");
+                        var strong = topicCount?.QuerySelector("strong");
+                        var favAnchor = header.QuerySelector("a[href*='/favorite/node/']");
+                        var unfavAnchor = header.QuerySelector("a[href*='/unfavorite/node/']");
+                        var img = header.QuerySelector("img");
+                        Node = new NodeModel
+                        {
+                            Topics = strong != null ? int.Parse(strong.TextContent, System.Globalization.NumberStyles.AllowThousands) : 0,
+                            IsCollect = unfavAnchor != null ? "取消收藏" : favAnchor?.TextContent.Trim() ?? string.Empty,
+                            Cover = img == null
+                                ? "ms-appx:///Assets/default.png"
+                                : img.GetAttribute("src") ?? "ms-appx:///Assets/default.png",
+                            Title = Node.Title,
+                            Name = Node.Name
+                        };
+                    }
                 }
 
-                var topics = dom.GetElementById("TopicsNode").Children.Select(node =>
+                var topicsNode = dom.GetElementById("TopicsNode");
+                var topics = topicsNode?.Children.Select(node =>
                 {
                     var hrefs = node.QuerySelectorAll("a");
                     var imgs = node.QuerySelector("img.avatar");
@@ -94,7 +104,7 @@ namespace iV2EX.Views
                 return new PagesBaseModel<TopicModel>
                 {
                     Pages = Node.Topics % 20 == 0 ? Node.Topics / 20 : Node.Topics / 20 + 1,
-                    Entity = topics
+                    Entity = topics ?? Enumerable.Empty<TopicModel>()
                 };
             };
         }
