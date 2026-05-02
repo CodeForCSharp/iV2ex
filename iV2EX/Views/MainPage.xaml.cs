@@ -20,6 +20,7 @@ namespace iV2EX.Views
             LeftPivot.SizeChanged += (s, e) =>
             {
                 var headerpanel = FindVisualChildren<PivotHeaderPanel>(LeftPivot).ToList();
+                if (headerpanel.Count == 0) return;
                 var totalwidth = LeftPivot.ActualWidth;
                 headerpanel[0].Width = totalwidth;
                 var items = FindVisualChildren<PivotHeaderItem>(headerpanel[0]).ToList();
@@ -27,45 +28,20 @@ namespace iV2EX.Views
                     items[i].Width = totalwidth / items.Count - 1;
             };
 
-            RightFrame.SizeChanged += (s, e) =>
+            RootGrid.SizeChanged += (s, e) =>
             {
-                if (RootGrid.ActualWidth > 600)
+                if (RootGrid.ActualWidth <= 600 && e.PreviousSize.Width > 600)
                 {
-                    LeftPivot.Width = 500;
-                    LeftPivot.Visibility = Visibility.Visible;
-                    RightFrame.Visibility = Visibility.Visible;
-                    RightFrame.SetValue(RelativePanel.RightOfProperty, LeftPivot);
-                    LeftPivot.SetValue(RelativePanel.AlignBottomWithPanelProperty, true);
-                    LeftPivot.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
-                    LeftPivot.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
-                    LeftPivot.SetValue(RelativePanel.AlignRightWithPanelProperty, false);
-                    RightFrame.SetValue(RelativePanel.AlignBottomWithPanelProperty, true);
-                    RightFrame.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
-                    RightFrame.SetValue(RelativePanel.AlignRightWithPanelProperty, true);
-                    RightFrame.SetValue(RelativePanel.AlignLeftWithPanelProperty, false);
-                }
-                else
-                {
-                    LeftPivot.Width = double.NaN;
-                    if (RightFrame.CanGoBack)
-                    {
-                        LeftPivot.Visibility = Visibility.Visible;
-                        RightFrame.Visibility = Visibility.Collapsed;
-                    }
-                    else
+                    if (PageStack.IsLeftToRightActive)
                     {
                         LeftPivot.Visibility = Visibility.Collapsed;
                         RightFrame.Visibility = Visibility.Visible;
                     }
-
-                    LeftPivot.SetValue(RelativePanel.AlignBottomWithPanelProperty, true);
-                    LeftPivot.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
-                    LeftPivot.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
-                    LeftPivot.SetValue(RelativePanel.AlignRightWithPanelProperty, true);
-                    RightFrame.SetValue(RelativePanel.AlignBottomWithPanelProperty, true);
-                    RightFrame.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
-                    RightFrame.SetValue(RelativePanel.AlignRightWithPanelProperty, true);
-                    RightFrame.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
+                    else
+                    {
+                        LeftPivot.Visibility = Visibility.Visible;
+                        RightFrame.Visibility = Visibility.Collapsed;
+                    }
                 }
             };
         }

@@ -12,6 +12,8 @@ namespace iV2EX.Util
 
         public static bool CanGoBack => PageContainer.Count > 1;
 
+        public static bool IsLeftToRightActive { get; private set; }
+
         public static void Next(string from, string to, Type page, object param)
         {
             if (from == "Left" && to == "Left")
@@ -19,6 +21,8 @@ namespace iV2EX.Util
             }
             else if (from == "Left" && to == "Right")
             {
+                IsLeftToRightActive = true;
+
                 if (App.Window.PageFrame.ActualWidth < 600)
                 {
                     MainPage.LeftPart.Visibility = Visibility.Collapsed;
@@ -47,6 +51,11 @@ namespace iV2EX.Util
         public static void Back()
         {
             var page = PageContainer.Peek();
+            if (page.From == "Left" && page.To == "Right")
+            {
+                IsLeftToRightActive = false;
+            }
+
             if (App.Window.PageFrame.ActualWidth < 600 && page.From == "Left" &&
                 page.To == "Right")
             {
@@ -63,6 +72,7 @@ namespace iV2EX.Util
         public static void Clear()
         {
             PageContainer.Clear();
+            IsLeftToRightActive = false;
             MainWindow window = App.Window;
             window.UpdateBackButton();
         }
