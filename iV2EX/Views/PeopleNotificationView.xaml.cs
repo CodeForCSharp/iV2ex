@@ -47,7 +47,7 @@ namespace iV2EX.Views
                                 Id = int.Parse(node.Id.Replace("n_", "")),
                                 Title = node.QuerySelector("span.fade").TextContent,
                                 ReplyDate = node.QuerySelector("span.snow").TextContent,
-                                Content = node.QuerySelector("div.payload")?.TextContent,
+                                Content = node.QuerySelector("div.payload")?.TextContent.Trim(),
                                 ReplyFloor = int.Parse(linkPieces[3].Replace("reply", ""))
                             };
                         });

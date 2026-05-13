@@ -375,15 +375,37 @@ namespace iV2EX.Controls
 
             var rows = new List<INode>();
             CollectTableRows(table, rows);
+            if (rows.Count == 0) return;
 
+            var maxCols = 0;
             foreach (var row in rows)
             {
-                var rowPara = new Paragraph
+                var count = 0;
+                foreach (var child in row.ChildNodes)
                 {
-                    FontFamily = new FontFamily("Consolas"),
-                    Margin = new Microsoft.UI.Xaml.Thickness(0, 2, 0, 2)
-                };
+                    var name = child.NodeName.ToUpperInvariant();
+                    if (name == "TD" || name == "TH") count++;
+                }
+                if (count > maxCols) maxCols = count;
+            }
+            if (maxCols == 0) return;
 
+            var grid = new Grid
+            {
+                Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6),
+                BorderBrush = new SolidColorBrush(Colors.Gray),
+                BorderThickness = new Microsoft.UI.Xaml.Thickness(1),
+                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Stretch
+            };
+
+            for (var r = 0; r < rows.Count; r++)
+                grid.RowDefinitions.Add(new RowDefinition { Height = Microsoft.UI.Xaml.GridLength.Auto });
+            for (var c = 0; c < maxCols; c++)
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
+
+            var rowIndex = 0;
+            foreach (var row in rows)
+            {
                 var cells = new List<INode>();
                 foreach (var child in row.ChildNodes)
                 {
@@ -392,21 +414,55 @@ namespace iV2EX.Controls
                         cells.Add(child);
                 }
 
-                for (var i = 0; i < cells.Count; i++)
+                var colIndex = 0;
+                foreach (var cell in cells)
                 {
-                    if (i > 0)
-                        rowPara.Inlines.Add(new Run { Text = " | " });
+                    var cellBlock = new RichTextBlock
+                    {
+                        TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap,
+                        Padding = new Microsoft.UI.Xaml.Thickness(6, 4, 6, 4)
+                    };
 
-                    var cellText = cells[i].TextContent.Trim().Replace("\n", " ").Replace("\r", "");
-                    if (cells[i].NodeName.Equals("TH", StringComparison.OrdinalIgnoreCase))
-                        rowPara.Inlines.Add(new Bold { Inlines = { new Run { Text = cellText } } });
-                    else
-                        rowPara.Inlines.Add(new Run { Text = cellText });
+                    var isHeader = cell.NodeName.Equals("TH", StringComparison.OrdinalIgnoreCase);
+
+                    var cellPara = new Paragraph();
+                    var cellState = new RenderState();
+                    if (isHeader) cellState.PushBold();
+                    var savedSuppress = cellState.SuppressBlockFlush;
+                    cellState.SuppressBlockFlush = true;
+                    RenderChildren(cell, ref cellPara, new List<Paragraph>(), cellState);
+                    cellState.SuppressBlockFlush = savedSuppress;
+                    if (isHeader) cellState.Pop();
+
+                    if (cellPara.Inlines.Count > 0)
+                        cellBlock.Blocks.Add(cellPara);
+
+                    var border = new Border
+                    {
+                        Child = cellBlock,
+                        BorderBrush = new SolidColorBrush(Colors.Gray),
+                        BorderThickness = new Microsoft.UI.Xaml.Thickness(0, 0, 1, 1)
+                    };
+
+                    if (isHeader)
+                    {
+                        border.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 128, 128, 128));
+                    }
+
+                    Grid.SetRow(border, rowIndex);
+                    Grid.SetColumn(border, colIndex);
+                    grid.Children.Add(border);
+
+                    colIndex++;
                 }
 
-                if (rowPara.Inlines.Count > 0)
-                    paragraphs.Add(rowPara);
+                rowIndex++;
             }
+
+            paragraphs.Add(new Paragraph
+            {
+                Inlines = { new InlineUIContainer { Child = grid } }
+            });
         }
 
         private static void CollectTableRows(INode node, List<INode> rows)

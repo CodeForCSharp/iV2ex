@@ -147,7 +147,7 @@ namespace iV2EX.Views
                             Collect = main.TextContent.Contains("加入收藏") ? "加入\n收藏" : "已\n收藏",
                             Content = main.QuerySelector("div.topic_content")?.InnerHtml,
                             Replies = maxReply,
-                            CreateDate = node.QuerySelector("small.gray").TextContent.Split('·')[1]
+                            CreateDate = node.QuerySelector("small.gray").TextContent.Split('·')[1].Trim()
                         };
                         Topic = topic;
                     }
