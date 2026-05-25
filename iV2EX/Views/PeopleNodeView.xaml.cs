@@ -1,13 +1,10 @@
-﻿using System;
-using System.Linq;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using System.Linq;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.Util;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using System.Threading.Tasks;
 
 namespace iV2EX.Views
 {
