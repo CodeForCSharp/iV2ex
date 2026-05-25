@@ -191,7 +191,9 @@
                             VerticalAlignment="Center"
                             Background="#7986CB"
                             CornerRadius="9"
-                            RelativePanel.Below="ImagePanel">
+                            RelativePanel.Below="ImagePanel"
+                            Loaded="ThanksPanel_Loaded"
+                            Tapped="ThanksPanel_Tapped">
                             <TextBlock
                                 x:Name="ThanksText"
                                 FontSize="12"

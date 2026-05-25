@@ -9,6 +9,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -147,7 +148,7 @@ namespace iV2EX.Views
                             Collect = main.TextContent.Contains("加入收藏") ? "加入\n收藏" : "已\n收藏",
                             Content = main.QuerySelector("div.topic_content")?.InnerHtml,
                             Replies = maxReply,
-                            CreateDate = node.QuerySelector("small.gray").TextContent.Split('·')[1].Trim()
+                            CreateDate = node.QuerySelector("small.gray span").TextContent.Trim()
                         };
                         Topic = topic;
                     }
@@ -166,6 +167,7 @@ namespace iV2EX.Views
                     .Select(table =>
                     {
                         var spans = table.QuerySelectorAll("span");
+                        var thankArea = table.QuerySelector("div.thank_area");
                         return new ReplyModel
                         {
                             Id = int.Parse(table.ParentElement.Id.Replace("r_", "")),
@@ -174,8 +176,9 @@ namespace iV2EX.Views
                             Content = table.QuerySelector("div.reply_content").InnerHtml.Trim(),
                             Thanks = spans.Length == 3 ? int.Parse(spans[2].TextContent.Replace("♥ ", "")) : 0,
                             Floor = $"#{spans[0].TextContent}",
-                            ReplyDate = spans[1].TextContent,
-                            IsLz = Topic.Member.Username == table.QuerySelector("strong").TextContent
+                            ReplyDate = table.QuerySelector("span.ago").TextContent.Trim(),
+                            IsLz = Topic.Member.Username == table.QuerySelector("strong").TextContent,
+                            IsThanked = thankArea?.ClassList.Contains("thanked") ?? false
                         };
                     });
                 return new PagesBaseModel<ReplyModel>
@@ -231,6 +234,64 @@ namespace iV2EX.Views
         private void UsernamePanel_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ReplyText.Text += $"@{(string)(sender as TextBlock)?.Tag} ";
+        }
+
+        private void ThanksPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            var panel = sender as StackPanel;
+            var reply = panel?.DataContext as ReplyModel;
+            if (reply is { IsThanked: true })
+            {
+                panel.Background = new SolidColorBrush(Microsoft.UI.Colors.Gray);
+            }
+        }
+
+        private async void ThanksPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            try
+            {
+                var panel = sender as StackPanel;
+                var reply = panel?.DataContext as ReplyModel;
+                if (reply == null) return;
+
+                if (reply.IsThanked)
+                {
+                    Toast.ShowTips("已经感谢过这条回复了");
+                    return;
+                }
+
+                var dialog = new ContentDialog
+                {
+                    Title = "确认",
+                    Content = $"确认花费 10 个铜币向 @{reply.Username} 的这条回复发送感谢？",
+                    PrimaryButtonText = "确认",
+                    CloseButtonText = "取消",
+                    XamlRoot = XamlRoot
+                };
+                var result = await dialog.ShowAsync();
+                if (result != ContentDialogResult.Primary) return;
+
+                var html = await ApiClient.GetTopicInformation(_id);
+                var once = new HtmlParser().ParseDocument(html).QuerySelector("input[name='once']").GetAttribute("value");
+
+                var error = await ApiClient.ThankReply(reply.Id, once);
+                if (error == null)
+                {
+                    Toast.ShowTips("感谢已发送");
+                    reply.Thanks += 1;
+                    reply.IsThanked = true;
+                    panel.Background = new SolidColorBrush(Microsoft.UI.Colors.Gray);
+                    (panel.Children[0] as TextBlock).Text = reply.Thanks.ToString();
+                }
+                else
+                {
+                    Toast.ShowTips(error);
+                }
+            }
+            catch
+            {
+                Toast.ShowTips("感谢失败");
+            }
         }
     }
 }

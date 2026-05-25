@@ -19,5 +19,7 @@
         public string Token { get; set; }
 
         public string Floor { get; set; }
+
+        public bool IsThanked { get; set; }
     }
 }

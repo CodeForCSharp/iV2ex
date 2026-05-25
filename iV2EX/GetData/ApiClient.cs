@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using iV2EX.Model;
 using System.Text.Json;
@@ -121,6 +122,20 @@ namespace iV2EX.GetData
         public static async Task<Stream> GetStream(string url) => await Client.GetStreamAsync(url);
 
         public static async Task<string> GetSettingInformation() => await Client.GetStringAsync($"{Host}/settings");
+
+        public static async Task<string> ThankReply(int replyId, string once)
+        {
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{Host}/thank/reply/{replyId}?once={once}")
+            };
+            var json = await Client.SendAsync(request).Result.Content.ReadAsStringAsync();
+            if (json.Contains("\"success\": true") || json.Contains("\"success\":true"))
+                return null;
+            var match = Regex.Match(json, "\"message\"\\s*:\\s*\"([^\"]*)\"");
+            return match.Success ? match.Groups[1].Value : "未知错误";
+        }
 
     }
 

@@ -38,6 +38,7 @@ namespace iV2EX
             this.InitializeComponent();
 
             m_AppWindow = GetAppWindowForCurrentWindow();
+            m_AppWindow.Title = "iV2EX";
 
             // Check to see if customization is supported.
             // Currently only supported on Windows 11.

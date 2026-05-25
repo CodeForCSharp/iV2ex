@@ -16,23 +16,23 @@ namespace iV2EX.Views
         public PeopleNodeView()
         {
             InitializeComponent();
-            async Task<IEnumerable<NodeModel>> loadData()
+            async Task<List<NodeModel>> loadData()
             {
                 var html = await ApiClient.GetFavoriteNodes();
-                return new HtmlParser().ParseDocument(html).GetElementById("my-nodes").GetElementsByClassName("grid_item")
+                return new HtmlParser().ParseDocument(html).GetElementById("my-nodes").GetElementsByClassName("fav-node")
                     .Select(
-                        child =>
+                        a =>
                         {
-                            var strs = child.TextContent.Split(' ');
+                            var topicsText = a.QuerySelector("span.f12")?.TextContent ?? "0";
                             return new NodeModel
                             {
-                                Id = int.Parse(child.Id.Replace("n_", "")),
-                                Name = child.GetAttribute("href").Replace("/go/", ""),
-                                Image = child.QuerySelector("img").GetAttribute("src"),
-                                Title = string.Join("", strs.Take(strs.Length - 1)),
-                                Topics = int.Parse(strs.Last())
+                                Id = int.Parse(a.Id.Replace("n_", "")),
+                                Name = a.GetAttribute("href").Replace("/go/", ""),
+                                Image = a.QuerySelector("img").GetAttribute("src"),
+                                Title = a.QuerySelector("span.fav-node-name")?.TextContent ?? "",
+                                Topics = int.Parse(topicsText.Trim())
                             };
-                        });
+                        }).ToList();
             }
 
             PeopleNodePage.Loaded += async (s, e) =>
