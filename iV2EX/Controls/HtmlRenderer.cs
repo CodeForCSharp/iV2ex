@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
@@ -9,6 +10,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
+using Windows.Media.Core;
 using iV2EX.Util;
 using iV2EX.Views;
 
@@ -178,8 +180,26 @@ namespace iV2EX.Controls
                     FlushAndReset(ref current, paragraphs);
                     paragraphs.Add(new Paragraph
                     {
-                        Inlines = { new Run { Text = new string('\u2500', 60) }, new LineBreak() }
+                        Inlines =
+                        {
+                            new InlineUIContainer
+                            {
+                                Child = new Border
+                                {
+                                    Height = 1,
+                                    HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Stretch,
+                                    Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x80, 0x60, 0x60, 0x60)),
+                                    Margin = new Microsoft.UI.Xaml.Thickness(0, 10, 0, 10)
+                                }
+                            },
+                            new LineBreak()
+                        }
                     });
+                    break;
+
+                case "VIDEO":
+                    FlushAndReset(ref current, paragraphs);
+                    RenderVideo(node, paragraphs);
                     break;
 
                 // --- Inline elements ---
@@ -302,6 +322,7 @@ namespace iV2EX.Controls
                 case "OL":
                 case "LI":
                 case "HR":
+                case "VIDEO":
                 case "TABLE":
                 case "TR":
                 case "TD":
@@ -509,6 +530,57 @@ namespace iV2EX.Controls
             };
 
             current.Inlines.Add(new InlineUIContainer { Child = viewBox });
+        }
+
+        private static void RenderVideo(INode videoNode, List<Paragraph> paragraphs)
+        {
+            string src = null;
+            if (videoNode is IElement videoEl)
+                src = videoEl.GetAttribute("src");
+
+            if (string.IsNullOrEmpty(src))
+            {
+                foreach (var child in videoNode.ChildNodes)
+                {
+                    if (child.NodeName.Equals("SOURCE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (child is IElement srcEl)
+                            src = srcEl.GetAttribute("src");
+                        if (!string.IsNullOrEmpty(src))
+                            break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(src) && Uri.TryCreate(src, UriKind.Absolute, out var videoUri))
+            {
+                var container = new Grid
+                {
+                    HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Stretch,
+                    Height = 400,
+                    Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6),
+                };
+
+                var mediaElement = new MediaPlayerElement
+                {
+                    Source = MediaSource.CreateFromUri(videoUri),
+                    AreTransportControlsEnabled = true,
+                    AutoPlay = false,
+                    HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Stretch,
+                    VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Stretch,
+                    Stretch = Microsoft.UI.Xaml.Media.Stretch.Uniform,
+                };
+                mediaElement.TransportControls.ShowAndHideAutomatically = true;
+                mediaElement.TransportControls.IsCompact = true;
+
+                container.Children.Add(mediaElement);
+
+                paragraphs.Add(new Paragraph
+                {
+                    Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6),
+                    Inlines = { new InlineUIContainer { Child = container }, new LineBreak() }
+                });
+            }
         }
 
         private sealed class RenderState

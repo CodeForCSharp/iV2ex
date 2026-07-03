@@ -83,11 +83,18 @@ namespace iV2EX.Views
                 {
                     var html = await ApiClient.GetTopicInformation(_id);
                     var url = "";
-                    var regexFav = new Regex("<a href=\"(.*)\">加入收藏</a>");
-                    var regexUnFav = new Regex("<a href=\"(.*)\">取消收藏</a>");
+                    var regexFav = new Regex("<a href=\"([^\"]*)\"[^>]*>加入收藏</a>");
+                    var regexUnFav = new Regex("<a href=\"([^\"]*)\"[^>]*>取消收藏</a>");
                     if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
                     if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
-                    await ApiClient.OnlyGet($"https://www.v2ex.com{url}");
+                    if (string.IsNullOrEmpty(url)) return;
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri($"https://www.v2ex.com{url}"),
+                        Headers = { { "Referer", $"https://www.v2ex.com/t/{_id}" } }
+                    };
+                    await ApiClient.Client.SendAsync(request);
                     if (Topic.Collect == "加入\n收藏")
                     {
                         Topic.Collect = "已\n收藏";
@@ -98,6 +105,7 @@ namespace iV2EX.Views
                         Topic.Collect = "加入\n收藏";
                         Toast.ShowTips("取消收藏成功");
                     }
+                    OnPropertyChanged(nameof(Topic));
                 }
                 catch
                 {
