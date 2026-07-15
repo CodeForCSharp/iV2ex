@@ -98,11 +98,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp">
-      <Version>1.5.1</Version>
+      <Version>1.5.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.10" />
 
   </ItemGroup>
   <PropertyGroup>

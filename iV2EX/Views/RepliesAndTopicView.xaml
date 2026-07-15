@@ -192,7 +192,7 @@
                             Background="#7986CB"
                             CornerRadius="9"
                             RelativePanel.Below="ImagePanel"
-                            Loaded="ThanksPanel_Loaded"
+                            DataContextChanged="ThanksPanel_DataContextChanged"
                             Tapped="ThanksPanel_Tapped">
                             <TextBlock
                                 x:Name="ThanksText"

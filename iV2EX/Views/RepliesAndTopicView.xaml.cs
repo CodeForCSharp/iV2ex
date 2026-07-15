@@ -244,14 +244,20 @@ namespace iV2EX.Views
             ReplyText.Text += $"@{(string)(sender as TextBlock)?.Tag} ";
         }
 
-        private void ThanksPanel_Loaded(object sender, RoutedEventArgs e)
+        private void ThanksPanel_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs e)
         {
             var panel = sender as StackPanel;
             var reply = panel?.DataContext as ReplyModel;
-            if (reply is { IsThanked: true })
-            {
-                panel.Background = new SolidColorBrush(Microsoft.UI.Colors.Gray);
-            }
+            UpdateThanksPanelUI(panel, reply);
+        }
+
+        private static void UpdateThanksPanelUI(StackPanel panel, ReplyModel reply)
+        {
+            if (panel == null || reply == null) return;
+            panel.Background = reply.IsThanked
+                ? new SolidColorBrush(Microsoft.UI.Colors.Gray)
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x79, 0x86, 0xCB));
+            (panel.Children[0] as TextBlock).Text = reply.Thanks.ToString();
         }
 
         private async void ThanksPanel_Tapped(object sender, TappedRoutedEventArgs e)
@@ -288,8 +294,7 @@ namespace iV2EX.Views
                     Toast.ShowTips("感谢已发送");
                     reply.Thanks += 1;
                     reply.IsThanked = true;
-                    panel.Background = new SolidColorBrush(Microsoft.UI.Colors.Gray);
-                    (panel.Children[0] as TextBlock).Text = reply.Thanks.ToString();
+                    UpdateThanksPanelUI(panel, reply);
                 }
                 else
                 {

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
@@ -56,10 +57,31 @@ namespace iV2EX.Controls
                     var text = node.TextContent;
                     if (string.IsNullOrEmpty(text))
                         return;
-                    text = text.Replace("\n", "").Replace("\r", "");
-                    var wrapped = state.WrapInline(new Run { Text = text });
-                    if (wrapped != null)
-                        current.Inlines.Add(wrapped);
+                    if (state.InPreBlock)
+                    {
+                        var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
+                        var end = lines.Length;
+                        while (end > 0 && lines[end - 1].Length == 0)
+                            end--;
+                        for (var i = 0; i < end; i++)
+                        {
+                            if (lines[i].Length > 0)
+                            {
+                                var run = state.WrapInline(new Run { Text = lines[i] });
+                                if (run != null)
+                                    current.Inlines.Add(run);
+                            }
+                            if (i < end - 1)
+                                current.Inlines.Add(new LineBreak());
+                        }
+                    }
+                    else
+                    {
+                        text = text.Replace("\n", "").Replace("\r", "");
+                        var wrapped = state.WrapInline(new Run { Text = text });
+                        if (wrapped != null)
+                            current.Inlines.Add(wrapped);
+                    }
                     break;
 
                 // --- Block-level elements ---
@@ -117,17 +139,42 @@ namespace iV2EX.Controls
                         FlushAndReset(ref current, paragraphs);
                     if (state.SuppressBlockFlush)
                     {
+                        state.InPreBlock = true;
                         RenderChildren(node, ref current, paragraphs, state);
+                        state.InPreBlock = false;
                     }
                     else
                     {
-                        current = new Paragraph
+                        state.InPreBlock = true;
+                        var preParagraphs = new List<Paragraph>();
+                        var preCurrent = new Paragraph();
+                        RenderChildren(node, ref preCurrent, preParagraphs, state);
+                        if (preCurrent.Inlines.Count > 0)
+                            preParagraphs.Add(preCurrent);
+                        state.InPreBlock = false;
+
+                        var codeBlock = new RichTextBlock
                         {
                             FontFamily = new FontFamily("Consolas"),
-                            Margin = new Microsoft.UI.Xaml.Thickness(0, 4, 0, 4)
+                            TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap,
+                            IsTextSelectionEnabled = true
                         };
-                        RenderChildren(node, ref current, paragraphs, state);
-                        FlushAndReset(ref current, paragraphs);
+                        foreach (var p in preParagraphs)
+                            codeBlock.Blocks.Add(p);
+
+                        var border = new Border
+                        {
+                            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 128, 128, 128)),
+                            Padding = new Microsoft.UI.Xaml.Thickness(12, 8, 12, 8),
+                            CornerRadius = new Microsoft.UI.Xaml.CornerRadius(6),
+                            Child = codeBlock,
+                            Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6)
+                        };
+
+                        paragraphs.Add(new Paragraph
+                        {
+                            Inlines = { new InlineUIContainer { Child = border } }
+                        });
                     }
                     break;
 
@@ -184,15 +231,14 @@ namespace iV2EX.Controls
                         {
                             new InlineUIContainer
                             {
-                                Child = new Border
+                                Child = new Rectangle
                                 {
-                                    Height = 1,
-                                    HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Stretch,
-                                    Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x80, 0x60, 0x60, 0x60)),
-                                    Margin = new Microsoft.UI.Xaml.Thickness(0, 10, 0, 10)
+                                    Height = 2,
+                                    Width = 9999,
+                                    Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0x80, 0x60, 0x60, 0x60)),
+                                    Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6)
                                 }
-                            },
-                            new LineBreak()
+                            }
                         }
                     });
                     break;
@@ -590,6 +636,7 @@ namespace iV2EX.Controls
 
             public bool SuppressBlockFlush { get; set; }
             public int ListDepth { get; set; }
+            public bool InPreBlock { get; set; }
 
             public Inline WrapInline(Inline leaf)
             {
