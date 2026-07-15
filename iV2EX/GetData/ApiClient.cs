@@ -42,7 +42,8 @@ namespace iV2EX.GetData
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(url)
             };
-            return await Client.SendAsync(request).Result.Content.ReadAsStringAsync();
+            var response = await Client.SendAsync(request);
+            return await response.Content.ReadAsStringAsync();
         }
 
         public static async Task<string> SignIn(FormUrlEncodedContent content)
@@ -54,7 +55,8 @@ namespace iV2EX.GetData
                 RequestUri = new Uri($"{Host}/signin"),
                 Content = content
             };
-            return await Client.SendAsync(request).Result.Content.ReadAsStringAsync();
+            var response = await Client.SendAsync(request);
+            return await response.Content.ReadAsStringAsync();
         }
 
         public static async Task<string> GetSignInInformation() => await Client.GetStringAsync($"{Host}/signin");
@@ -72,7 +74,8 @@ namespace iV2EX.GetData
                 RequestUri = new Uri($"{Host}/t/{id}"),
                 Content = content
             };
-            return await Client.SendAsync(request).Result.Content.ReadAsStringAsync();
+            var response = await Client.SendAsync(request);
+            return await response.Content.ReadAsStringAsync();
         }
 
         public static async Task<string> GetNodeInformation(string nodeName) => await Client.GetStringAsync($"{Host}/go/{nodeName}");
@@ -88,7 +91,8 @@ namespace iV2EX.GetData
                 RequestUri = new Uri($"{Host}/new/{nodeName}"),
                 Content = content
             };
-            return await Client.SendAsync(request).Result.Content.ReadAsStringAsync();
+            var response = await Client.SendAsync(request);
+            return await response.Content.ReadAsStringAsync();
         }
 
         public static async Task<List<NodeModel>> GetNodes()
@@ -130,7 +134,8 @@ namespace iV2EX.GetData
                 Method = HttpMethod.Post,
                 RequestUri = new Uri($"{Host}/thank/reply/{replyId}?once={once}")
             };
-            var json = await Client.SendAsync(request).Result.Content.ReadAsStringAsync();
+            var response = await Client.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
             if (json.Contains("\"success\": true") || json.Contains("\"success\":true"))
                 return null;
             var match = Regex.Match(json, "\"message\"\\s*:\\s*\"([^\"]*)\"");
@@ -162,16 +167,5 @@ namespace iV2EX.GetData
         Failure = 1,
         Ban = 2,
         TextEmpty = 3
-    }
-
-    internal enum WrritenStatus
-    {
-        Success = 0,
-        Failure = 1,
-        TitleEmpty = 2,
-        TitleLonger = 3,
-        BodyEmpty = 4,
-        BodyLonger = 5,
-        NotExistNode = 6
     }
 }

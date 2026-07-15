@@ -12,46 +12,50 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Button
-            Name="Send"
-            Grid.Row="2"
-            Width="50"
-            Height="50"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Background="#3F51B5"
-            Canvas.ZIndex="1"
-            Foreground="White">
-            <SymbolIcon Symbol="Send" />
-        </Button>
-        <AutoSuggestBox
-            Name="Option"
-            Grid.Row="0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            ItemsSource="{x:Bind Show}">
-            <AutoSuggestBox.ItemTemplate>
-                <DataTemplate x:DataType="data:NodeModel">
-                    <Grid>
-                        <TextBlock Text="{x:Bind Title}" />
-                    </Grid>
-                </DataTemplate>
-            </AutoSuggestBox.ItemTemplate>
-        </AutoSuggestBox>
         <TextBox
             Name="TitleText"
-            Grid.Row="1"
-            Grid.ColumnSpan="2"
+            Grid.Row="0"
+            Margin="12,4,12,0"
             PlaceholderText="标题,不超过120字" />
         <TextBox
             Name="Body"
-            Grid.Row="2"
-            Grid.ColumnSpan="2"
+            Grid.Row="1"
+            Margin="12,4,12,0"
             AcceptsReturn="True"
             PlaceholderText="正文,不超过20000字" />
+        <Grid Grid.Row="2" Margin="12,8,12,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <AutoSuggestBox
+                Name="Option"
+                Grid.Column="0"
+                Width="200"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                PlaceholderText="选择节点"
+                ItemsSource="{x:Bind Show}">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="data:NodeModel">
+                        <TextBlock Text="{x:Bind Title}" />
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+            <Button
+                Name="Send"
+                Grid.Column="1"
+                Width="36"
+                Height="36"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+                <SymbolIcon Symbol="Send" />
+            </Button>
+        </Grid>
         <localcontrol:ToastTips
             x:Name="Toast"
             Grid.Row="0"

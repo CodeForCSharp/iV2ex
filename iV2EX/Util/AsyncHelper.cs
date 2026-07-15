@@ -24,6 +24,7 @@ namespace iV2EX.Util
         public static Action<T> Debounce<T>(Action<T> action, TimeSpan interval)
         {
             var lastCts = new CancellationTokenSource();
+            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             return arg =>
             {
                 lastCts.Cancel();
@@ -35,7 +36,7 @@ namespace iV2EX.Util
                 {
                     if (!token.IsCancellationRequested)
                         action(arg);
-                }, TaskScheduler.Default);
+                }, scheduler);
             };
         }
     }
