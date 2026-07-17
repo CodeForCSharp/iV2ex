@@ -8,51 +8,84 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="using:iV2EX.Model"
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <DataTemplate x:Name="MoneyTemplate" x:DataType="model:MoneyModel">
+            <Grid
+                Padding="12"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid
+                    Grid.RowSpan="2"
+                    Width="40"
+                    Height="40"
+                    VerticalAlignment="Center"
+                    Background="{x:Bind converter:Converter.SymbolToLightColor(Spend)}"
+                    CornerRadius="20">
+                    <FontIcon
+                        FontSize="16"
+                        Foreground="{x:Bind converter:Converter.SymbolToColor(Spend)}"
+                        Glyph="{x:Bind converter:Converter.TypeToGlyph(Type)}" />
+                </Grid>
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="12,0,0,0"
+                    VerticalAlignment="Bottom"
+                    Text="{x:Bind Type}"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="12,2,0,0"
+                    VerticalAlignment="Top"
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind Time}" />
+                <TextBlock
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Foreground="{x:Bind converter:Converter.SymbolToColor(Spend)}"
+                    Text="{x:Bind Spend}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.ColumnSpan="3"
+                    Margin="0,8,0,0"
+                    FontSize="13"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind Desc}"
+                    TextWrapping="Wrap"
+                    Visibility="{x:Bind converter:Converter.EmptyToVisibility(Desc)}" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView
             Name="MoneyList"
+            Padding="8,4"
+            ItemTemplate="{StaticResource MoneyTemplate}"
             ItemsSource="{x:Bind Moneys}"
             SelectionMode="None">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="model:MoneyModel">
-                    <RelativePanel>
-                        <Grid
-                            Name="SpendPanel"
-                            Width="50"
-                            Height="50"
-                            Margin="5"
-                            Background="{x:Bind converter:Converter.SymbolToColor(Spend)}"
-                            RelativePanel.AlignLeftWithPanel="True"
-                            RelativePanel.AlignTopWithPanel="True">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="24"
-                                Foreground="White"
-                                Text="{x:Bind Spend}" />
-                        </Grid>
-                        <TextBlock
-                            Name="TypePanel"
-                            Margin="5"
-                            RelativePanel.AlignTopWithPanel="True"
-                            RelativePanel.RightOf="SpendPanel"
-                            Text="{x:Bind Type}" />
-                        <TextBlock
-                            Name="TimePanel"
-                            Margin="5"
-                            FontSize="13"
-                            Foreground="Gray"
-                            RelativePanel.Below="TypePanel"
-                            RelativePanel.RightOf="SpendPanel"
-                            Text="{x:Bind Time}" />
-                        <TextBlock
-                            RelativePanel.Below="TimePanel"
-                            Text="{x:Bind Desc}"
-                            TextWrapping="Wrap" />
-                    </RelativePanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0,4" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
 </Page>
