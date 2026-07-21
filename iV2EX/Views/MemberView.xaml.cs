@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using iV2EX.Annotations;
@@ -11,7 +12,6 @@ using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
-using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -19,8 +19,9 @@ namespace iV2EX.Views
 {
     public partial class MemberView : INotifyPropertyChanged
     {
-        private MemberModel _member = new MemberModel();
+        private MemberModel _member = new();
         private string _username;
+        private bool _isLoading;
 
         public MemberView()
         {
@@ -49,19 +50,42 @@ namespace iV2EX.Views
 
             MemberPage.Loaded += async (s, e) =>
             {
-                Member = await AsyncHelper.RetryAsync(() => loadData(), 5);
+                if (_isLoading) return;
+                _isLoading = true;
+                try
+                {
+                    Member = await AsyncHelper.RetryAsync(() => loadData(), 5);
+                }
+                finally
+                {
+                    _isLoading = false;
+                }
             };
 
             Notice.Tapped += async (s, e) =>
             {
-                await ApiClient.OnlyGet(Member.Notice);
-                Member.IsNotice = "取消特别关注";
+                try
+                {
+                    await ApiClient.OnlyGet(Member.Notice);
+                    await RefreshMemberState();
+                }
+                catch
+                {
+                    // ignore toggle errors
+                }
             };
 
             Block.Tapped += async (s, e) =>
             {
-                await ApiClient.OnlyGet(Member.Block);
-                Member.IsBlock = "取消Block";
+                try
+                {
+                    await ApiClient.OnlyGet(Member.Block);
+                    await RefreshMemberState();
+                }
+                catch
+                {
+                    // ignore toggle errors
+                }
             };
 
             MemberInfoList.ItemClick += (s, e) =>
@@ -161,10 +185,19 @@ namespace iV2EX.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private async Task RefreshMemberState()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            var html = await ApiClient.GetMemberInformation(_username);
+            var cell = new HtmlParser().ParseDocument(html).GetElementById("Main").QuerySelector("div.cell");
+            var inputs = cell.QuerySelectorAll("input");
+            if (inputs.Length >= 2)
+            {
+                Member.Notice = "https://www.v2ex.com" + inputs[0].GetAttribute("onclick").Split('\'')[3];
+                Member.IsNotice = inputs[0].GetAttribute("value");
+                Member.Block = "https://www.v2ex.com" + inputs[1].GetAttribute("onclick").Split('\'')[3];
+                Member.IsBlock = inputs[1].GetAttribute("value");
+                OnPropertyChanged(nameof(Member));
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -172,6 +205,12 @@ namespace iV2EX.Views
             base.OnNavigatedTo(e);
             var parameter = e.Parameter;
             if (parameter is string s) _username = s;
+        }
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
