@@ -80,7 +80,7 @@ namespace iV2EX
             }
         }
 
-        private void AppTitleBar_Loaded(object sender, RoutedEventArgs e)
+        private async void AppTitleBar_Loaded(object sender, RoutedEventArgs e)
         {
             SetTitleBar(AppTitleBar);
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -98,6 +98,32 @@ namespace iV2EX
                     container.Add(new Uri("https://www.v2ex.com"), new Cookie(name, value));
                 }
                 hasCookies = true;
+            }
+
+            if (hasCookies)
+            {
+                var isValid = false;
+                try
+                {
+                    var html = await ApiClient.GetMainPage();
+                    isValid = html.Contains("登出");
+                }
+                catch
+                {
+                    isValid = true;
+                }
+
+                if (!isValid)
+                {
+                    localSettings.Values.Remove("Cookies");
+                    var v2exUri = new Uri("https://www.v2ex.com");
+                    var cookies = ApiClient.Handler.CookieContainer.GetCookies(v2exUri);
+                    foreach (Cookie cookie in cookies)
+                    {
+                        cookie.Expired = true;
+                    }
+                    hasCookies = false;
+                }
             }
 
             PageFrame.Navigate(hasCookies ? typeof(MainPage) : typeof(UserLoginView));
