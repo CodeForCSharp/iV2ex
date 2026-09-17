@@ -28,27 +28,31 @@ namespace iV2EX.Views
                 var header = dom.GetElementById("Main").QuerySelector("div.header");
                 var messages = int.Parse(header.QuerySelector("strong.gray")?.TextContent ?? "0");
                 var pages = messages % 10 != 0 ? messages / 10 + 1 : messages / 10;
-                var notifications = dom.GetElementById("Main").GetElementsByClassName("cell")
+                var notifications = dom.QuerySelectorAll("#notifications > div.cell")
                     .Where(node => node.Id != null).Select(
                         node =>
                         {
-                            var hrefs = node.QuerySelectorAll("a");
-                            var linkPieces = hrefs[2].GetAttribute("href").Split('/', '#');
+                            var topicHref = node.QuerySelector("a.topic-link")?.GetAttribute("href") ?? "";
+                            var linkPieces = topicHref.Split(new[] { '/', '#' }, StringSplitOptions.RemoveEmptyEntries);
+                            var topicId = linkPieces.Length > 1 ? int.Parse(linkPieces[1]) : 0;
+                            var replyFloor = 0;
+                            if (linkPieces.Length > 2)
+                                int.TryParse(linkPieces[2].Replace("reply", ""), out replyFloor);
                             return new NotificationModel
                             {
                                 Topic = new TopicModel
                                 {
-                                    Id = int.Parse(linkPieces[2])
+                                    Id = topicId
                                 },
                                 Member = new MemberModel
                                 {
-                                    Image = node.QuerySelector("img").GetAttribute("src")
+                                    Image = node.QuerySelector("img")?.GetAttribute("src")
                                 },
                                 Id = int.Parse(node.Id.Replace("n_", "")),
-                                Title = node.QuerySelector("span.fade").TextContent,
-                                ReplyDate = node.QuerySelector("span.snow").TextContent,
+                                Title = node.QuerySelector("span.fade")?.TextContent,
+                                ReplyDate = node.QuerySelector("span.snow")?.TextContent,
                                 Content = node.QuerySelector("div.payload")?.TextContent.Trim(),
-                                ReplyFloor = int.Parse(linkPieces[3].Replace("reply", ""))
+                                ReplyFloor = replyFloor
                             };
                         });
                 return new PagesBaseModel<NotificationModel>

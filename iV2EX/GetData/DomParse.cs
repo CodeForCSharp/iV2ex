@@ -35,7 +35,7 @@ namespace iV2EX.GetData
                         Username = hrefs[3].TextContent,
                         Image = imgs.GetAttribute("src")
                     },
-                    Id = int.Parse(hrefs[1].GetAttribute("href").Split('/', '#')[2])
+                    Id = int.Parse(hrefs[1].GetAttribute("href").Split(new[] { '/', '#' })[2])
                 };
                 if (hrefs.Length == 6)
                 {

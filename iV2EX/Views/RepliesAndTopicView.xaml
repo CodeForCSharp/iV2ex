@@ -24,6 +24,7 @@
             Margin="5,5,0,0"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.RightOf="TImagePanel"
+            Tag="{x:Bind Topic.Member.Username, Mode=OneWay}"
             Text="{x:Bind Topic.Member.Username, Mode=OneWay}" />
         <TextBlock
             x:Name="ReplyDatePanel"
