@@ -171,24 +171,26 @@ namespace iV2EX.Views
                     }
                 }
 
-                var replies = main.QuerySelectorAll("table").Where(table => table.ParentElement.Id != null)
-                    .Select(table =>
+                var lzUsername = Topic.Member?.Username;
+                var replies = main.QuerySelectorAll("div.cell[id^='r_']").Select(cell =>
+                {
+                    var username = cell.QuerySelector("strong")?.TextContent?.Trim() ?? "";
+                    var thanksMatch = Regex.Match(cell.QuerySelector("span.small.fade")?.TextContent ?? "", @"\d+");
+                    int.TryParse(cell.Id.AsSpan(2), out var id);
+                    return new ReplyModel
                     {
-                        var spans = table.QuerySelectorAll("span");
-                        var thankArea = table.QuerySelector("div.thank_area");
-                        return new ReplyModel
-                        {
-                            Id = int.Parse(table.ParentElement.Id.Replace("r_", "")),
-                            Avater = table.QuerySelector("img").GetAttribute("src"),
-                            Username = table.QuerySelector("strong").TextContent,
-                            Content = table.QuerySelector("div.reply_content").InnerHtml.Trim(),
-                            Thanks = spans.Length == 3 ? int.Parse(spans[2].TextContent.Replace("♥ ", "")) : 0,
-                            Floor = $"#{spans[0].TextContent}",
-                            ReplyDate = table.QuerySelector("span.ago").TextContent.Trim(),
-                            IsLz = Topic.Member.Username == table.QuerySelector("strong").TextContent,
-                            IsThanked = thankArea?.ClassList.Contains("thanked") ?? false
-                        };
-                    });
+                        Id = id,
+                        Avater = cell.QuerySelector("img.avatar")?.GetAttribute("src")
+                                 ?? cell.QuerySelector("img")?.GetAttribute("src"),
+                        Username = username,
+                        Content = cell.QuerySelector("div.reply_content")?.InnerHtml.Trim() ?? "",
+                        Thanks = thanksMatch.Success ? int.Parse(thanksMatch.Value) : 0,
+                        Floor = $"#{cell.QuerySelector("span.no")?.TextContent}",
+                        ReplyDate = cell.QuerySelector("span.ago")?.TextContent?.Trim() ?? "",
+                        IsLz = lzUsername == username,
+                        IsThanked = cell.QuerySelector("div.thank_area")?.ClassList.Contains("thanked") ?? false
+                    };
+                });
                 return new PagesBaseModel<ReplyModel>
                 {
                     Pages = Topic.Replies % 100 == 0 ? Topic.Replies / 100 : Topic.Replies / 100 + 1,

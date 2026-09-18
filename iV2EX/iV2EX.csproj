@@ -16,6 +16,7 @@
     <UseWinUI>true</UseWinUI>
     <Platforms>x86;x64;arm64</Platforms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
     <LangVersion>12.0</LangVersion>
@@ -82,6 +83,7 @@
     <Content Include="Assets\88x88.targetsize-256.png" />
     <Content Include="Assets\88x88.targetsize-32.png" />
     <Content Include="Assets\88x88.targetsize-48.png" />
+    <Content Include="Assets\app.ico" />
     <Content Include="Assets\default.png" />
     <Content Include="Assets\IconFont\iconfont.ttf" />
   </ItemGroup>

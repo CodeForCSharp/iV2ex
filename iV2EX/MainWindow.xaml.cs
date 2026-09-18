@@ -39,6 +39,9 @@ namespace iV2EX
 
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "iV2EX";
+            var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "app.ico");
+            if (File.Exists(iconPath))
+                m_AppWindow.SetIcon(iconPath);
 
             // Check to see if customization is supported.
             // Currently only supported on Windows 11.
