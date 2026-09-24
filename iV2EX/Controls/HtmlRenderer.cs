@@ -6,7 +6,6 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Shapes;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -555,15 +554,13 @@ namespace iV2EX.Controls
                 source = BaseUrl + source.Replace("about://", "");
             else if (source.StartsWith("about:"))
                 source = "https:" + source.Replace("about:", "");
+            else if (source.StartsWith("//"))
+                source = "https:" + source;
 
             if (!Uri.IsWellFormedUriString(source, UriKind.Absolute))
                 return;
 
-            var bitmap = new Image
-            {
-                Source = new BitmapImage(new Uri(source)),
-                Stretch = Stretch.None
-            };
+            var bitmap = new Image { Stretch = Stretch.None };
             var viewBox = new Viewbox
             {
                 Child = bitmap,
@@ -574,8 +571,17 @@ namespace iV2EX.Controls
                 s.Handled = true;
                 PageStack.Next("Right", "Right", typeof(ImageViewerPage), source);
             };
-
             current.Inlines.Add(new InlineUIContainer { Child = viewBox });
+            _ = new Func<Task>(async () =>
+            {
+                try
+                {
+                    bitmap.Source = await GetBitmapFromUrl.GetBitmapFromStream(source);
+                }
+                catch
+                {
+                }
+            })();
         }
 
         private static void RenderVideo(INode videoNode, List<Paragraph> paragraphs)

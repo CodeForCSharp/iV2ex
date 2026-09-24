@@ -7,8 +7,8 @@ using Windows.Storage.Streams;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media.Imaging;
 using iV2EX.GetData;
+using iV2EX.Util;
 
 namespace iV2EX.Views
 {
@@ -73,11 +73,12 @@ namespace iV2EX.Views
                 if (_imageUrl.StartsWith("//"))
                     _imageUrl = "https:" + _imageUrl;
 
-                ImagePanel.Source = new BitmapImage(new Uri(_imageUrl));
                 ImageScrollViewer.ChangeView(null, null, 1.0f);
 
                 try
                 {
+                    ImagePanel.Source = await GetBitmapFromUrl.GetBitmapFromStream(_imageUrl);
+
                     using var stream = await ApiClient.GetStream(_imageUrl);
                     var extension = Path.GetExtension(new Uri(_imageUrl).AbsolutePath);
                     if (string.IsNullOrEmpty(extension))

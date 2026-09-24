@@ -12,10 +12,22 @@ namespace iV2EX.Util
     {
         public static async Task<SoftwareBitmapSource> GetBitmapFromStream(string url)
         {
-            var inputStream = await ApiClient.GetStream(url);
-            var memStream = new InMemoryRandomAccessStream();
+            using var inputStream = await ApiClient.GetStream(url);
+            using var memStream = new InMemoryRandomAccessStream();
             await RandomAccessStream.CopyAsync(inputStream.AsInputStream(), memStream);
-            var decoder = await BitmapDecoder.CreateAsync(memStream);
+            memStream.Seek(0);
+
+            BitmapDecoder decoder;
+            try
+            {
+                decoder = await BitmapDecoder.CreateAsync(memStream);
+            }
+            catch
+            {
+                memStream.Seek(0);
+                decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.WebpDecoderId, memStream);
+            }
+
             var sb = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
             var source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(sb);
