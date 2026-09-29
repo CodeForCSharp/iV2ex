@@ -144,12 +144,48 @@
                             Margin="12,0,0,0"
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="铜币" />
-                        <localcontrol:HtmlTextBlock
+                            Text="余额" />
+                        <StackPanel
                             Grid.Column="2"
-                            Height="18"
+                            Orientation="Horizontal"
                             VerticalAlignment="Center"
-                            Text="{x:Bind People.Money, Mode=OneWay}" />
+                            Spacing="4">
+                            <StackPanel
+                                Orientation="Horizontal"
+                                Spacing="4"
+                                Visibility="{x:Bind converter:Converter.GreaterThanZeroToVisibility(People.Gold), Mode=OneWay}">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{x:Bind People.Gold, Mode=OneWay}" />
+                                <Image
+                                    Width="16"
+                                    Height="16"
+                                    VerticalAlignment="Center"
+                                    Stretch="Uniform"
+                                    Source="ms-appx:///Assets/gold.png" />
+                            </StackPanel>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{x:Bind People.Silver, Mode=OneWay}" />
+                            <Image
+                                Width="16"
+                                Height="16"
+                                VerticalAlignment="Center"
+                                Stretch="Uniform"
+                                Source="ms-appx:///Assets/silver.png" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{x:Bind People.Bronze, Mode=OneWay}" />
+                            <Image
+                                Width="16"
+                                Height="16"
+                                VerticalAlignment="Center"
+                                Stretch="Uniform"
+                                Source="ms-appx:///Assets/bronze.png" />
+                        </StackPanel>
                     </Grid>
                 </Button>
 

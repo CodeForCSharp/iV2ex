@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -131,6 +132,7 @@ namespace iV2EX.Fragments
             var right = new HtmlParser().ParseDocument(html).GetElementById("Rightbar");
             var tables = right.QuerySelectorAll("table");
             var spans = tables[1].QuerySelectorAll("span.bigger");
+            var moneyLink = right.QuerySelector("div#money a");
             return new PersonCenterModel
             {
                 Member = new MemberModel
@@ -141,11 +143,20 @@ namespace iV2EX.Fragments
                 CollectedNodes = spans[0].TextContent,
                 CollectedTopics = spans[1].TextContent,
                 NoticePeople = spans[2].TextContent,
-                Money = right.QuerySelector("div#money").QuerySelector("a").InnerHtml,
+                Gold = ParseCoin(moneyLink, "G"),
+                Silver = ParseCoin(moneyLink, "S"),
+                Bronze = ParseCoin(moneyLink, "B"),
                 Notifications = right.QuerySelector("a[href='/notifications']").TextContent.Split(' ')
                     .FirstOrDefault(),
                 IsNotChecked = right.QuerySelector("a[href='/mission/daily']") != null
             };
+        }
+
+        private static int ParseCoin(IElement moneyLink, string alt)
+        {
+            var img = moneyLink?.QuerySelector($"img[alt='{alt}']");
+            if (img?.PreviousSibling == null) return 0;
+            return int.TryParse(img.PreviousSibling.TextContent?.Trim(), out var amount) ? amount : 0;
         }
 
         [NotifyPropertyChangedInvocator]

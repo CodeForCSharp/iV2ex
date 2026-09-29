@@ -84,7 +84,10 @@
     <Content Include="Assets\88x88.targetsize-32.png" />
     <Content Include="Assets\88x88.targetsize-48.png" />
     <Content Include="Assets\app.ico" />
+    <Content Include="Assets\bronze.png" />
     <Content Include="Assets\default.png" />
+    <Content Include="Assets\gold.png" />
+    <Content Include="Assets\silver.png" />
     <Content Include="Assets\IconFont\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>

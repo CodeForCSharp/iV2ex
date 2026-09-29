@@ -2,7 +2,11 @@
 {
     public class PersonCenterModel
     {
-        public string Money { get; set; }
+        public int Gold { get; set; }
+
+        public int Silver { get; set; }
+
+        public int Bronze { get; set; }
 
         public string Notifications { get; set; }
 

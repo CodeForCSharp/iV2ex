@@ -40,5 +40,10 @@ namespace iV2EX.Util
         {
             return string.IsNullOrEmpty(s) ? Visibility.Collapsed : Visibility.Visible;
         }
+
+        public static Visibility GreaterThanZeroToVisibility(int n)
+        {
+            return n > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 }
