@@ -103,6 +103,11 @@ namespace iV2EX.Fragments
             PageStack.Next("Left", "Right", typeof(PeopleNotificationView), null);
         }
 
+        private void HistoryItem_Click(object sender, RoutedEventArgs e)
+        {
+            PageStack.Next("Left", "Right", typeof(BrowseHistoryView), null);
+        }
+
         private void WriteItem_Click(object sender, RoutedEventArgs e)
         {
             PageStack.Next("Left", "Right", typeof(WriteTopicView), null);

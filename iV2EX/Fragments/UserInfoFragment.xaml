@@ -342,6 +342,30 @@
                     </Grid>
                 </Button>
 
+                <!--  Browse History  -->
+                <Button Style="{StaticResource MenuButtonStyle}" Click="HistoryItem_Click">
+                    <Grid Padding="8,6" ColumnDefinitions="Auto,*">
+                        <Grid Grid.Column="0" Width="30" Height="30">
+                            <Ellipse
+                                Width="30"
+                                Height="30"
+                                Fill="#FF7E57C2" />
+                            <FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Foreground="White"
+                                Glyph="&#xE81C;" />
+                        </Grid>
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                            Text="浏览历史" />
+                    </Grid>
+                </Button>
+
                 <!--  New Topic  -->
                 <Button Style="{StaticResource MenuButtonStyle}" Click="WriteItem_Click">
                     <Grid Padding="8,6" ColumnDefinitions="Auto,*">

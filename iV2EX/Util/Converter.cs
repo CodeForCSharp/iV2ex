@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Color = Windows.UI.Color;
 
@@ -39,6 +40,13 @@ namespace iV2EX.Util
         public static string PercentToString(double percent)
         {
             return $"{percent:0}%";
+        }
+
+        public static string TimestampToString(long unixTimeMs)
+        {
+            return unixTimeMs <= 0
+                ? ""
+                : DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMs).ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public static Visibility EmptyToVisibility(string s)

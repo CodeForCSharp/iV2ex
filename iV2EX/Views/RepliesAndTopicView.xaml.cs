@@ -156,9 +156,11 @@ namespace iV2EX.Views
                             Collect = main.TextContent.Contains("加入收藏") ? "加入\n收藏" : "已\n收藏",
                             Content = main.QuerySelector("div.topic_content")?.InnerHtml,
                             Replies = maxReply,
-                            CreateDate = node.QuerySelector("small.gray span").TextContent.Trim()
+                            CreateDate = node.QuerySelector("small.gray span").TextContent.Trim(),
+                            NodeName = node.QuerySelector("a[href^='/go/']")?.TextContent?.Trim()
                         };
                         Topic = topic;
+                        _ = BrowseHistoryStore.AddAsync(topic);
                     }
                     catch
                     {

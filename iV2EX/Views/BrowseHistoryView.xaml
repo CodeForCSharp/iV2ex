@@ -1,0 +1,129 @@
+<Page
+    x:Class="iV2EX.Views.BrowseHistoryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="using:iV2EX.Util"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:iV2EX.Model"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <converter:StringToImageSourceConverter x:Key="ImageConverter" />
+        <DataTemplate x:Name="HistoryTemplate" x:DataType="model:BrowseHistoryItem">
+            <Grid
+                Padding="12"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Click="DeleteItem_Click" Tag="{x:Bind}" Text="删除" />
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Ellipse
+                    Grid.RowSpan="2"
+                    Width="40"
+                    Height="40"
+                    VerticalAlignment="Top">
+                    <Ellipse.Fill>
+                        <ImageBrush
+                            ImageSource="{x:Bind Image, Converter={StaticResource ImageConverter}}"
+                            Stretch="UniformToFill" />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="8,0,0,0"
+                    FontSize="14"
+                    Foreground="#FF3D3D3D"
+                    Text="{x:Bind Title}"
+                    TextWrapping="Wrap" />
+                <Grid
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="8,8,0,0"
+                    ColumnDefinitions="Auto,Auto,*">
+                    <Grid
+                        Height="20"
+                        Margin="0,0,8,0"
+                        Background="Gray"
+                        CornerRadius="10"
+                        Visibility="{x:Bind converter:Converter.EmptyToVisibility(NodeName)}">
+                        <TextBlock
+                            Margin="5,0,5,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="White"
+                            Text="{x:Bind NodeName}" />
+                    </Grid>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        FontWeight="Bold"
+                        Foreground="Gray"
+                        Text="{x:Bind Username}" />
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="8,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        Foreground="Gray"
+                        Text="{x:Bind converter:Converter.TimestampToString(ViewedAt)}" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Padding="16,12,12,4" ColumnDefinitions="*,Auto">
+            <TextBlock
+                VerticalAlignment="Center"
+                Style="{ThemeResource SubtitleTextBlockStyle}"
+                Text="浏览历史" />
+            <HyperlinkButton
+                x:Name="ClearButton"
+                Grid.Column="1"
+                Click="Clear_Click"
+                Content="清空" />
+        </Grid>
+        <ListView
+            x:Name="HistoryList"
+            Grid.Row="1"
+            Padding="8,4"
+            IsItemClickEnabled="True"
+            ItemClick="HistoryList_ItemClick"
+            ItemTemplate="{StaticResource HistoryTemplate}"
+            ItemsSource="{x:Bind Items}"
+            SelectionMode="None">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0,4" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <TextBlock
+            x:Name="EmptyHint"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+            Text="暂无浏览记录"
+            Visibility="Collapsed" />
+    </Grid>
+</Page>
