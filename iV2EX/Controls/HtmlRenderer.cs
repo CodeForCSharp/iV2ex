@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
@@ -112,69 +111,14 @@ namespace iV2EX.Controls
                     break;
 
                 case "BLOCKQUOTE":
-                    if (!state.SuppressBlockFlush)
-                        FlushAndReset(ref current, paragraphs);
-                    if (state.SuppressBlockFlush)
-                    {
-                        RenderChildren(node, ref current, paragraphs, state);
-                    }
-                    else
-                    {
-                        current = new Paragraph
-                        {
-                            Margin = new Microsoft.UI.Xaml.Thickness(16, 4, 0, 4)
-                        };
-                        state.PushItalic();
-                        state.PushInlineAction(i => i.Foreground = new SolidColorBrush(Colors.Gray));
-                        RenderChildren(node, ref current, paragraphs, state);
-                        state.Pop();
-                        state.Pop();
-                        FlushAndReset(ref current, paragraphs);
-                    }
+                    AddBox(ref current, paragraphs, state, CreateQuoteBox(RenderIsolated(node, state)));
                     break;
 
                 case "PRE":
-                    if (!state.SuppressBlockFlush)
-                        FlushAndReset(ref current, paragraphs);
-                    if (state.SuppressBlockFlush)
-                    {
-                        state.InPreBlock = true;
-                        RenderChildren(node, ref current, paragraphs, state);
-                        state.InPreBlock = false;
-                    }
-                    else
-                    {
-                        state.InPreBlock = true;
-                        var preParagraphs = new List<Paragraph>();
-                        var preCurrent = new Paragraph();
-                        RenderChildren(node, ref preCurrent, preParagraphs, state);
-                        if (preCurrent.Inlines.Count > 0)
-                            preParagraphs.Add(preCurrent);
-                        state.InPreBlock = false;
-
-                        var codeBlock = new RichTextBlock
-                        {
-                            FontFamily = new FontFamily("Consolas"),
-                            TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap,
-                            IsTextSelectionEnabled = true
-                        };
-                        foreach (var p in preParagraphs)
-                            codeBlock.Blocks.Add(p);
-
-                        var border = new Border
-                        {
-                            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 128, 128, 128)),
-                            Padding = new Microsoft.UI.Xaml.Thickness(12, 8, 12, 8),
-                            CornerRadius = new Microsoft.UI.Xaml.CornerRadius(6),
-                            Child = codeBlock,
-                            Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6)
-                        };
-
-                        paragraphs.Add(new Paragraph
-                        {
-                            Inlines = { new InlineUIContainer { Child = border } }
-                        });
-                    }
+                    state.InPreBlock = true;
+                    var preInner = RenderIsolated(node, state);
+                    state.InPreBlock = false;
+                    AddBox(ref current, paragraphs, state, CreateCodeBox(preInner));
                     break;
 
                 case "UL":
@@ -297,6 +241,8 @@ namespace iV2EX.Controls
                 case "A":
                     var anchor = node as IHtmlAnchorElement;
                     if (anchor == null) break;
+                    if (TryAddDecodedEmail(anchor, ref current, state))
+                        break;
                     var link = BuildHyperlink(anchor);
                     if (link != null)
                     {
@@ -320,8 +266,13 @@ namespace iV2EX.Controls
                 case "HTML":
                 case "HEAD":
                 case "BODY":
+                    RenderChildren(node, ref current, paragraphs, state);
+                    break;
+
                 case "SPAN":
                 case "FONT":
+                    if (node is IElement spanEl && TryAddDecodedEmail(spanEl, ref current, state))
+                        break;
                     RenderChildren(node, ref current, paragraphs, state);
                     break;
 
@@ -339,6 +290,93 @@ namespace iV2EX.Controls
                         RenderChildren(node, ref current, paragraphs, state);
                     }
                     break;
+            }
+        }
+
+        private static List<Paragraph> RenderIsolated(INode node, RenderState state)
+        {
+            var paragraphs = new List<Paragraph>();
+            var current = new Paragraph();
+            RenderChildren(node, ref current, paragraphs, state);
+            if (current.Inlines.Count > 0)
+                paragraphs.Add(current);
+            return paragraphs;
+        }
+
+        private static void AddBox(ref Paragraph current, List<Paragraph> paragraphs, RenderState state, Border box)
+        {
+            if (box == null) return;
+            if (!state.SuppressBlockFlush)
+                FlushAndReset(ref current, paragraphs);
+            var container = new InlineUIContainer { Child = box };
+            if (state.SuppressBlockFlush)
+                current.Inlines.Add(container);
+            else
+                paragraphs.Add(new Paragraph { Inlines = { container } });
+        }
+
+        private static RichTextBlock ToRichText(List<Paragraph> paragraphs)
+        {
+            var block = new RichTextBlock
+            {
+                TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap,
+                IsTextSelectionEnabled = true
+            };
+            foreach (var p in paragraphs)
+                block.Blocks.Add(p);
+            return block;
+        }
+
+        private static Border CreateQuoteBox(List<Paragraph> inner)
+        {
+            if (inner.Count == 0) return null;
+            return new Border
+            {
+                BorderThickness = new Microsoft.UI.Xaml.Thickness(3, 0, 0, 0),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 160, 160, 160)),
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(28, 128, 128, 128)),
+                Padding = new Microsoft.UI.Xaml.Thickness(12, 8, 12, 8),
+                CornerRadius = new Microsoft.UI.Xaml.CornerRadius(0, 6, 6, 0),
+                Child = ToRichText(inner),
+                Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6),
+                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Stretch
+            };
+        }
+
+        private static Border CreateCodeBox(List<Paragraph> inner)
+        {
+            if (inner.Count == 0) return null;
+            var block = ToRichText(inner);
+            block.FontFamily = new FontFamily("Consolas");
+            return new Border
+            {
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 128, 128, 128)),
+                Padding = new Microsoft.UI.Xaml.Thickness(12, 8, 12, 8),
+                CornerRadius = new Microsoft.UI.Xaml.CornerRadius(6),
+                Child = block,
+                Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6)
+            };
+        }
+
+        private static bool TryAddDecodedEmail(IElement element, ref Paragraph current, RenderState state)
+        {
+            var encoded = element.GetAttribute("data-cfemail");
+            if (string.IsNullOrEmpty(encoded) || encoded.Length < 4 || encoded.Length % 2 != 0)
+                return false;
+            try
+            {
+                var key = Convert.ToByte(encoded.Substring(0, 2), 16);
+                var chars = new char[(encoded.Length - 2) / 2];
+                for (var i = 0; i < chars.Length; i++)
+                    chars[i] = (char)(Convert.ToByte(encoded.Substring(2 + i * 2, 2), 16) ^ key);
+                var wrapped = state.WrapInline(new Run { Text = new string(chars) });
+                if (wrapped != null)
+                    current.Inlines.Add(wrapped);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
