@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
@@ -148,8 +150,18 @@ namespace iV2EX.Fragments
                 Bronze = ParseCoin(moneyLink, "B"),
                 Notifications = right.QuerySelector("a[href='/notifications']").TextContent.Split(' ')
                     .FirstOrDefault(),
-                IsNotChecked = right.QuerySelector("a[href='/mission/daily']") != null
+                IsNotChecked = right.QuerySelector("a[href='/mission/daily']") != null,
+                ActivityPercent = ParseActivityPercent(right)
             };
+        }
+
+        private static double ParseActivityPercent(IElement right)
+        {
+            var style = right?.QuerySelector(".member-activity-bar > *")?.GetAttribute("style") ?? "";
+            var match = Regex.Match(style, @"width\s*:\s*([\d.]+)");
+            return match.Success && double.TryParse(match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent)
+                ? Math.Clamp(percent, 0, 100)
+                : 0;
         }
 
         private static int ParseCoin(IElement moneyLink, string alt)

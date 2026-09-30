@@ -36,6 +36,11 @@ namespace iV2EX.Util
             return check ? "未签到" : "已签到";
         }
 
+        public static string PercentToString(double percent)
+        {
+            return $"{percent:0}%";
+        }
+
         public static Visibility EmptyToVisibility(string s)
         {
             return string.IsNullOrEmpty(s) ? Visibility.Collapsed : Visibility.Visible;

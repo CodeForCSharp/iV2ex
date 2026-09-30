@@ -19,5 +19,7 @@
         public MemberModel Member { get; set; }
 
         public bool IsNotChecked { get; set; }
+
+        public double ActivityPercent { get; set; }
     }
 }

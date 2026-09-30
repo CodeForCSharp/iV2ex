@@ -123,6 +123,39 @@
                     </Grid>
                 </Button>
 
+                <!--  Activity  -->
+                <Grid Padding="8,6" ColumnDefinitions="Auto,*">
+                    <Grid Width="30" Height="30">
+                        <Ellipse Width="30" Height="30" Fill="#FF5B8DEF" />
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="White"
+                            Glyph="&#xE945;" />
+                    </Grid>
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                Text="活跃进度" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{x:Bind converter:Converter.PercentToString(People.ActivityPercent), Mode=OneWay}" />
+                        </Grid>
+                        <ProgressBar
+                            Height="6"
+                            Maximum="100"
+                            Foreground="#FF5B8DEF"
+                            Value="{x:Bind People.ActivityPercent, Mode=OneWay}" />
+                    </StackPanel>
+                </Grid>
+
                 <!--  Money  -->
                 <Button Style="{StaticResource MenuButtonStyle}" Click="MoneyItem_Click">
                     <Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto">
