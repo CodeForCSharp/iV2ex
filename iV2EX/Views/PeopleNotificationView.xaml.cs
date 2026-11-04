@@ -5,8 +5,8 @@ using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
+using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using System.Collections.Generic;
 
 namespace iV2EX.Views
 {
@@ -25,33 +25,37 @@ namespace iV2EX.Views
             {
                 var html = await ApiClient.GetNotifications(NotifyData.CurrentPage);
                 var dom = new HtmlParser().ParseDocument(html);
-                var header = dom.GetElementById("Main").QuerySelector("div.header");
-                var messages = int.Parse(header.QuerySelector("strong.gray")?.TextContent ?? "0");
-                var pages = messages % 10 != 0 ? messages / 10 + 1 : messages / 10;
+                var pages = ParseNotificationPages(dom);
                 var notifications = dom.QuerySelectorAll("#notifications > div.cell")
-                    .Where(node => node.Id != null).Select(
+                    .Where(node => !string.IsNullOrEmpty(node.Id) && node.Id.StartsWith("n_")).Select(
                         node =>
                         {
-                            var topicHref = node.QuerySelector("a.topic-link")?.GetAttribute("href") ?? "";
+                            var topicLink = node.QuerySelector("a.topic-link");
+                            var topicHref = topicLink?.GetAttribute("href") ?? "";
                             var linkPieces = topicHref.Split(new[] { '/', '#' }, StringSplitOptions.RemoveEmptyEntries);
-                            var topicId = linkPieces.Length > 1 ? int.Parse(linkPieces[1]) : 0;
+                            var topicId = linkPieces.Length > 1 && int.TryParse(linkPieces[1], out var parsedId)
+                                ? parsedId
+                                : 0;
                             var replyFloor = 0;
                             if (linkPieces.Length > 2)
                                 int.TryParse(linkPieces[2].Replace("reply", ""), out replyFloor);
+                            var avatar = node.QuerySelector("img.avatar");
                             return new NotificationModel
                             {
                                 Topic = new TopicModel
                                 {
-                                    Id = topicId
+                                    Id = topicId,
+                                    Title = topicLink?.TextContent
                                 },
                                 Member = new MemberModel
                                 {
-                                    Image = node.QuerySelector("img")?.GetAttribute("src")
+                                    Username = avatar?.GetAttribute("alt"),
+                                    Image = avatar?.GetAttribute("src")
                                 },
-                                Id = int.Parse(node.Id.Replace("n_", "")),
-                                Title = node.QuerySelector("span.fade")?.TextContent,
-                                ReplyDate = node.QuerySelector("span.snow")?.TextContent,
-                                Content = node.QuerySelector("div.payload")?.TextContent.Trim(),
+                                Id = int.TryParse(node.Id.AsSpan(2), out var notificationId) ? notificationId : 0,
+                                Title = node.QuerySelector("span.gray")?.TextContent?.Trim(),
+                                ReplyDate = node.QuerySelector("span.snow")?.TextContent?.Trim(),
+                                Content = node.QuerySelector("div.payload")?.TextContent?.Trim(),
                                 ReplyFloor = replyFloor
                             };
                         });
@@ -61,6 +65,31 @@ namespace iV2EX.Views
                     Entity = notifications
                 };
             };
+        }
+
+        // Notifications are 50 per page. Prefer the pager's max so a site-side page size
+        // change does not send incremental loading past the last real page.
+        private static int ParseNotificationPages(IHtmlDocument dom)
+        {
+            var pageInput = dom.QuerySelector("input.page_input");
+            if (int.TryParse(pageInput?.GetAttribute("max"), out var maxFromInput) && maxFromInput > 0)
+                return maxFromInput;
+
+            var lastPageLink = 0;
+            foreach (var link in dom.QuerySelectorAll(".ps_container a.page_normal, .ps_container a.page_current"))
+            {
+                if (int.TryParse(link.TextContent, out var n) && n > lastPageLink)
+                    lastPageLink = n;
+            }
+            if (lastPageLink > 0)
+                return lastPageLink;
+
+            var totalText = dom.QuerySelector("#Main div.header strong.gray")?.TextContent
+                            ?? dom.QuerySelector("div.header strong.gray")?.TextContent;
+            if (int.TryParse(totalText, out var total) && total > 0)
+                return (total + 49) / 50;
+
+            return 1;
         }
     }
 }
