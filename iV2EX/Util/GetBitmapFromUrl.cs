@@ -18,6 +18,19 @@ namespace iV2EX.Util
             var memStream = new InMemoryRandomAccessStream();
             await RandomAccessStream.CopyAsync(inputStream.AsInputStream(), memStream);
 
+            return await LoadFromStream(memStream);
+        }
+
+        public static async Task<ImageSource> GetBitmapFromBytes(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0) return null;
+            var memStream = new InMemoryRandomAccessStream();
+            await memStream.WriteAsync(bytes.AsBuffer());
+            return await LoadFromStream(memStream);
+        }
+
+        private static async Task<ImageSource> LoadFromStream(InMemoryRandomAccessStream memStream)
+        {
             return await IsWebp(memStream)
                 ? await LoadWebp(memStream)
                 : await LoadBitmapImage(memStream);

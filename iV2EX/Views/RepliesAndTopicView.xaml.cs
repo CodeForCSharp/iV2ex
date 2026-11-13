@@ -8,8 +8,6 @@ using System.Text.RegularExpressions;
 using Windows.ApplicationModel.DataTransfer;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -23,9 +21,7 @@ namespace iV2EX.Views
     public partial class RepliesAndTopicView : INotifyPropertyChanged
     {
         private int _id;
-
         private int _replyfloor;
-
         private TopicModel _topic = new TopicModel();
 
         public RepliesAndTopicView()
@@ -53,7 +49,7 @@ namespace iV2EX.Views
                 }
             };
             Replies.LoadFailed += _ => Toast.ShowTips("加载失败，请稍后重试");
-            var controls = new List<Control> {Send, ReplyText};
+            var controls = new List<Control> { Send, ReplyText };
 
             Send.Click += async (s, e) =>
             {
@@ -94,60 +90,6 @@ namespace iV2EX.Views
                 }
             };
 
-            UsernamePanel.Tapped += (s, e) =>
-            {
-                ReplyText.Text += $"@{(string)(s as TextBlock)?.Tag} ";
-            };
-
-            CollectedPanel.Tapped += async (s, e) =>
-            {
-                try
-                {
-                    var html = await ApiClient.GetTopicInformation(_id);
-                    var url = "";
-                    var regexFav = new Regex("<a href=\"([^\"]*)\"[^>]*>加入收藏</a>");
-                    var regexUnFav = new Regex("<a href=\"([^\"]*)\"[^>]*>取消收藏</a>");
-                    if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
-                    if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
-                    if (string.IsNullOrEmpty(url)) return;
-                    var request = new HttpRequestMessage
-                    {
-                        Method = HttpMethod.Get,
-                        RequestUri = new Uri($"https://www.v2ex.com{url}"),
-                        Headers = { { "Referer", $"https://www.v2ex.com/t/{_id}" } }
-                    };
-                    await ApiClient.Client.SendAsync(request);
-                    if (Topic.Collect == "加入\n收藏")
-                    {
-                        Topic.Collect = "已\n收藏";
-                        Toast.ShowTips("收藏成功");
-                    }
-                    else
-                    {
-                        Topic.Collect = "加入\n收藏";
-                        Toast.ShowTips("取消收藏成功");
-                    }
-                    OnPropertyChanged(nameof(Topic));
-                }
-                catch
-                {
-                    Toast.ShowTips("操作失败");
-                }
-            };
-
-            TImagePanel.Tapped += (s, e) =>
-            {
-                PageStack.Next("Right", "Right", typeof(MemberView), TImagePanel.Tag);
-            };
-
-            CopyLinkPanel.Tapped += (s, e) =>
-            {
-                var clipBoardText = new DataPackage();
-                clipBoardText.SetText(Topic.Url);
-                Clipboard.SetContent(clipBoardText);
-                Toast.ShowTips("已复制到剪贴板");
-            };
-
             Replies.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetRepliesAndTopicContent(_id, Replies.CurrentPage);
@@ -160,6 +102,8 @@ namespace iV2EX.Views
                         var replyString = match.Success ? match.Groups[1].Value : "0";
                         var maxReply = int.Parse(replyString);
                         var node = main.QuerySelector("div.header");
+                        var nodeLink = node.QuerySelector("a[href^='/go/']");
+                        var isCollected = !main.TextContent.Contains("加入收藏");
                         var topic = new TopicModel
                         {
                             Id = _id,
@@ -175,11 +119,13 @@ namespace iV2EX.Views
                                 Content = subtle.QuerySelector("div.topic_content").InnerHtml,
                                 LastReply = subtle.QuerySelector("span.fade").TextContent
                             }).ToList(),
-                            Collect = main.TextContent.Contains("加入收藏") ? "加入\n收藏" : "已\n收藏",
+                            IsCollected = isCollected,
+                            Collect = isCollected ? "已收藏" : "收藏",
                             Content = main.QuerySelector("div.topic_content")?.InnerHtml,
                             Replies = maxReply,
                             CreateDate = node.QuerySelector("small.gray span").TextContent.Trim(),
-                            NodeName = node.QuerySelector("a[href^='/go/']")?.TextContent?.Trim()
+                            NodeName = nodeLink?.TextContent?.Trim(),
+                            NodeSlug = nodeLink?.GetAttribute("href")?.Replace("/go/", "").Trim('/')
                         };
                         Topic = topic;
                         _ = BrowseHistoryStore.AddAsync(topic);
@@ -258,40 +204,97 @@ namespace iV2EX.Views
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void ImagePanel_Tapped(object sender, TappedRoutedEventArgs e)
+        private void AuthorButton_Click(object sender, RoutedEventArgs e)
         {
             var username = (sender as FrameworkElement)?.Tag as string;
             if (!string.IsNullOrEmpty(username))
                 PageStack.Next("Right", "Right", typeof(MemberView), username);
         }
 
-        private void UsernamePanel_Tapped(object sender, TappedRoutedEventArgs e)
+        private void UsernameButton_Click(object sender, RoutedEventArgs e)
         {
-            ReplyText.Text += $"@{(string)(sender as TextBlock)?.Tag} ";
+            InsertMention((sender as FrameworkElement)?.Tag as string);
         }
 
-        private void ThanksPanel_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs e)
+        private void ReplyToButton_Click(object sender, RoutedEventArgs e)
         {
-            var panel = sender as StackPanel;
-            var reply = panel?.DataContext as ReplyModel;
-            UpdateThanksPanelUI(panel, reply);
+            InsertMention((sender as FrameworkElement)?.Tag as string);
         }
 
-        private static void UpdateThanksPanelUI(StackPanel panel, ReplyModel reply)
+        private void InsertMention(string username)
         {
-            if (panel == null || reply == null) return;
-            panel.Background = reply.IsThanked
-                ? new SolidColorBrush(Microsoft.UI.Colors.Gray)
-                : new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x79, 0x86, 0xCB));
-            (panel.Children[0] as TextBlock).Text = reply.Thanks.ToString();
+            if (string.IsNullOrEmpty(username)) return;
+            var mention = $"@{username} ";
+            if (!ReplyText.Text.Contains(mention))
+            {
+                if (!string.IsNullOrEmpty(ReplyText.Text) && !ReplyText.Text.EndsWith(" ") && !ReplyText.Text.EndsWith("\n"))
+                    ReplyText.Text += " ";
+                ReplyText.Text += mention;
+            }
+            ReplyText.Focus(FocusState.Programmatic);
+            ReplyText.SelectionStart = ReplyText.Text.Length;
         }
 
-        private async void ThanksPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        private void NodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(Topic.NodeSlug)) return;
+            PageStack.Next("Right", "Right", typeof(OneNodeTopicsView), new NodeModel
+            {
+                Name = Topic.NodeSlug,
+                Title = Topic.NodeName
+            });
+        }
+
+        private async void CollectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(Topic.Title)) return;
+            CollectedPanel.IsEnabled = false;
+            try
+            {
+                var html = await ApiClient.GetTopicInformation(_id);
+                var url = "";
+                var regexFav = new Regex("<a href=\"([^\"]*)\"[^>]*>加入收藏</a>");
+                var regexUnFav = new Regex("<a href=\"([^\"]*)\"[^>]*>取消收藏</a>");
+                if (regexFav.IsMatch(html)) url = regexFav.Match(html).Groups[1].Value;
+                if (regexUnFav.IsMatch(html)) url = regexUnFav.Match(html).Groups[1].Value;
+                if (string.IsNullOrEmpty(url)) return;
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri($"https://www.v2ex.com{url}"),
+                    Headers = { { "Referer", $"https://www.v2ex.com/t/{_id}" } }
+                };
+                await ApiClient.Client.SendAsync(request);
+                Topic.IsCollected = !Topic.IsCollected;
+                Topic.Collect = Topic.IsCollected ? "已收藏" : "收藏";
+                Toast.ShowTips(Topic.IsCollected ? "收藏成功" : "取消收藏成功");
+                OnPropertyChanged(nameof(Topic));
+            }
+            catch
+            {
+                Toast.ShowTips("操作失败");
+            }
+            finally
+            {
+                CollectedPanel.IsEnabled = true;
+            }
+        }
+
+        private void CopyLinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            var url = string.IsNullOrEmpty(Topic.Url) ? $"https://www.v2ex.com/t/{_id}" : Topic.Url;
+            var clipBoardText = new DataPackage();
+            clipBoardText.SetText(url);
+            Clipboard.SetContent(clipBoardText);
+            Toast.ShowTips("已复制到剪贴板");
+        }
+
+        private async void ThanksButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var panel = sender as StackPanel;
-                var reply = panel?.DataContext as ReplyModel;
+                var button = sender as Button;
+                var reply = button?.Tag as ReplyModel;
                 if (reply == null) return;
 
                 if (reply.IsThanked)
@@ -320,7 +323,6 @@ namespace iV2EX.Views
                     Toast.ShowTips("感谢已发送");
                     reply.Thanks += 1;
                     reply.IsThanked = true;
-                    UpdateThanksPanelUI(panel, reply);
                 }
                 else
                 {

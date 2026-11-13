@@ -18,8 +18,10 @@ namespace iV2EX.Fragments
     {
         private int _loadGeneration;
         private CancellationTokenSource _loadCts;
+        private CollectedListModel _selectedTab;
+        private readonly Action _loadTopicsAction;
 
-        private CollectedListModel[] _tabs =
+        private readonly CollectedListModel[] _tabs =
         {
             new CollectedListModel {Text = "技术", Name = "tech"},
             new CollectedListModel {Text = "创意", Name = "creative"},
@@ -34,12 +36,13 @@ namespace iV2EX.Fragments
             new CollectedListModel {Text = "R2", Name = "r2"},
             new CollectedListModel {Text = "节点", Name = "nodes"},
             new CollectedListModel {Text = "关注", Name = "members"}
-
         };
+
         public CollectedTopicsFragment()
         {
             InitializeComponent();
             LabelPanel.ItemsSource = _tabs;
+
             async Task<IEnumerable<TopicModel>> loadData(string tabName)
             {
                 var html = await ApiClient.GetTopicsWithTab(tabName);
@@ -49,7 +52,7 @@ namespace iV2EX.Fragments
 
             async void LoadTopics()
             {
-                if (LabelPanel.SelectedItem is not CollectedListModel model) return;
+                if (_selectedTab == null) return;
 
                 var generation = ++_loadGeneration;
                 _loadCts?.Cancel();
@@ -70,7 +73,7 @@ namespace iV2EX.Fragments
 
                 try
                 {
-                    var topics = await AsyncHelper.RetryAsync(() => loadData(model.Name), 3);
+                    var topics = await AsyncHelper.RetryAsync(() => loadData(_selectedTab.Name), 3);
                     if (generation != _loadGeneration) return;
 
                     News.Clear();
@@ -99,8 +102,8 @@ namespace iV2EX.Fragments
                 }
             }
 
-            LabelPanel.SelectionChanged += (s, e) => { LoadTopics(); };
-            Refresh.Tapped += (s, e) => { LoadTopics(); };
+            _loadTopicsAction = LoadTopics;
+
             RetryButton.Click += (s, e) => { LoadTopics(); };
 
             NewsList.ItemClick += (s, e) =>
@@ -109,9 +112,30 @@ namespace iV2EX.Fragments
                     PageStack.Next("Left", "Right", typeof(RepliesAndTopicView), item.Id);
             };
 
-            LabelPanel.SelectedIndex = 0;
+            SelectTab(_tabs[0]);
         }
 
         public ObservableCollection<TopicModel> News { get; } = new ObservableCollection<TopicModel>();
+
+        private void SelectTab(CollectedListModel tab)
+        {
+            if (tab == null || _selectedTab == tab) return;
+            if (_selectedTab != null)
+                _selectedTab.IsSelected = false;
+            _selectedTab = tab;
+            _selectedTab.IsSelected = true;
+            _loadTopicsAction?.Invoke();
+        }
+
+        private void TabButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.Tag is CollectedListModel tab)
+                SelectTab(tab);
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            _loadTopicsAction?.Invoke();
+        }
     }
 }

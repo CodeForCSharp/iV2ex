@@ -77,13 +77,10 @@
                 <!--  Profile header  -->
                 <Button Style="{StaticResource MenuButtonStyle}" Click="UserItem_Click">
                     <Grid Padding="4,6" ColumnDefinitions="Auto,*">
-                        <Ellipse Grid.Column="0" Width="40" Height="40">
-                            <Ellipse.Fill>
-                                <ImageBrush
-                                    Stretch="UniformToFill"
-                                    ImageSource="{x:Bind People.Member.Image, Converter={StaticResource ImageConverter}, Mode=OneWay}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
+                        <localcontrol:AvatarImage
+                            Grid.Column="0"
+                            AvatarSize="40"
+                            ImageUrl="{x:Bind People.Member.Image, Mode=OneWay}" />
                         <TextBlock
                             Grid.Column="1"
                             Margin="12,0,0,0"

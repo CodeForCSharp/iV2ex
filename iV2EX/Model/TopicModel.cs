@@ -20,11 +20,15 @@ namespace iV2EX.Model
 
         public string NodeName { get; set; }
 
+        public string NodeSlug { get; set; }
+
         public string LastUsername { get; set; }
 
         public string LastReply { get; set; }
 
         public string Collect { get; set; }
+
+        public bool IsCollected { get; set; }
 
         public List<TopicModel> Postscript { get; set; }
     }

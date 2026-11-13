@@ -5,6 +5,7 @@
     xmlns:converter="using:iV2EX.Util"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="using:iV2EX.Model"
+    xmlns:localcontrol="using:iV2EX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="MemberPage"
     mc:Ignorable="d">
@@ -157,16 +158,13 @@
 
             <!--  Avatar  -->
             <Grid Grid.Column="0">
-                <Ellipse Width="56" Height="56">
-                    <Ellipse.Fill>
-                        <ImageBrush
-                            Stretch="UniformToFill"
-                            ImageSource="{x:Bind Member.Image, Converter={StaticResource ImageConverter}, Mode=OneWay}" />
-                    </Ellipse.Fill>
-                </Ellipse>
+                <localcontrol:AvatarImage
+                    AvatarSize="56"
+                    ImageUrl="{x:Bind Member.Image, Mode=OneWay}" />
                 <Ellipse
                     Width="56"
                     Height="56"
+                    IsHitTestVisible="False"
                     Stroke="{ThemeResource CardStrokeColorDefaultBrush}"
                     StrokeThickness="1"
                     Fill="Transparent" />

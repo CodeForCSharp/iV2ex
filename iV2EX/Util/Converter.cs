@@ -58,5 +58,48 @@ namespace iV2EX.Util
         {
             return n > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        public static string CollectToGlyph(bool isCollected)
+        {
+            return isCollected ? "\uE735" : "\uE734";
+        }
+
+        public static string CollectToText(bool isCollected)
+        {
+            return isCollected ? "已收藏" : "收藏";
+        }
+
+        public static SolidColorBrush ThanksToBackground(bool isThanked)
+        {
+            return isThanked
+                ? new SolidColorBrush(Color.FromArgb(255, 224, 224, 224))
+                : new SolidColorBrush(Color.FromArgb(24, 63, 81, 181));
+        }
+
+        public static SolidColorBrush ThanksToForeground(bool isThanked)
+        {
+            return isThanked
+                ? new SolidColorBrush(Color.FromArgb(255, 117, 117, 117))
+                : new SolidColorBrush(Color.FromArgb(255, 63, 81, 181));
+        }
+
+        public static string ThanksToText(int thanks)
+        {
+            return thanks > 0 ? thanks.ToString() : "感谢";
+        }
+
+        public static SolidColorBrush TabToBackground(bool isSelected)
+        {
+            return isSelected
+                ? new SolidColorBrush(Color.FromArgb(255, 63, 81, 181))
+                : new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+        }
+
+        public static SolidColorBrush TabToForeground(bool isSelected)
+        {
+            return isSelected
+                ? new SolidColorBrush(Color.FromArgb(255, 255, 255, 255))
+                : new SolidColorBrush(Color.FromArgb(255, 96, 96, 96));
+        }
     }
 }
