@@ -21,5 +21,19 @@
             ItemsSource="{x:Bind NotifyData}"
             SelectionMode="Single"
             ShowsScrollingPlaceholders="True" />
+        <ProgressBar
+            x:Name="LoadingBar"
+            VerticalAlignment="Top"
+            IsHitTestVisible="False"
+            IsIndeterminate="True"
+            Visibility="Collapsed" />
+        <ProgressRing
+            x:Name="LoadingRing"
+            Width="36"
+            Height="36"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsActive="False"
+            Visibility="Collapsed" />
     </Grid>
 </Page>

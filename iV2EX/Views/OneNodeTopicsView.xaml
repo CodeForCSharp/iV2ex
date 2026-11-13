@@ -697,5 +697,36 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+        <ProgressBar
+            x:Name="LoadingBar"
+            VerticalAlignment="Top"
+            Foreground="{StaticResource BG}"
+            IsHitTestVisible="False"
+            IsIndeterminate="True"
+            Visibility="Collapsed" />
+        <ProgressRing
+            x:Name="LoadingRing"
+            Width="36"
+            Height="36"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="{StaticResource BG}"
+            IsActive="False"
+            Visibility="Collapsed" />
+        <StackPanel
+            x:Name="ErrorPanel"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="12"
+            Visibility="Collapsed">
+            <TextBlock
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="加载失败，请检查网络后重试" />
+            <Button
+                x:Name="RetryButton"
+                HorizontalAlignment="Center"
+                Content="重新加载" />
+        </StackPanel>
     </Grid>
 </Page>

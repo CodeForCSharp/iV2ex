@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using iV2EX.Annotations;
@@ -23,6 +24,41 @@ namespace iV2EX.Views
         public OneNodeTopicsView()
         {
             InitializeComponent();
+
+            NotifyData.LoadingStateChanged += isLoading =>
+            {
+                if (isLoading)
+                {
+                    ErrorPanel.Visibility = Visibility.Collapsed;
+                    if (NotifyData.Count == 0)
+                    {
+                        LoadingRing.IsActive = true;
+                        LoadingRing.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        LoadingBar.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    LoadingRing.IsActive = false;
+                    LoadingRing.Visibility = Visibility.Collapsed;
+                    LoadingBar.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            NotifyData.LoadFailed += _ =>
+            {
+                if (NotifyData.Count == 0)
+                    ErrorPanel.Visibility = Visibility.Visible;
+            };
+
+            RetryButton.Click += (s, e) =>
+            {
+                ErrorPanel.Visibility = Visibility.Collapsed;
+                NotifyData.Retry();
+            };
 
             NodeTopcisList.ItemClick += (s, e) =>
             {

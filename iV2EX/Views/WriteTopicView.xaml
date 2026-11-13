@@ -11,20 +11,24 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBox
             Name="TitleText"
             Grid.Row="0"
-            Margin="12,4,12,0"
+            MinHeight="36"
+            Margin="12,8,12,4"
             PlaceholderText="标题,不超过120字" />
         <TextBox
             Name="Body"
             Grid.Row="1"
             Margin="12,4,12,0"
             AcceptsReturn="True"
+            TextWrapping="Wrap"
+            VerticalContentAlignment="Top"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
             PlaceholderText="正文,不超过20000字" />
         <Grid Grid.Row="2" Margin="12,8,12,8">
             <Grid.ColumnDefinitions>
@@ -59,6 +63,8 @@
         <localcontrol:ToastTips
             x:Name="Toast"
             Grid.Row="0"
+            Grid.RowSpan="3"
+            Canvas.ZIndex="10"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top" />
     </Grid>

@@ -11,23 +11,82 @@
     d:DesignWidth="400"
     mc:Ignorable="d">
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView Name="InView" IsItemClickEnabled="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Padding="12,10"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,0,0,1">
+            <TextBox
+                x:Name="SearchBox"
+                PlaceholderText="搜索节点名称或描述..."
+                TextChanged="SearchBox_TextChanged" />
+        </Grid>
+        <ListView
+            Name="InView"
+            Grid.Row="1"
+            IsItemClickEnabled="True">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="data:NodeModel">
-                    <StackPanel Margin="12,8">
+                    <StackPanel Margin="12,8" Spacing="2">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                MaxLines="1"
+                                Text="{x:Bind Title}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                Text="{x:Bind Name}" />
+                        </StackPanel>
                         <TextBlock
-                            FontSize="16"
-                            Foreground="#FF3D3D3D"
+                            FontSize="13"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             MaxLines="1"
-                            Text="{x:Bind Title}" />
-                        <TextBlock
-                            FontSize="14"
-                            Foreground="Gray"
-                            MaxLines="1"
+                            TextTrimming="CharacterEllipsis"
                             Text="{x:Bind Header}" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <ProgressRing
+            x:Name="LoadingRing"
+            Grid.Row="1"
+            Width="36"
+            Height="36"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsActive="False"
+            Visibility="Collapsed" />
+        <TextBlock
+            x:Name="EmptyHint"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+            Text="未找到匹配的节点"
+            Visibility="Collapsed" />
+        <StackPanel
+            x:Name="ErrorPanel"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="12"
+            Visibility="Collapsed">
+            <TextBlock
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="节点列表加载失败" />
+            <Button
+                x:Name="RetryButton"
+                HorizontalAlignment="Center"
+                Content="重新加载" />
+        </StackPanel>
     </Grid>
 </UserControl>

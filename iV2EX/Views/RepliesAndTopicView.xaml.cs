@@ -31,6 +31,28 @@ namespace iV2EX.Views
         public RepliesAndTopicView()
         {
             InitializeComponent();
+            Replies.LoadingStateChanged += isLoading =>
+            {
+                if (isLoading)
+                {
+                    if (string.IsNullOrEmpty(Topic.Title))
+                    {
+                        LoadingRing.IsActive = true;
+                        LoadingRing.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        LoadingBar.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    LoadingRing.IsActive = false;
+                    LoadingRing.Visibility = Visibility.Collapsed;
+                    LoadingBar.Visibility = Visibility.Collapsed;
+                }
+            };
+            Replies.LoadFailed += _ => Toast.ShowTips("加载失败，请稍后重试");
             var controls = new List<Control> {Send, ReplyText};
 
             Send.Click += async (s, e) =>

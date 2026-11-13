@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
 using iV2EX.Util;
 using iV2EX.Views;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using AngleSharp.Html.Parser;
@@ -14,6 +16,8 @@ namespace iV2EX.Fragments
 {
     public partial class CollectedTopicsFragment
     {
+        private int _loadGeneration;
+        private CancellationTokenSource _loadCts;
 
         private CollectedListModel[] _tabs =
         {
@@ -36,24 +40,68 @@ namespace iV2EX.Fragments
         {
             InitializeComponent();
             LabelPanel.ItemsSource = _tabs;
-            async Task<IEnumerable<TopicModel>> loadData()
+            async Task<IEnumerable<TopicModel>> loadData(string tabName)
             {
-                var model = LabelPanel.SelectedItem as CollectedListModel;
-                var html = await ApiClient.GetTopicsWithTab(model.Name);
+                var html = await ApiClient.GetTopicsWithTab(tabName);
                 var dom = new HtmlParser().ParseDocument(html);
                 return DomParse.ParseTopics(dom);
             }
 
             async void LoadTopics()
             {
-                var topics = await AsyncHelper.RetryAsync(() => loadData(), 5);
-                News.Clear();
-                foreach (var item in topics)
-                    News.Add(item);
+                if (LabelPanel.SelectedItem is not CollectedListModel model) return;
+
+                var generation = ++_loadGeneration;
+                _loadCts?.Cancel();
+                _loadCts?.Dispose();
+                _loadCts = new CancellationTokenSource();
+
+                ErrorPanel.Visibility = Visibility.Collapsed;
+                if (News.Count == 0)
+                {
+                    LoadingRing.IsActive = true;
+                    LoadingRing.Visibility = Visibility.Visible;
+                    LoadingBar.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    LoadingBar.Visibility = Visibility.Visible;
+                }
+
+                try
+                {
+                    var topics = await AsyncHelper.RetryAsync(() => loadData(model.Name), 3);
+                    if (generation != _loadGeneration) return;
+
+                    News.Clear();
+                    if (topics != null)
+                    {
+                        foreach (var item in topics)
+                            News.Add(item);
+                    }
+                }
+                catch
+                {
+                    if (generation != _loadGeneration) return;
+                    if (News.Count == 0)
+                        ErrorPanel.Visibility = Visibility.Visible;
+                    else
+                        Toast.ShowTips("刷新失败，请稍后重试");
+                }
+                finally
+                {
+                    if (generation == _loadGeneration)
+                    {
+                        LoadingRing.IsActive = false;
+                        LoadingRing.Visibility = Visibility.Collapsed;
+                        LoadingBar.Visibility = Visibility.Collapsed;
+                    }
+                }
             }
 
             LabelPanel.SelectionChanged += (s, e) => { LoadTopics(); };
             Refresh.Tapped += (s, e) => { LoadTopics(); };
+            RetryButton.Click += (s, e) => { LoadTopics(); };
 
             NewsList.ItemClick += (s, e) =>
             {

@@ -5,6 +5,7 @@ using iV2EX.Util;
 using System.Collections.Generic;
 using AngleSharp.Html.Parser;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 
 namespace iV2EX.Views
 {
@@ -34,7 +35,17 @@ namespace iV2EX.Views
 
             PeopleNodePage.Loaded += async (s, e) =>
             {
-                PeopleNodeList.ItemsSource = await AsyncHelper.RetryAsync(() => loadData(), 5);
+                LoadingRing.IsActive = true;
+                LoadingRing.Visibility = Visibility.Visible;
+                try
+                {
+                    PeopleNodeList.ItemsSource = await AsyncHelper.RetryAsync(() => loadData(), 5);
+                }
+                finally
+                {
+                    LoadingRing.IsActive = false;
+                    LoadingRing.Visibility = Visibility.Collapsed;
+                }
             };
 
             PeopleNodeList.ItemClick += (s, e) =>

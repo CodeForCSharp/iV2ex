@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -13,6 +14,27 @@ namespace iV2EX.Views
         public PeopleFollowerView()
         {
             InitializeComponent();
+            NotifyData.LoadingStateChanged += isLoading =>
+            {
+                if (isLoading)
+                {
+                    if (NotifyData.Count == 0)
+                    {
+                        LoadingRing.IsActive = true;
+                        LoadingRing.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        LoadingBar.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    LoadingRing.IsActive = false;
+                    LoadingRing.Visibility = Visibility.Collapsed;
+                    LoadingBar.Visibility = Visibility.Collapsed;
+                }
+            };
             NotifyData.LoadDataTask = async count =>
             {
                 var html = await ApiClient.GetFollowerTopics(NotifyData.CurrentPage);

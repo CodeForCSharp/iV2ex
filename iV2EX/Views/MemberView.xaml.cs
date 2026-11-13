@@ -88,6 +88,50 @@ namespace iV2EX.Views
                 }
             };
 
+            Topics.LoadingStateChanged += isLoading =>
+            {
+                if (isLoading)
+                {
+                    if (Topics.Count == 0)
+                    {
+                        TopicsLoadingRing.IsActive = true;
+                        TopicsLoadingRing.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        TopicsLoadingBar.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    TopicsLoadingRing.IsActive = false;
+                    TopicsLoadingRing.Visibility = Visibility.Collapsed;
+                    TopicsLoadingBar.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            Notifications.LoadingStateChanged += isLoading =>
+            {
+                if (isLoading)
+                {
+                    if (Notifications.Count == 0)
+                    {
+                        NotificationsLoadingRing.IsActive = true;
+                        NotificationsLoadingRing.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        NotificationsLoadingBar.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    NotificationsLoadingRing.IsActive = false;
+                    NotificationsLoadingRing.Visibility = Visibility.Collapsed;
+                    NotificationsLoadingBar.Visibility = Visibility.Collapsed;
+                }
+            };
+
             MemberInfoList.ItemClick += (s, e) =>
             {
                 if (e.ClickedItem is TopicModel item)

@@ -17,11 +17,16 @@ namespace iV2EX.Util
         public int CurrentPage { get; private set; } = 1;
         public Func<int, Task<PagesBaseModel<T>>> LoadDataTask { get; set; }
         public bool HasMoreItems { get; private set; } = true;
+        public bool IsBusy => _busy;
+
+        public event Action<bool> LoadingStateChanged;
+        public event Action<Exception> LoadFailed;
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             if (_busy) throw new InvalidOperationException("Only one operation in flight at a time");
             _busy = true;
+            LoadingStateChanged?.Invoke(true);
             return AsyncInfo.Run(c => LoadMoreItemsAsync(c, count));
         }
 
@@ -30,21 +35,31 @@ namespace iV2EX.Util
             try
             {
                 var model = await LoadDataTask(Count);
-                var items = model.Entity;
+                var items = model.Entity?.ToList() ?? new System.Collections.Generic.List<T>();
                 MaxPage = model.Pages;
                 foreach (var item in items) Add(item);
                 CurrentPage++;
                 HasMoreItems = CurrentPage <= MaxPage;
-                return new LoadMoreItemsResult {Count = (uint) items.Count()};
+                return new LoadMoreItemsResult {Count = (uint) items.Count};
             }
-            catch
+            catch (Exception ex)
             {
+                HasMoreItems = false;
+                LoadFailed?.Invoke(ex);
                 return new LoadMoreItemsResult {Count = 0};
             }
             finally
             {
                 _busy = false;
+                LoadingStateChanged?.Invoke(false);
             }
+        }
+
+        public void Retry()
+        {
+            if (_busy) return;
+            HasMoreItems = true;
+            _ = LoadMoreItemsAsync(20);
         }
     }
 }

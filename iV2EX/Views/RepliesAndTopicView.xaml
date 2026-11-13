@@ -250,6 +250,24 @@
                 <SymbolIcon Symbol="Send" />
             </Button>
         </RelativePanel>
+        <ProgressBar
+            x:Name="LoadingBar"
+            IsHitTestVisible="False"
+            IsIndeterminate="True"
+            Foreground="#3F51B5"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.Below="TImagePanel"
+            Visibility="Collapsed" />
+        <ProgressRing
+            x:Name="LoadingRing"
+            Width="36"
+            Height="36"
+            Foreground="#3F51B5"
+            IsActive="False"
+            RelativePanel.AlignHorizontalCenterWithPanel="True"
+            RelativePanel.AlignVerticalCenterWithPanel="True"
+            Visibility="Collapsed" />
         <localcontrol:ToastTips
             x:Name="Toast"
             RelativePanel.AlignLeftWithPanel="True"

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AngleSharp.Html.Parser;
+using Microsoft.UI.Xaml;
 using iV2EX.GetData;
 using iV2EX.Model;
 using iV2EX.TupleModel;
@@ -35,6 +36,27 @@ namespace iV2EX.Views
                 return new PagesBaseModel<MoneyModel> {Entity = moneys, Pages = pages};
             };
             InitializeComponent();
+            Moneys.LoadingStateChanged += isLoading =>
+            {
+                if (isLoading)
+                {
+                    if (Moneys.Count == 0)
+                    {
+                        LoadingRing.IsActive = true;
+                        LoadingRing.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        LoadingBar.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    LoadingRing.IsActive = false;
+                    LoadingRing.Visibility = Visibility.Collapsed;
+                    LoadingBar.Visibility = Visibility.Collapsed;
+                }
+            };
         }
 
         public IncrementalLoadingCollection<MoneyModel> Moneys { get; } =

@@ -215,142 +215,178 @@
 
             <!--  Tab: 用户话题  -->
             <PivotItem Header="用户话题">
-                <ListView
-                    x:Name="MemberInfoList"
-                    IsItemClickEnabled="True"
-                    ItemsSource="{x:Bind Topics}"
-                    SelectionMode="None">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Padding" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.Header>
-                        <TextBlock
-                            x:Name="ListHiddenPanel"
-                            Margin="0,40,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Visibility="Collapsed">
-                            <Run
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                Text="&#xe652;" />
-                            <Run Text=" 该列表被隐藏" />
-                        </TextBlock>
-                    </ListView.Header>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="data:TopicModel">
-                            <Grid
-                                Padding="16,12"
-                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                                BorderThickness="0,0,0,1"
-                                ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="0" Spacing="4">
-                                    <TextBlock
-                                        FontSize="15"
-                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                        MaxLines="3"
-                                        Text="{x:Bind Title}"
-                                        TextWrapping="Wrap" />
-                                    <StackPanel Orientation="Horizontal" Spacing="16">
+                <Grid>
+                    <ListView
+                        x:Name="MemberInfoList"
+                        IsItemClickEnabled="True"
+                        ItemsSource="{x:Bind Topics}"
+                        SelectionMode="None">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.Header>
+                            <TextBlock
+                                x:Name="ListHiddenPanel"
+                                Margin="0,40,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Visibility="Collapsed">
+                                <Run
+                                    FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
+                                    Text="&#xe652;" />
+                                <Run Text=" 该列表被隐藏" />
+                            </TextBlock>
+                        </ListView.Header>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="data:TopicModel">
+                                <Grid
+                                    Padding="16,12"
+                                    BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                    BorderThickness="0,0,0,1"
+                                    ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="4">
                                         <TextBlock
-                                            FontSize="12"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="{x:Bind NodeName}" />
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="{x:Bind Member.Username}" />
+                                            FontSize="15"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                            MaxLines="3"
+                                            Text="{x:Bind Title}"
+                                            TextWrapping="Wrap" />
+                                        <StackPanel Orientation="Horizontal" Spacing="16">
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="{x:Bind NodeName}" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="{x:Bind Member.Username}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="16">
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                Text="{x:Bind LastUsername}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                Text="{x:Bind LastReply}"
+                                                TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="16">
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                            Text="{x:Bind LastUsername}"
-                                            TextTrimming="CharacterEllipsis" />
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                            Text="{x:Bind LastReply}"
-                                            TextTrimming="CharacterEllipsis" />
-                                    </StackPanel>
-                                </StackPanel>
 
-                                <!--  Reply count badge  -->
-                                <Border
-                                    Grid.Column="1"
-                                    Width="36"
-                                    Height="24"
-                                    Margin="8,2,0,0"
-                                    Background="#7986CB"
-                                    CornerRadius="12"
-                                    VerticalAlignment="Top">
-                                    <TextBlock
-                                        FontSize="12"
-                                        FontWeight="SemiBold"
-                                        Foreground="White"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Text="{x:Bind Replies}"
-                                        TextAlignment="Center"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Border>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                                    <!--  Reply count badge  -->
+                                    <Border
+                                        Grid.Column="1"
+                                        MinWidth="32"
+                                        Height="24"
+                                        Margin="8,2,0,0"
+                                        Padding="8,0"
+                                        Background="#7986CB"
+                                        CornerRadius="12"
+                                        VerticalAlignment="Top">
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="White"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind Replies}"
+                                            TextAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <ProgressBar
+                        x:Name="TopicsLoadingBar"
+                        VerticalAlignment="Top"
+                        Foreground="{StaticResource ThemeColor}"
+                        IsHitTestVisible="False"
+                        IsIndeterminate="True"
+                        Visibility="Collapsed" />
+                    <ProgressRing
+                        x:Name="TopicsLoadingRing"
+                        Width="36"
+                        Height="36"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="{StaticResource ThemeColor}"
+                        IsActive="False"
+                        Visibility="Collapsed" />
+                </Grid>
             </PivotItem>
 
             <!--  Tab: 用户回复  -->
             <PivotItem Header="用户回复">
-                <ListView
-                    x:Name="NotificationsList"
-                    ItemsSource="{x:Bind Notifications}"
-                    SelectionMode="None">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Padding" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="data:NotificationModel">
-                            <Border
-                                Padding="16,14"
-                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                                BorderThickness="0,0,0,1">
-                                <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
-                                    <TextBlock
-                                        Grid.Row="0"
-                                        FontSize="15"
-                                        FontWeight="SemiBold"
-                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                        MaxLines="2"
-                                        Text="{x:Bind Title}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        FontSize="14"
-                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                        MaxLines="6"
-                                        Text="{x:Bind Content}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock
-                                        Grid.Row="2"
-                                        HorizontalAlignment="Right"
-                                        FontSize="12"
-                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                        Text="{x:Bind ReplyDate}" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                <Grid>
+                    <ListView
+                        x:Name="NotificationsList"
+                        ItemsSource="{x:Bind Notifications}"
+                        SelectionMode="None">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="data:NotificationModel">
+                                <Border
+                                    Padding="16,14"
+                                    BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                    BorderThickness="0,0,0,1">
+                                    <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            FontSize="15"
+                                            FontWeight="SemiBold"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                            MaxLines="2"
+                                            Text="{x:Bind Title}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            FontSize="14"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            MaxLines="6"
+                                            Text="{x:Bind Content}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Grid.Row="2"
+                                            HorizontalAlignment="Right"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                            Text="{x:Bind ReplyDate}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <ProgressBar
+                        x:Name="NotificationsLoadingBar"
+                        VerticalAlignment="Top"
+                        Foreground="{StaticResource ThemeColor}"
+                        IsHitTestVisible="False"
+                        IsIndeterminate="True"
+                        Visibility="Collapsed" />
+                    <ProgressRing
+                        x:Name="NotificationsLoadingRing"
+                        Width="36"
+                        Height="36"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="{StaticResource ThemeColor}"
+                        IsActive="False"
+                        Visibility="Collapsed" />
+                </Grid>
             </PivotItem>
         </Pivot>
     </Grid>

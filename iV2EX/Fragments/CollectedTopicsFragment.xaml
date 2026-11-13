@@ -478,15 +478,17 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <GridView
             Name="LabelPanel"
+            Grid.Row="0"
             BorderBrush="WhiteSmoke"
             BorderThickness="0,0,0,1"
-            ItemContainerStyle="{StaticResource SelectedGridViewItemStyle}"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True">
+            ItemContainerStyle="{StaticResource SelectedGridViewItemStyle}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VariableSizedWrapGrid Orientation="Horizontal"/>
@@ -503,11 +505,10 @@
         </GridView>
         <ListView
             Name="NewsList"
+            Grid.Row="1"
+            Padding="0,0,0,72"
             IsItemClickEnabled="True"
-            ItemsSource="{x:Bind News}"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.Below="LabelPanel">
+            ItemsSource="{x:Bind News}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -1172,10 +1173,51 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <ProgressBar
+            x:Name="LoadingBar"
+            Grid.Row="1"
+            VerticalAlignment="Top"
+            Foreground="{StaticResource BG}"
+            IsHitTestVisible="False"
+            IsIndeterminate="True"
+            Visibility="Collapsed" />
+        <ProgressRing
+            x:Name="LoadingRing"
+            Grid.Row="1"
+            Width="36"
+            Height="36"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="{StaticResource BG}"
+            IsActive="False"
+            Visibility="Collapsed" />
+        <StackPanel
+            x:Name="ErrorPanel"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="12"
+            Visibility="Collapsed">
+            <TextBlock
+                x:Name="ErrorText"
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="加载失败，请检查网络后重试" />
+            <Button
+                x:Name="RetryButton"
+                HorizontalAlignment="Center"
+                Content="重新加载" />
+        </StackPanel>
         <localcontrol:RefreshButton
             x:Name="Refresh"
+            Grid.Row="1"
             Margin="0,0,20,60"
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True" />
-    </RelativePanel>
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom" />
+        <localcontrol:ToastTips
+            x:Name="Toast"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            VerticalAlignment="Top" />
+    </Grid>
 </UserControl>
