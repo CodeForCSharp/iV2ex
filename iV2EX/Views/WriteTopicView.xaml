@@ -251,7 +251,8 @@
         <!--  ===== Bottom Action Bar =====  -->
         <Border
             Grid.Row="2"
-            Padding="20,12"
+            Height="53"
+            Padding="20,0"
             BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0">
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">

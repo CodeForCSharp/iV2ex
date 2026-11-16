@@ -223,19 +223,25 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <TextBlock
+                            <StackPanel
                                 x:Name="ListHiddenPanel"
                                 Margin="0,40,0,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="14"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Orientation="Horizontal"
+                                Spacing="6"
                                 Visibility="Collapsed">
-                                <Run
-                                    FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                    Text="&#xe652;" />
-                                <Run Text=" 该列表被隐藏" />
-                            </TextBlock>
+                                <FontIcon
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Glyph="&#xE72E;" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="该列表被隐藏" />
+                            </StackPanel>
                         </ListView.Header>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="data:TopicModel">

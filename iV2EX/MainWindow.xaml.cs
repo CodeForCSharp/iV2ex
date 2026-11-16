@@ -58,12 +58,11 @@ namespace iV2EX
             }
             else
             {
-                // Title bar customization using these APIs is currently
-                // supported only on Windows 11. In other cases, hide
-                // the custom title bar element.
-                // AppTitleBar.Visibility = Visibility.Collapsed;
-                // TODO Show alternative UI for any functionality in
-                // the title bar, such as the back button, if used
+                AppTitleBar.Loaded += AppTitleBar_Loaded;
+                BackButton.Click += OnBackClicked;
+                TitleTextBlock.Visibility = Visibility.Collapsed;
+                AppTitleBar.Visibility = Visibility.Collapsed;
+                TitleBarRow.Height = new GridLength(0);
             }
         }
 
@@ -97,6 +96,20 @@ namespace iV2EX
             }
         }
 
+        public void UpdateTitle(string subtitle = null)
+        {
+            var fullTitle = string.IsNullOrWhiteSpace(subtitle) ? "iV2EX" : $"iV2EX · {subtitle}";
+            m_AppWindow.Title = fullTitle;
+            TitleTextBlock.Text = fullTitle;
+
+            if (AppWindowTitleBar.IsCustomizationSupported() &&
+                m_AppWindow.TitleBar.ExtendsContentIntoTitleBar &&
+                AppTitleBar.IsLoaded)
+            {
+                SetDragRegionForCustomTitleBar(m_AppWindow);
+            }
+        }
+
         public void UpdateBackButton()
         {
             if (PageStack.CanGoBack)
@@ -104,18 +117,29 @@ namespace iV2EX
                 BackButton.Visibility = Visibility.Visible;
                 IconColumn.Width = new GridLength(48);
                 TitleTextBlock.Margin = new Thickness(4, 0, 0, 0);
+                if (!AppWindowTitleBar.IsCustomizationSupported())
+                {
+                    AppTitleBar.Visibility = Visibility.Visible;
+                    TitleBarRow.Height = new GridLength(36);
+                }
             }
             else
             {
                 BackButton.Visibility = Visibility.Collapsed;
                 IconColumn.Width = new GridLength(0);
                 TitleTextBlock.Margin = new Thickness(12, 0, 0, 0);
+                if (!AppWindowTitleBar.IsCustomizationSupported())
+                {
+                    AppTitleBar.Visibility = Visibility.Collapsed;
+                    TitleBarRow.Height = new GridLength(0);
+                }
             }
         }
 
         private async void AppTitleBar_Loaded(object sender, RoutedEventArgs e)
         {
-            SetTitleBar(AppTitleBar);
+            if (AppWindowTitleBar.IsCustomizationSupported())
+                SetTitleBar(AppTitleBar);
             var localSettings = ApplicationData.Current.LocalSettings;
             var hasCookies = false;
             if (localSettings.Values["Cookies"] != null)
@@ -161,6 +185,7 @@ namespace iV2EX
 
             PageFrame.Navigate(hasCookies ? typeof(MainPage) : typeof(UserLoginView));
             UpdateBackButton();
+            UpdateTitle(hasCookies ? MainPage.Instance?.ActiveSectionTitle : "登录");
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {

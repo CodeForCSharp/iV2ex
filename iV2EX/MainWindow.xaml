@@ -11,7 +11,7 @@
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         PointerPressed="RootGrid_PointerPressed">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
+            <RowDefinition x:Name="TitleBarRow" Height="32"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid x:Name="AppTitleBar" Grid.Row="0">
@@ -79,7 +79,7 @@
                 <FontIcon FontSize="14" Glyph="&#xE72B;" />
             </Button>
             <TextBlock x:Name="TitleTextBlock" 
-               Text="iV2ex" 
+               Text="iV2EX" 
                Style="{StaticResource CaptionTextBlockStyle}"
                Grid.Column="2"
                VerticalAlignment="Center"

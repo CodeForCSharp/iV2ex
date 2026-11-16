@@ -1,72 +1,74 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media;
 using iV2EX.Util;
 
 namespace iV2EX.Views
 {
     internal partial class MainPage
     {
+        public const double WideBreakpoint = 860;
+        private string _activeSectionTitle = "首页";
+
         public MainPage()
         {
             InitializeComponent();
+            Instance = this;
             RightPart = RightFrame;
-            LeftPart = LeftPivot;
             PageStack.Next("Right", "Right", typeof(BlankPage), null);
 
-            LeftPivot.SizeChanged += (s, e) =>
-            {
-                var headerpanel = FindVisualChildren<PivotHeaderPanel>(LeftPivot).ToList();
-                if (headerpanel.Count == 0) return;
-                var totalwidth = LeftPivot.ActualWidth;
-                headerpanel[0].Width = totalwidth;
-                var items = FindVisualChildren<PivotHeaderItem>(headerpanel[0]).ToList();
-                for (var i = 0; i < items.Count; i++)
-                    items[i].Width = totalwidth / items.Count - 1;
-            };
-
-            LeftPivot.SelectionChanged += (s, e) =>
-            {
-                if (ReferenceEquals(LeftPivot.SelectedItem, UserInfoTab))
-                    UserInfoView.RefreshIfStale();
-            };
-
-            RootGrid.SizeChanged += (s, e) =>
-            {
-                if (RootGrid.ActualWidth <= 600 && e.PreviousSize.Width > 600)
-                {
-                    if (PageStack.IsLeftToRightActive)
-                    {
-                        LeftPivot.Visibility = Visibility.Collapsed;
-                        RightFrame.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        LeftPivot.Visibility = Visibility.Visible;
-                        RightFrame.Visibility = Visibility.Collapsed;
-                    }
-                }
-            };
+            Loaded += (_, _) => SyncPaneVisibility();
+            RootGrid.SizeChanged += (_, _) => SyncPaneVisibility();
         }
 
+        public static MainPage Instance { get; private set; }
         public static Frame RightPart { get; private set; }
-        public static Pivot LeftPart { get; private set; }
 
-        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        public string ActiveSectionTitle => _activeSectionTitle;
+
+        public void SyncPaneVisibility()
         {
-            if (depObj != null)
-                for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-                {
-                    var child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child is T variable)
-                        yield return variable;
+            if (RootGrid == null || LeftPaneContainer == null || RightFrame == null) return;
+            var width = RootGrid.ActualWidth > 0 ? RootGrid.ActualWidth : App.Window?.PageFrame?.ActualWidth ?? 0;
+            var isWide = width >= WideBreakpoint;
 
-                    foreach (var childOfChild in FindVisualChildren<T>(child))
-                        yield return childOfChild;
-                }
+            if (isWide)
+            {
+                LeftPaneContainer.Visibility = Visibility.Visible;
+                RightFrame.Visibility = Visibility.Visible;
+            }
+            else if (PageStack.IsLeftToRightActive)
+            {
+                LeftPaneContainer.Visibility = Visibility.Collapsed;
+                RightFrame.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                LeftPaneContainer.Visibility = Visibility.Visible;
+                RightFrame.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void NavRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            if (HomeView == null || NodesView == null || UserInfoView == null) return;
+            if ((sender as FrameworkElement)?.Tag is not string tag) return;
+
+            HomeView.Visibility = tag == "home" ? Visibility.Visible : Visibility.Collapsed;
+            NodesView.Visibility = tag == "nodes" ? Visibility.Visible : Visibility.Collapsed;
+            UserInfoView.Visibility = tag == "profile" ? Visibility.Visible : Visibility.Collapsed;
+
+            _activeSectionTitle = tag switch
+            {
+                "nodes" => "节点",
+                "profile" => "我的",
+                _ => "首页"
+            };
+
+            if (tag == "profile")
+                UserInfoView.RefreshIfStale();
+
+            if (!PageStack.IsLeftToRightActive)
+                App.Window?.UpdateTitle(_activeSectionTitle);
         }
     }
 }

@@ -88,7 +88,6 @@
     <Content Include="Assets\default.png" />
     <Content Include="Assets\gold.png" />
     <Content Include="Assets\silver.png" />
-    <Content Include="Assets\IconFont\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

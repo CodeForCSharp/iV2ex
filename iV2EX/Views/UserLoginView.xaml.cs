@@ -30,6 +30,7 @@ namespace iV2EX.Views
 
         private async void UserLoginPage_Loaded(object sender, RoutedEventArgs e)
         {
+            App.Window?.UpdateTitle("登录");
             if (_data != null) return;
             await RefreshCaptchaAsync(showErrorToast: true);
         }

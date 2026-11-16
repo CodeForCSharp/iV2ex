@@ -14,7 +14,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="TopicTabButtonStyle" TargetType="Button">
-            <Setter Property="Padding" Value="12,5" />
+            <Setter Property="Padding" Value="10,4" />
             <Setter Property="MinWidth" Value="0" />
             <Setter Property="MinHeight" Value="0" />
             <Setter Property="BorderThickness" Value="0" />
@@ -83,7 +83,7 @@
                 Grid.Column="0">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <localcontrol:WrapPanel HorizontalSpacing="4" VerticalSpacing="4" />
+                        <localcontrol:WrapPanel HorizontalSpacing="3" VerticalSpacing="4" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -95,7 +95,7 @@
                             Style="{StaticResource TopicTabButtonStyle}"
                             Tag="{x:Bind}">
                             <TextBlock
-                                FontSize="15"
+                                FontSize="14"
                                 Text="{x:Bind Text}" />
                         </Button>
                     </DataTemplate>

@@ -571,7 +571,6 @@
             x:Name="ReplyPanel"
             Grid.Row="2"
             Padding="16,8"
-            Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0">
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
