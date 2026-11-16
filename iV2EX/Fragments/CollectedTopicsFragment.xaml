@@ -14,7 +14,6 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <converter:StringToImageSourceConverter x:Key="ImageConverter" />
-        <SolidColorBrush x:Key="BG" Color="#3F51B5" />
 
         <Style x:Key="TopicTabButtonStyle" TargetType="Button">
             <Setter Property="Padding" Value="12,5" />
@@ -56,120 +55,6 @@
                                     <VisualState x:Name="Pressed">
                                         <VisualState.Setters>
                                             <Setter Target="Root.Opacity" Value="0.75" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="RefreshIconButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="34" />
-            <Setter Property="Height" Value="34" />
-            <Setter Property="MinWidth" Value="0" />
-            <Setter Property="MinHeight" Value="0" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="CornerRadius" Value="17" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid
-                            x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <ContentPresenter
-                                x:Name="ContentPresenter"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Foreground="{TemplateBinding Foreground}" />
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <VisualState.Setters>
-                                            <Setter Target="Root.Background" Value="#143F51B5" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{StaticResource BG}" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <VisualState.Setters>
-                                            <Setter Target="Root.Background" Value="#243F51B5" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{StaticResource BG}" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <VisualState.Setters>
-                                            <Setter Target="Root.Opacity" Value="0.4" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="TopicListItemStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="MinHeight" Value="0" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <Grid x:Name="ContentBorder" Background="{TemplateBinding Background}">
-                            <Rectangle
-                                x:Name="LeftIndicator"
-                                Width="3"
-                                HorizontalAlignment="Left"
-                                Fill="Transparent"
-                                IsHitTestVisible="False" />
-                            <ContentPresenter
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}" />
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentBorder.Background" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentBorder.Background" Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Selected">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentBorder.Background" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
-                                            <Setter Target="LeftIndicator.Fill" Value="{StaticResource BG}" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOverSelected">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentBorder.Background" Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
-                                            <Setter Target="LeftIndicator.Fill" Value="{StaticResource BG}" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="PressedSelected">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentBorder.Background" Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
-                                            <Setter Target="LeftIndicator.Fill" Value="{StaticResource BG}" />
                                         </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
@@ -255,7 +140,7 @@
                                     MinWidth="28"
                                     Padding="6,1"
                                     HorizontalAlignment="Center"
-                                    Background="#7986CB"
+                                    Background="{ThemeResource AppBrandBadgeBrush}"
                                     CornerRadius="9">
                                     <TextBlock
                                         FontSize="11"
@@ -320,7 +205,7 @@
             x:Name="LoadingBar"
             Grid.Row="1"
             VerticalAlignment="Top"
-            Foreground="{StaticResource BG}"
+            Foreground="{ThemeResource AppBrandBrush}"
             IsHitTestVisible="False"
             IsIndeterminate="True"
             Visibility="Collapsed" />
@@ -331,7 +216,7 @@
             Height="36"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Foreground="{StaticResource BG}"
+            Foreground="{ThemeResource AppBrandBrush}"
             IsActive="False"
             Visibility="Collapsed" />
         <StackPanel

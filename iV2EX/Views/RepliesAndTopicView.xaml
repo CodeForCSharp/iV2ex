@@ -10,7 +10,6 @@
     mc:Ignorable="d">
     <Page.Resources>
         <converter:StringToImageSourceConverter x:Key="ImageConverter" />
-        <SolidColorBrush x:Key="ThemeColor" Color="#3F51B5" />
 
         <Style x:Key="TransparentButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
@@ -84,12 +83,12 @@
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
                                         <VisualState.Setters>
-                                            <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ThemeColor}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBrandBrush}" />
                                         </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <VisualState.Setters>
-                                            <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ThemeColor}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBrandBrush}" />
                                             <Setter Target="Root.Opacity" Value="0.7" />
                                         </VisualState.Setters>
                                     </VisualState>
@@ -110,7 +109,7 @@
             <Setter Property="Width" Value="40" />
             <Setter Property="Height" Value="36" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="Background" Value="{StaticResource ThemeColor}" />
+            <Setter Property="Background" Value="{ThemeResource AppBrandSolidBrush}" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="CornerRadius" Value="6" />
@@ -240,14 +239,14 @@
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
                                         <VisualState.Setters>
-                                            <Setter Target="Root.Background" Value="#1A3F51B5" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ThemeColor}" />
+                                            <Setter Target="Root.Background" Value="{ThemeResource AppBrandHoverBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBrandBrush}" />
                                         </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <VisualState.Setters>
-                                            <Setter Target="Root.Background" Value="#283F51B5" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ThemeColor}" />
+                                            <Setter Target="Root.Background" Value="{ThemeResource AppBrandPressedBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBrandBrush}" />
                                         </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="Disabled">
@@ -261,17 +260,6 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
-
-        <Style x:Key="HeaderActionButtonStyle" TargetType="Button">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="Padding" Value="10,0" />
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="Background" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-            <Setter Property="FontSize" Value="12" />
         </Style>
     </Page.Resources>
 
@@ -430,14 +418,16 @@
                                 Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                 Text="{x:Bind Topic.Content, Mode=OneWay}"
                                 Visibility="{x:Bind converter:Converter.EmptyToVisibility(Topic.Content), Mode=OneWay}" />
-                            <ItemsControl ItemsSource="{x:Bind Topic.Postscript, Mode=OneWay}">
+                            <ItemsControl
+                                ItemsSource="{x:Bind Topic.Postscript, Mode=OneWay}"
+                                Visibility="{x:Bind converter:Converter.HasItemsToVisibility(Topic.Postscript), Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="data:TopicModel">
                                         <Border
                                             Margin="0,6,0,0"
                                             Padding="12,8"
                                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="#7986CB"
+                                            BorderBrush="{ThemeResource AppBrandBadgeBrush}"
                                             BorderThickness="3,0,0,0"
                                             CornerRadius="4">
                                             <StackPanel Spacing="4">
@@ -503,14 +493,14 @@
                                                     Height="18"
                                                     Padding="6,0"
                                                     VerticalAlignment="Center"
-                                                    Background="#183F51B5"
+                                                    Background="{ThemeResource AppBrandSubtleBrush}"
                                                     CornerRadius="4"
                                                     Visibility="{x:Bind IsLz}">
                                                     <TextBlock
                                                         VerticalAlignment="Center"
                                                         FontSize="10.5"
                                                         FontWeight="SemiBold"
-                                                        Foreground="{StaticResource ThemeColor}"
+                                                        Foreground="{ThemeResource AppBrandBrush}"
                                                         LineHeight="14"
                                                         Text="楼主" />
                                                 </Border>
@@ -519,7 +509,7 @@
                                                 <TextBlock
                                                     FontSize="12"
                                                     FontWeight="SemiBold"
-                                                    Foreground="{StaticResource ThemeColor}"
+                                                    Foreground="{ThemeResource AppBrandBrush}"
                                                     Text="{x:Bind Floor}" />
                                                 <TextBlock
                                                     FontSize="12"
@@ -563,7 +553,7 @@
             <ProgressBar
                 x:Name="LoadingBar"
                 VerticalAlignment="Top"
-                Foreground="{StaticResource ThemeColor}"
+                Foreground="{ThemeResource AppBrandBrush}"
                 IsHitTestVisible="False"
                 IsIndeterminate="True"
                 Visibility="Collapsed" />
@@ -573,7 +563,7 @@
                 Height="36"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Foreground="{StaticResource ThemeColor}"
+                Foreground="{ThemeResource AppBrandBrush}"
                 IsActive="False"
                 Visibility="Collapsed" />
         </Grid>

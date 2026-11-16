@@ -17,13 +17,15 @@
         <ListView
             Name="PeopleTopicsList"
             IsItemClickEnabled="True"
+            ItemContainerStyle="{StaticResource TopicListItemStyle}"
             ItemTemplate="{StaticResource TopicModelNormalTemplate}"
             ItemsSource="{x:Bind NotifyData}"
-            SelectionMode="Single"
+            SelectionMode="None"
             ShowsScrollingPlaceholders="True" />
         <ProgressBar
             x:Name="LoadingBar"
             VerticalAlignment="Top"
+            Foreground="{ThemeResource AppBrandBrush}"
             IsHitTestVisible="False"
             IsIndeterminate="True"
             Visibility="Collapsed" />
@@ -33,6 +35,7 @@
             Height="36"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
+            Foreground="{ThemeResource AppBrandBrush}"
             IsActive="False"
             Visibility="Collapsed" />
     </Grid>

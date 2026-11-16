@@ -28,6 +28,12 @@ namespace iV2EX.Views
                     items[i].Width = totalwidth / items.Count - 1;
             };
 
+            LeftPivot.SelectionChanged += (s, e) =>
+            {
+                if (ReferenceEquals(LeftPivot.SelectedItem, UserInfoTab))
+                    UserInfoView.RefreshIfStale();
+            };
+
             RootGrid.SizeChanged += (s, e) =>
             {
                 if (RootGrid.ActualWidth <= 600 && e.PreviousSize.Width > 600)

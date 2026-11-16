@@ -73,22 +73,38 @@
     </UserControl.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer>
-            <StackPanel Padding="16,12,16,80" Spacing="4">
+            <StackPanel Padding="16,12,16,16" Spacing="4">
                 <!--  Profile header  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="UserItem_Click">
-                    <Grid Padding="4,6" ColumnDefinitions="Auto,*">
-                        <localcontrol:AvatarImage
-                            Grid.Column="0"
-                            AvatarSize="40"
-                            ImageUrl="{x:Bind People.Member.Image, Mode=OneWay}" />
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Style="{ThemeResource BodyStrongTextBlockStyle}"
-                            Text="{x:Bind People.Member.Username, Mode=OneWay}" />
-                    </Grid>
-                </Button>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Button
+                        Grid.Column="0"
+                        Click="UserItem_Click"
+                        Style="{StaticResource MenuButtonStyle}"
+                        ToolTipService.ToolTip="查看个人主页">
+                        <Grid Padding="4,6" ColumnDefinitions="Auto,*">
+                            <localcontrol:AvatarImage
+                                Grid.Column="0"
+                                AvatarSize="40"
+                                ImageUrl="{x:Bind People.Member.Image, Mode=OneWay}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind People.Member.Username, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis" />
+                        </Grid>
+                    </Button>
+                    <Button
+                        x:Name="RefreshBtn"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Click="Refresh_Click"
+                        Style="{StaticResource RefreshIconButtonStyle}"
+                        ToolTipService.ToolTip="刷新个人数据">
+                        <FontIcon FontSize="14" Glyph="&#xE72C;" />
+                    </Button>
+                </Grid>
 
                 <Border Height="1" Margin="0,4,0,8" Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
@@ -415,13 +431,15 @@
             </StackPanel>
         </ScrollViewer>
 
+        <ProgressBar
+            x:Name="LoadingBar"
+            VerticalAlignment="Top"
+            Foreground="{ThemeResource AppBrandBrush}"
+            IsHitTestVisible="False"
+            IsIndeterminate="True"
+            Visibility="Collapsed" />
         <localcontrol:ToastTips
             x:Name="Toast"
             VerticalAlignment="Top" />
-        <localcontrol:RefreshButton
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Right"
-            Margin="0,0,20,30"
-            Tapped="Refresh_Tapped" />
     </Grid>
 </UserControl>

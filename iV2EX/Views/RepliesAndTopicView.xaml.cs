@@ -121,7 +121,7 @@ namespace iV2EX.Views
                             }).ToList(),
                             IsCollected = isCollected,
                             Collect = isCollected ? "已收藏" : "收藏",
-                            Content = main.QuerySelector("div.topic_content")?.InnerHtml,
+                            Content = main.QuerySelector("div.topic_content")?.InnerHtml?.Trim(),
                             Replies = maxReply,
                             CreateDate = node.QuerySelector("small.gray span").TextContent.Trim(),
                             NodeName = nodeLink?.TextContent?.Trim(),

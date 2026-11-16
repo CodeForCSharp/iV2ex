@@ -132,7 +132,7 @@ namespace iV2EX.Views
                             last = $"{(int) timeSpan.TotalDays}天";
                         }
 
-                        topic.LastReply = $"时间 : {last.Trim()}";
+                        topic.LastReply = last.Trim();
                     }
 
                     return topic;

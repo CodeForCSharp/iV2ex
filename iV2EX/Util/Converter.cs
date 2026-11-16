@@ -7,16 +7,27 @@ namespace iV2EX.Util
 {
     public static class Converter
     {
+        private static bool IsDarkTheme =>
+            Application.Current?.RequestedTheme == ApplicationTheme.Dark;
+
         public static SolidColorBrush SymbolToColor(string s)
         {
-            return s.StartsWith("-")
+            var isNegative = s != null && s.StartsWith("-");
+            if (IsDarkTheme)
+            {
+                return isNegative
+                    ? new SolidColorBrush(Color.FromArgb(255, 239, 83, 80))
+                    : new SolidColorBrush(Color.FromArgb(255, 102, 187, 106));
+            }
+            return isNegative
                 ? new SolidColorBrush(Color.FromArgb(255, 229, 57, 53))
                 : new SolidColorBrush(Color.FromArgb(255, 67, 160, 71));
         }
 
         public static SolidColorBrush SymbolToLightColor(string s)
         {
-            return s.StartsWith("-")
+            var isNegative = s != null && s.StartsWith("-");
+            return isNegative
                 ? new SolidColorBrush(Color.FromArgb(36, 229, 57, 53))
                 : new SolidColorBrush(Color.FromArgb(36, 67, 160, 71));
         }
@@ -51,7 +62,12 @@ namespace iV2EX.Util
 
         public static Visibility EmptyToVisibility(string s)
         {
-            return string.IsNullOrEmpty(s) ? Visibility.Collapsed : Visibility.Visible;
+            return string.IsNullOrWhiteSpace(s) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public static Visibility HasItemsToVisibility(System.Collections.ICollection items)
+        {
+            return items is { Count: > 0 } ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public static Visibility GreaterThanZeroToVisibility(int n)
@@ -71,6 +87,12 @@ namespace iV2EX.Util
 
         public static SolidColorBrush ThanksToBackground(bool isThanked)
         {
+            if (IsDarkTheme)
+            {
+                return isThanked
+                    ? new SolidColorBrush(Color.FromArgb(36, 255, 255, 255))
+                    : new SolidColorBrush(Color.FromArgb(36, 140, 158, 255));
+            }
             return isThanked
                 ? new SolidColorBrush(Color.FromArgb(255, 224, 224, 224))
                 : new SolidColorBrush(Color.FromArgb(24, 63, 81, 181));
@@ -78,6 +100,12 @@ namespace iV2EX.Util
 
         public static SolidColorBrush ThanksToForeground(bool isThanked)
         {
+            if (IsDarkTheme)
+            {
+                return isThanked
+                    ? new SolidColorBrush(Color.FromArgb(255, 160, 160, 160))
+                    : new SolidColorBrush(Color.FromArgb(255, 140, 158, 255));
+            }
             return isThanked
                 ? new SolidColorBrush(Color.FromArgb(255, 117, 117, 117))
                 : new SolidColorBrush(Color.FromArgb(255, 63, 81, 181));
@@ -90,6 +118,12 @@ namespace iV2EX.Util
 
         public static SolidColorBrush TabToBackground(bool isSelected)
         {
+            if (IsDarkTheme)
+            {
+                return isSelected
+                    ? new SolidColorBrush(Color.FromArgb(255, 92, 107, 192))
+                    : new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            }
             return isSelected
                 ? new SolidColorBrush(Color.FromArgb(255, 63, 81, 181))
                 : new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
@@ -97,6 +131,12 @@ namespace iV2EX.Util
 
         public static SolidColorBrush TabToForeground(bool isSelected)
         {
+            if (IsDarkTheme)
+            {
+                return isSelected
+                    ? new SolidColorBrush(Color.FromArgb(255, 255, 255, 255))
+                    : new SolidColorBrush(Color.FromArgb(255, 200, 200, 200));
+            }
             return isSelected
                 ? new SolidColorBrush(Color.FromArgb(255, 255, 255, 255))
                 : new SolidColorBrush(Color.FromArgb(255, 96, 96, 96));

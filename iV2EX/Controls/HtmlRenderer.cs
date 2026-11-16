@@ -19,6 +19,13 @@ namespace iV2EX.Controls
     {
         private const string BaseUrl = "https://www.v2ex.com";
 
+        private static Brush GetThemeBrush(string key, Windows.UI.Color fallback)
+        {
+            if (Microsoft.UI.Xaml.Application.Current?.Resources.TryGetValue(key, out var value) == true && value is Brush brush)
+                return brush;
+            return new SolidColorBrush(fallback);
+        }
+
         public static async Task<List<Paragraph>> Render(string html)
         {
             if (string.IsNullOrEmpty(html))
@@ -76,6 +83,10 @@ namespace iV2EX.Controls
                     else
                     {
                         text = text.Replace("\n", "").Replace("\r", "");
+                        if (text.Length == 0)
+                            return;
+                        if (current.Inlines.Count == 0 && !state.InHyperlink && string.IsNullOrWhiteSpace(text))
+                            return;
                         var wrapped = state.WrapInline(new Run { Text = text });
                         if (wrapped != null)
                             current.Inlines.Add(wrapped);
@@ -178,7 +189,7 @@ namespace iV2EX.Controls
                                 {
                                     Height = 2,
                                     Width = 9999,
-                                    Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0x80, 0x60, 0x60, 0x60)),
+                                    Fill = GetThemeBrush("DividerStrokeColorDefaultBrush", Windows.UI.Color.FromArgb(0x60, 0x80, 0x80, 0x80)),
                                     Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6)
                                 }
                             }
@@ -333,8 +344,8 @@ namespace iV2EX.Controls
             return new Border
             {
                 BorderThickness = new Microsoft.UI.Xaml.Thickness(3, 0, 0, 0),
-                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 160, 160, 160)),
-                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(28, 128, 128, 128)),
+                BorderBrush = GetThemeBrush("AppQuoteBorderBrush", Windows.UI.Color.FromArgb(255, 160, 160, 160)),
+                Background = GetThemeBrush("AppQuoteBackgroundBrush", Windows.UI.Color.FromArgb(28, 128, 128, 128)),
                 Padding = new Microsoft.UI.Xaml.Thickness(12, 8, 12, 8),
                 CornerRadius = new Microsoft.UI.Xaml.CornerRadius(0, 6, 6, 0),
                 Child = ToRichText(inner),
@@ -350,7 +361,7 @@ namespace iV2EX.Controls
             block.FontFamily = new FontFamily("Consolas");
             return new Border
             {
-                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 128, 128, 128)),
+                Background = GetThemeBrush("AppCodeBackgroundBrush", Windows.UI.Color.FromArgb(40, 128, 128, 128)),
                 Padding = new Microsoft.UI.Xaml.Thickness(12, 8, 12, 8),
                 CornerRadius = new Microsoft.UI.Xaml.CornerRadius(6),
                 Child = block,
@@ -437,7 +448,7 @@ namespace iV2EX.Controls
             var hyperlink = new Hyperlink
             {
                 UnderlineStyle = UnderlineStyle.None,
-                Foreground = new SolidColorBrush(Colors.RoyalBlue)
+                Foreground = GetThemeBrush("AppHyperlinkBrush", Colors.RoyalBlue)
             };
 
             try
@@ -497,7 +508,7 @@ namespace iV2EX.Controls
             var grid = new Grid
             {
                 Margin = new Microsoft.UI.Xaml.Thickness(0, 6, 0, 6),
-                BorderBrush = new SolidColorBrush(Colors.Gray),
+                BorderBrush = GetThemeBrush("DividerStrokeColorDefaultBrush", Windows.UI.Color.FromArgb(0x60, 0x80, 0x80, 0x80)),
                 BorderThickness = new Microsoft.UI.Xaml.Thickness(1),
                 HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Stretch
             };
@@ -544,13 +555,13 @@ namespace iV2EX.Controls
                     var border = new Border
                     {
                         Child = cellBlock,
-                        BorderBrush = new SolidColorBrush(Colors.Gray),
+                        BorderBrush = GetThemeBrush("DividerStrokeColorDefaultBrush", Windows.UI.Color.FromArgb(0x60, 0x80, 0x80, 0x80)),
                         BorderThickness = new Microsoft.UI.Xaml.Thickness(0, 0, 1, 1)
                     };
 
                     if (isHeader)
                     {
-                        border.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 128, 128, 128));
+                        border.Background = GetThemeBrush("AppCodeBackgroundBrush", Windows.UI.Color.FromArgb(40, 128, 128, 128));
                     }
 
                     Grid.SetRow(border, rowIndex);
@@ -681,6 +692,7 @@ namespace iV2EX.Controls
             public bool SuppressBlockFlush { get; set; }
             public int ListDepth { get; set; }
             public bool InPreBlock { get; set; }
+            public bool InHyperlink => _hyperlinks.Count > 0;
 
             public Inline WrapInline(Inline leaf)
             {

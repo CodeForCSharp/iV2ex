@@ -9,7 +9,6 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using iV2EX.Annotations;
 using iV2EX.GetData;
 using iV2EX.Model;
@@ -20,7 +19,10 @@ namespace iV2EX.Fragments
 {
     public partial class UserInfoFragment : INotifyPropertyChanged
     {
+        private static readonly TimeSpan AutoRefreshInterval = TimeSpan.FromSeconds(10);
         private PersonCenterModel _people = new();
+        private bool _isRefreshing;
+        private DateTimeOffset _lastRefreshedAt = DateTimeOffset.MinValue;
 
         public UserInfoFragment()
         {
@@ -41,12 +43,52 @@ namespace iV2EX.Fragments
 
         private async void UserInfoFragment_Loaded(object sender, RoutedEventArgs e)
         {
-            People = await AsyncHelper.RetryAsync(LoadData, 5);
+            await RefreshIfStaleAsync();
         }
 
-        private async void Refresh_Tapped(object sender, TappedRoutedEventArgs e)
+        public void RefreshIfStale()
         {
-            People = await AsyncHelper.RetryAsync(LoadData, 5);
+            _ = RefreshIfStaleAsync();
+        }
+
+        private async Task RefreshIfStaleAsync()
+        {
+            if (_isRefreshing) return;
+            if (DateTimeOffset.UtcNow - _lastRefreshedAt < AutoRefreshInterval) return;
+            await RefreshAsync(showErrorToast: false);
+        }
+
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await RefreshAsync(showErrorToast: true);
+        }
+
+        private async Task RefreshAsync(bool showErrorToast)
+        {
+            if (_isRefreshing) return;
+            _isRefreshing = true;
+            RefreshBtn.IsEnabled = false;
+            LoadingBar.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            try
+            {
+                var data = await AsyncHelper.RetryAsync(LoadData, 3);
+                if (data != null)
+                {
+                    People = data;
+                    _lastRefreshedAt = DateTimeOffset.UtcNow;
+                }
+            }
+            catch
+            {
+                if (showErrorToast)
+                    Toast.ShowTips("刷新失败，请稍后重试");
+            }
+            finally
+            {
+                _isRefreshing = false;
+                RefreshBtn.IsEnabled = true;
+                LoadingBar.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            }
         }
 
         private async void CheckInItem_Click(object sender, RoutedEventArgs e)
@@ -65,7 +107,7 @@ namespace iV2EX.Fragments
 
                 await ApiClient.CheckIn($"https://www.v2ex.com{href}", $"https://www.v2ex.com{href}");
                 Toast.ShowTips("签到成功");
-                People = await AsyncHelper.RetryAsync(LoadData, 5);
+                await RefreshAsync(showErrorToast: false);
             }
             catch
             {
@@ -75,7 +117,8 @@ namespace iV2EX.Fragments
 
         private void UserItem_Click(object sender, RoutedEventArgs e)
         {
-            PageStack.Next("Left", "Right", typeof(MemberView), People.Member.Username);
+            if (!string.IsNullOrEmpty(People?.Member?.Username))
+                PageStack.Next("Left", "Right", typeof(MemberView), People.Member.Username);
         }
 
         private void MoneyItem_Click(object sender, RoutedEventArgs e)

@@ -6,7 +6,7 @@
 
     <Border
         x:Name="ToastRoot"
-        Background="#3F51B5"
+        Background="{ThemeResource AppBrandSolidBrush}"
         CornerRadius="4"
         Padding="16,8"
         HorizontalAlignment="Center"

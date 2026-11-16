@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
-        <SolidColorBrush x:Key="BG" Color="#3F51B5" />
         <Style x:Key="BottomBarPivotStyle" TargetType="Pivot">
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
@@ -215,7 +214,7 @@
                                                 </ContentControl.Clip>
                                                 <Grid
                                                     Background="{ThemeResource PivotHeaderBackgroundUnselectedBrush}"
-                                                    BorderBrush="WhiteSmoke"
+                                                    BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                                                     BorderThickness="0,1,0,0">
                                                     <Grid.RenderTransform>
                                                         <CompositeTransform x:Name="HeaderOffsetTranslateTransform" />
@@ -501,7 +500,7 @@
                                                 <VisualState x:Name="Selected">
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BG}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBrandBrush}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid" Storyboard.TargetProperty="Background">
                                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource PivotHeaderItemBackgroundSelected}" />
@@ -511,7 +510,7 @@
                                                 <VisualState x:Name="UnselectedPointerOver">
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BG}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBrandBrush}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid" Storyboard.TargetProperty="Background">
                                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource PivotHeaderItemBackgroundUnselectedPointerOver}" />
@@ -521,7 +520,7 @@
                                                 <VisualState x:Name="SelectedPointerOver">
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BG}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBrandBrush}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid" Storyboard.TargetProperty="Background">
                                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource PivotHeaderItemBackgroundSelectedPointerOver}" />
@@ -590,7 +589,7 @@
                     </PivotItem.Header>
                     <fragments:NodesFragment />
                 </PivotItem>
-                <PivotItem>
+                <PivotItem x:Name="UserInfoTab">
                     <PivotItem.Header>
                         <TextBlock TextAlignment="Center">
                             <Run
@@ -601,7 +600,7 @@
                             <Run FontSize="15" Text="我的" />
                         </TextBlock>
                     </PivotItem.Header>
-                    <fragments:UserInfoFragment />
+                    <fragments:UserInfoFragment x:Name="UserInfoView" />
                 </PivotItem>
             </Pivot>
             <Frame x:Name="RightFrame" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" />

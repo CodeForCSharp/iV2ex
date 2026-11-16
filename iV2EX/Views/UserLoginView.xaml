@@ -29,8 +29,6 @@
                 Grid.Column="0"
                 MaxWidth="500"
                 Margin="5"
-                BorderBrush="Black"
-                BorderThickness="1,1,1,1"
                 PlaceholderText="账号" />
             <PasswordBox
                 Name="TbPassword"
@@ -38,8 +36,6 @@
                 Grid.Column="0"
                 MaxWidth="500"
                 Margin="5"
-                BorderBrush="Black"
-                BorderThickness="1,1,1,1"
                 PasswordRevealMode="Peek"
                 PlaceholderText="密码" />
             <Image
@@ -53,8 +49,6 @@
                 Grid.Column="0"
                 MaxWidth="500"
                 Margin="5"
-                BorderBrush="Black"
-                BorderThickness="1,1,1,1"
                 PlaceholderText="验证码" />
             <Button
                 Name="BtnLogin"

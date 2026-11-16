@@ -9,43 +9,56 @@
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Name="NodesTemplate" x:DataType="data:NodeModel">
-            <StackPanel
-                Width="120"
-                Height="120"
-                Margin="6"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <Image
-                    Name="ImagePanel"
-                    Width="48"
-                    Height="48"
-                    Margin="0,12,0,0"
+            <Border
+                Width="136"
+                Height="128"
+                Padding="12"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel
                     HorizontalAlignment="Center"
-                    Source="{x:Bind Image}" />
-                <TextBlock
-                    Name="TitlePanel"
-                    Margin="4,6,4,0"
-                    HorizontalAlignment="Center"
-                    FontSize="14"
-                    Foreground="#FF3D3D3D"
-                    Text="{x:Bind Title}"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="NoWrap" />
-                <TextBlock
-                    Margin="4,2,4,0"
-                    HorizontalAlignment="Center"
-                    FontSize="12"
-                    Foreground="Gray"
-                    Text="{x:Bind Topics}" />
-            </StackPanel>
+                    VerticalAlignment="Center"
+                    Spacing="6">
+                    <Border
+                        Width="44"
+                        Height="44"
+                        HorizontalAlignment="Center"
+                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        CornerRadius="10">
+                        <Image
+                            Name="ImagePanel"
+                            Source="{x:Bind Image}"
+                            Stretch="UniformToFill" />
+                    </Border>
+                    <TextBlock
+                        Name="TitlePanel"
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        Text="{x:Bind Title}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="{x:Bind Topics}" />
+                        <Run Text=" 主题" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
         </DataTemplate>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <GridView
             Name="PeopleNodeList"
+            Padding="12"
             IsItemClickEnabled="True"
             ItemTemplate="{StaticResource NodesTemplate}"
-            SelectionMode="Single"
+            SelectionMode="None"
             ShowsScrollingPlaceholders="True" />
         <ProgressRing
             x:Name="LoadingRing"
@@ -53,6 +66,7 @@
             Height="36"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
+            Foreground="{ThemeResource AppBrandBrush}"
             IsActive="False"
             Visibility="Collapsed" />
     </Grid>
