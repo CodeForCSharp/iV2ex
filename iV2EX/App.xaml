@@ -16,6 +16,8 @@
                     <SolidColorBrush x:Key="AppBrandSubtleBrush" Color="#143F51B5" />
                     <SolidColorBrush x:Key="AppBrandHoverBrush" Color="#1F3F51B5" />
                     <SolidColorBrush x:Key="AppBrandPressedBrush" Color="#2E3F51B5" />
+                    <SolidColorBrush x:Key="AppDangerBrush" Color="#D32F2F" />
+                    <SolidColorBrush x:Key="AppDangerSubtleBrush" Color="#14D32F2F" />
                     <SolidColorBrush x:Key="AppHyperlinkBrush" Color="#2B579A" />
                     <SolidColorBrush x:Key="AppQuoteBorderBrush" Color="#A0A0A0" />
                     <SolidColorBrush x:Key="AppQuoteBackgroundBrush" Color="#10000000" />
@@ -28,6 +30,8 @@
                     <SolidColorBrush x:Key="AppBrandSubtleBrush" Color="#248C9EFF" />
                     <SolidColorBrush x:Key="AppBrandHoverBrush" Color="#338C9EFF" />
                     <SolidColorBrush x:Key="AppBrandPressedBrush" Color="#448C9EFF" />
+                    <SolidColorBrush x:Key="AppDangerBrush" Color="#EF5350" />
+                    <SolidColorBrush x:Key="AppDangerSubtleBrush" Color="#24EF5350" />
                     <SolidColorBrush x:Key="AppHyperlinkBrush" Color="#8AB4F8" />
                     <SolidColorBrush x:Key="AppQuoteBorderBrush" Color="#707070" />
                     <SolidColorBrush x:Key="AppQuoteBackgroundBrush" Color="#18FFFFFF" />

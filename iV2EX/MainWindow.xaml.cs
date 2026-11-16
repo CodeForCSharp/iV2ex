@@ -49,6 +49,8 @@ namespace iV2EX
             {
                 var titleBar = m_AppWindow.TitleBar;
                 titleBar.ExtendsContentIntoTitleBar = true;
+                UpdateTitleBarColors(titleBar);
+                RootGrid.ActualThemeChanged += (_, _) => UpdateTitleBarColors(m_AppWindow.TitleBar);
                 AppTitleBar.Loaded += AppTitleBar_Loaded;
                 AppTitleBar.SizeChanged += AppTitleBar_SizeChanged;
 
@@ -66,6 +68,34 @@ namespace iV2EX
         }
 
         public Button BackButton => AppTitleBarBackButton;
+
+        private void UpdateTitleBarColors(AppWindowTitleBar titleBar)
+        {
+            if (titleBar == null) return;
+
+            var isDark = RootGrid.ActualTheme == ElementTheme.Dark;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+
+            if (isDark)
+            {
+                titleBar.ButtonForegroundColor = Colors.White;
+                titleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(0xFF, 0x9A, 0x9A, 0x9A);
+                titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(0x14, 0xFF, 0xFF, 0xFF);
+                titleBar.ButtonHoverForegroundColor = Colors.White;
+                titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF);
+                titleBar.ButtonPressedForegroundColor = Colors.White;
+            }
+            else
+            {
+                titleBar.ButtonForegroundColor = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x1A, 0x1A);
+                titleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(0xFF, 0x76, 0x76, 0x76);
+                titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(0x0F, 0x00, 0x00, 0x00);
+                titleBar.ButtonHoverForegroundColor = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x1A, 0x1A);
+                titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(0x1A, 0x00, 0x00, 0x00);
+                titleBar.ButtonPressedForegroundColor = Windows.UI.Color.FromArgb(0xFF, 0x1A, 0x1A, 0x1A);
+            }
+        }
 
         public void UpdateBackButton()
         {

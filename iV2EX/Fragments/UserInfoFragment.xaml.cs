@@ -128,7 +128,8 @@ namespace iV2EX.Fragments
 
         private void CollectTopicItem_Click(object sender, RoutedEventArgs e)
         {
-            PageStack.Next("Left", "Right", typeof(PeopleTopicView), Convert.ToInt32(People.CollectedTopics));
+            var count = int.TryParse(People?.CollectedTopics, out var parsed) ? parsed : 0;
+            PageStack.Next("Left", "Right", typeof(PeopleTopicView), count);
         }
 
         private void CollectNodeItem_Click(object sender, RoutedEventArgs e)

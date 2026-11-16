@@ -9,7 +9,6 @@
     xmlns:model="using:iV2EX.Model"
     mc:Ignorable="d">
     <Page.Resources>
-        <converter:StringToImageSourceConverter x:Key="ImageConverter" />
         <DataTemplate x:Name="HistoryTemplate" x:DataType="model:BrowseHistoryItem">
             <Border
                 Padding="14,10"

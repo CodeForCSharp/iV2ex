@@ -13,8 +13,6 @@
     d:DesignWidth="400"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <converter:StringToImageSourceConverter x:Key="ImageConverter" />
-
         <Style x:Key="TopicTabButtonStyle" TargetType="Button">
             <Setter Property="Padding" Value="12,5" />
             <Setter Property="MinWidth" Value="0" />

@@ -6,61 +6,51 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localcontrol="using:iV2EX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="300"
+    d:DesignHeight="600"
     d:DesignWidth="400"
-    mc:Ignorable="d"
-    Loaded="UserInfoFragment_Loaded">
+    Loaded="UserInfoFragment_Loaded"
+    mc:Ignorable="d">
     <UserControl.Resources>
-        <converter:StringToImageSourceConverter x:Key="ImageConverter" />
-
-        <Style x:Key="MenuButtonStyle" TargetType="Button">
+        <Style x:Key="CardRowButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
+            <Setter Property="Padding" Value="10,9" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="CornerRadius" Value="5" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid
                             x:Name="RootGrid"
+                            Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
+                                        </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
+                                        </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                Storyboard.TargetName="RootGrid"
-                                                Storyboard.TargetProperty="Opacity"
-                                                To="0.4"
-                                                Duration="0" />
-                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Opacity" Value="0.5" />
+                                        </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Content="{TemplateBinding Content}"
@@ -70,363 +60,547 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="CheckInButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="{ThemeResource AppBrandSolidBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid
+                            x:Name="RootGrid"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Opacity" Value="0.88" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Opacity" Value="0.75" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TextFillColorTertiaryBrush}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Foreground="{TemplateBinding Foreground}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DangerCardButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{ThemeResource AppDangerBrush}" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid
+                            x:Name="RootGrid"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource AppDangerSubtleBrush}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource AppDangerSubtleBrush}" />
+                                            <Setter Target="RootGrid.Opacity" Value="0.8" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Foreground="{TemplateBinding Foreground}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ScrollViewer>
-            <StackPanel Padding="16,12,16,16" Spacing="4">
-                <!--  Profile header  -->
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                    <Button
-                        Grid.Column="0"
-                        Click="UserItem_Click"
-                        Style="{StaticResource MenuButtonStyle}"
-                        ToolTipService.ToolTip="查看个人主页">
-                        <Grid Padding="4,6" ColumnDefinitions="Auto,*">
-                            <localcontrol:AvatarImage
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Padding="16,14,16,20" Spacing="16">
+                <!--  ===== Profile Card =====  -->
+                <Border
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <!--  Avatar + Username + Refresh  -->
+                        <Grid
+                            Padding="6,6,10,6"
+                            ColumnDefinitions="*,Auto"
+                            ColumnSpacing="4">
+                            <Button
                                 Grid.Column="0"
-                                AvatarSize="40"
-                                ImageUrl="{x:Bind People.Member.Image, Mode=OneWay}" />
-                            <TextBlock
+                                Padding="8,8"
+                                Click="UserItem_Click"
+                                Style="{StaticResource CardRowButtonStyle}"
+                                ToolTipService.ToolTip="查看个人主页">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <localcontrol:AvatarImage
+                                        Grid.Column="0"
+                                        AvatarSize="46"
+                                        ImageUrl="{x:Bind People.Member.Image, Mode=OneWay}" />
+                                    <StackPanel
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Spacing="2">
+                                        <TextBlock
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                            Text="{x:Bind People.Member.Username, Mode=OneWay}"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                            Text="查看个人主页" />
+                                    </StackPanel>
+                                    <FontIcon
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Glyph="&#xE76C;" />
+                                </Grid>
+                            </Button>
+
+                            <Button
+                                x:Name="RefreshBtn"
                                 Grid.Column="1"
-                                Margin="12,0,0,0"
                                 VerticalAlignment="Center"
-                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Text="{x:Bind People.Member.Username, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                Click="Refresh_Click"
+                                Style="{StaticResource RefreshIconButtonStyle}"
+                                ToolTipService.ToolTip="刷新个人数据">
+                                <FontIcon FontSize="14" Glyph="&#xE72C;" />
+                            </Button>
                         </Grid>
-                    </Button>
-                    <Button
-                        x:Name="RefreshBtn"
-                        Grid.Column="1"
-                        VerticalAlignment="Center"
-                        Click="Refresh_Click"
-                        Style="{StaticResource RefreshIconButtonStyle}"
-                        ToolTipService.ToolTip="刷新个人数据">
-                        <FontIcon FontSize="14" Glyph="&#xE72C;" />
-                    </Button>
-                </Grid>
 
-                <Border Height="1" Margin="0,4,0,8" Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                        <Border
+                            Height="1"
+                            Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
-                <!--  Check In  -->
-                <Button
-                    Click="CheckInItem_Click"
-                    Style="{StaticResource MenuButtonStyle}"
-                    IsEnabled="{x:Bind People.IsNotChecked, Mode=OneWay}">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FF00D1A4" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe8cf;" />
-                        </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="{x:Bind converter:Converter.CheckedToString(People.IsNotChecked), Mode=OneWay}" />
-                    </Grid>
-                </Button>
+                        <!--  3-Column Stats: Collected Topics / Nodes / Following  -->
+                        <Grid Padding="4" ColumnDefinitions="*,Auto,*,Auto,*">
+                            <Button
+                                Grid.Column="0"
+                                Padding="4,10"
+                                HorizontalContentAlignment="Center"
+                                Click="CollectTopicItem_Click"
+                                Style="{StaticResource CardRowButtonStyle}">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="{x:Bind converter:Converter.CountOrDash(People.CollectedTopics), Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="11.5"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="收藏主题" />
+                                </StackPanel>
+                            </Button>
 
-                <!--  Activity  -->
-                <Grid Padding="8,6" ColumnDefinitions="Auto,*">
-                    <Grid Width="30" Height="30">
-                        <Ellipse Width="30" Height="30" Fill="#FF5B8DEF" />
-                        <FontIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Foreground="White"
-                            Glyph="&#xE945;" />
-                    </Grid>
-                    <StackPanel
-                        Grid.Column="1"
-                        Margin="12,0,0,0"
-                        VerticalAlignment="Center"
-                        Spacing="4">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock
-                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                Text="活跃进度" />
-                            <TextBlock
+                            <Border
                                 Grid.Column="1"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{x:Bind converter:Converter.PercentToString(People.ActivityPercent), Mode=OneWay}" />
-                        </Grid>
-                        <ProgressBar
-                            Height="6"
-                            Maximum="100"
-                            Foreground="#FF5B8DEF"
-                            Value="{x:Bind People.ActivityPercent, Mode=OneWay}" />
-                    </StackPanel>
-                </Grid>
+                                Width="1"
+                                Margin="0,8"
+                                Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
-                <!--  Money  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="MoneyItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FFFFCD53" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe603;" />
+                            <Button
+                                Grid.Column="2"
+                                Padding="4,10"
+                                HorizontalContentAlignment="Center"
+                                Click="CollectNodeItem_Click"
+                                Style="{StaticResource CardRowButtonStyle}">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="{x:Bind converter:Converter.CountOrDash(People.CollectedNodes), Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="11.5"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="收藏节点" />
+                                </StackPanel>
+                            </Button>
+
+                            <Border
+                                Grid.Column="3"
+                                Width="1"
+                                Margin="0,8"
+                                Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                            <Button
+                                Grid.Column="4"
+                                Padding="4,10"
+                                HorizontalContentAlignment="Center"
+                                Click="FollowerItem_Click"
+                                Style="{StaticResource CardRowButtonStyle}">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="{x:Bind converter:Converter.CountOrDash(People.NoticePeople), Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="11.5"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="特别关注" />
+                                </StackPanel>
+                            </Button>
                         </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="余额" />
-                        <StackPanel
-                            Grid.Column="2"
-                            Orientation="Horizontal"
-                            VerticalAlignment="Center"
-                            Spacing="4">
+
+                        <Border
+                            Height="1"
+                            Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                        <!--  Activity Progress + Daily Check-in  -->
+                        <Grid
+                            Padding="14,10"
+                            ColumnDefinitions="*,Auto"
+                            ColumnSpacing="14">
                             <StackPanel
-                                Orientation="Horizontal"
-                                Spacing="4"
-                                Visibility="{x:Bind converter:Converter.GreaterThanZeroToVisibility(People.Gold), Mode=OneWay}">
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="{x:Bind People.Gold, Mode=OneWay}" />
-                                <Image
-                                    Width="16"
-                                    Height="16"
-                                    VerticalAlignment="Center"
-                                    Stretch="Uniform"
-                                    Source="ms-appx:///Assets/gold.png" />
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock
+                                        FontSize="12.5"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="今日活跃度" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        FontSize="12.5"
+                                        FontWeight="SemiBold"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="{x:Bind converter:Converter.PercentToString(People.ActivityPercent), Mode=OneWay}" />
+                                </Grid>
+                                <ProgressBar
+                                    Height="5"
+                                    Foreground="{ThemeResource AppBrandBrush}"
+                                    Maximum="100"
+                                    Value="{x:Bind People.ActivityPercent, Mode=OneWay}" />
                             </StackPanel>
-                            <TextBlock
+
+                            <Button
+                                Grid.Column="1"
                                 VerticalAlignment="Center"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{x:Bind People.Silver, Mode=OneWay}" />
-                            <Image
-                                Width="16"
-                                Height="16"
-                                VerticalAlignment="Center"
-                                Stretch="Uniform"
-                                Source="ms-appx:///Assets/silver.png" />
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{x:Bind People.Bronze, Mode=OneWay}" />
-                            <Image
-                                Width="16"
-                                Height="16"
-                                VerticalAlignment="Center"
-                                Stretch="Uniform"
-                                Source="ms-appx:///Assets/bronze.png" />
+                                Click="CheckInItem_Click"
+                                IsEnabled="{x:Bind People.IsNotChecked, Mode=OneWay}"
+                                Style="{StaticResource CheckInButtonStyle}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <FontIcon
+                                        FontSize="12"
+                                        Glyph="{x:Bind converter:Converter.CheckedToGlyph(People.IsNotChecked), Mode=OneWay}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind converter:Converter.CheckedToString(People.IsNotChecked), Mode=OneWay}" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!--  ===== Group 1: Account & Messages =====  -->
+                <StackPanel Spacing="6">
+                    <TextBlock
+                        Margin="4,0,0,0"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="账户与消息" />
+
+                    <Border
+                        Padding="4"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <!--  Messages  -->
+                            <Button Click="MessageItem_Click" Style="{StaticResource CardRowButtonStyle}">
+                                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                                    <Border
+                                        Grid.Column="0"
+                                        Width="32"
+                                        Height="32"
+                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                        CornerRadius="6">
+                                        <FontIcon
+                                            FontSize="15"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                            Glyph="&#xE8BD;" />
+                                    </Border>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="我的消息" />
+                                    <Border
+                                        Grid.Column="2"
+                                        MinWidth="22"
+                                        Height="20"
+                                        Padding="7,0"
+                                        VerticalAlignment="Center"
+                                        Background="{ThemeResource AppBrandSolidBrush}"
+                                        CornerRadius="10"
+                                        Visibility="{x:Bind converter:Converter.UnreadBadgeVisibility(People.Notifications), Mode=OneWay}">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontSize="11.5"
+                                            FontWeight="SemiBold"
+                                            Foreground="White"
+                                            Text="{x:Bind People.Notifications, Mode=OneWay}" />
+                                    </Border>
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        FontSize="12.5"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Text="暂无未读"
+                                        Visibility="{x:Bind converter:Converter.NoUnreadVisibility(People.Notifications), Mode=OneWay}" />
+                                    <FontIcon
+                                        Grid.Column="3"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Glyph="&#xE76C;" />
+                                </Grid>
+                            </Button>
+
+                            <Border
+                                Height="1"
+                                Margin="54,2,10,2"
+                                Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                            <!--  Balance  -->
+                            <Button Click="MoneyItem_Click" Style="{StaticResource CardRowButtonStyle}">
+                                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                                    <Border
+                                        Grid.Column="0"
+                                        Width="32"
+                                        Height="32"
+                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                        CornerRadius="6">
+                                        <FontIcon
+                                            FontSize="15"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                            Glyph="&#xE825;" />
+                                    </Border>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="账户余额" />
+                                    <StackPanel
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="5">
+                                        <StackPanel
+                                            Orientation="Horizontal"
+                                            Spacing="3"
+                                            Visibility="{x:Bind converter:Converter.GreaterThanZeroToVisibility(People.Gold), Mode=OneWay}">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontSize="13"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="{x:Bind People.Gold, Mode=OneWay}" />
+                                            <Image
+                                                Width="15"
+                                                Height="15"
+                                                VerticalAlignment="Center"
+                                                Source="ms-appx:///Assets/gold.png"
+                                                Stretch="Uniform" />
+                                        </StackPanel>
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontSize="13"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="{x:Bind People.Silver, Mode=OneWay}" />
+                                        <Image
+                                            Width="15"
+                                            Height="15"
+                                            VerticalAlignment="Center"
+                                            Source="ms-appx:///Assets/silver.png"
+                                            Stretch="Uniform" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontSize="13"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="{x:Bind People.Bronze, Mode=OneWay}" />
+                                        <Image
+                                            Width="15"
+                                            Height="15"
+                                            VerticalAlignment="Center"
+                                            Source="ms-appx:///Assets/bronze.png"
+                                            Stretch="Uniform" />
+                                    </StackPanel>
+                                    <FontIcon
+                                        Grid.Column="3"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Glyph="&#xE76C;" />
+                                </Grid>
+                            </Button>
                         </StackPanel>
-                    </Grid>
-                </Button>
+                    </Border>
+                </StackPanel>
 
-                <!--  Collected Topics  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="CollectTopicItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FF12B7F5" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe737;" />
-                        </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="收藏主题" />
-                        <TextBlock
-                            Grid.Column="2"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="{x:Bind People.CollectedTopics, Mode=OneWay}" />
-                    </Grid>
-                </Button>
+                <!--  ===== Group 2: Create & History =====  -->
+                <StackPanel Spacing="6">
+                    <TextBlock
+                        Margin="4,0,0,0"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="创作与记录" />
 
-                <!--  Collected Nodes  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="CollectNodeItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FFFEA356" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe73a;" />
-                        </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="收藏节点" />
-                        <TextBlock
-                            Grid.Column="2"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="{x:Bind People.CollectedNodes, Mode=OneWay}" />
-                    </Grid>
-                </Button>
+                    <Border
+                        Padding="4"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <!--  New Topic  -->
+                            <Button Click="WriteItem_Click" Style="{StaticResource CardRowButtonStyle}">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border
+                                        Grid.Column="0"
+                                        Width="32"
+                                        Height="32"
+                                        Background="{ThemeResource AppBrandSubtleBrush}"
+                                        CornerRadius="6">
+                                        <FontIcon
+                                            FontSize="15"
+                                            Foreground="{ThemeResource AppBrandBrush}"
+                                            Glyph="&#xE70F;" />
+                                    </Border>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="写新主题" />
+                                    <FontIcon
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Glyph="&#xE76C;" />
+                                </Grid>
+                            </Button>
 
-                <!--  Followers  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="FollowerItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FF89D043" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe6cc;" />
-                        </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="关注的人" />
-                        <TextBlock
-                            Grid.Column="2"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="{x:Bind People.NoticePeople, Mode=OneWay}" />
-                    </Grid>
-                </Button>
+                            <Border
+                                Height="1"
+                                Margin="54,2,10,2"
+                                Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
-                <!--  Messages  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="MessageItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FFF05E4B" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe759;" />
-                        </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="我的消息" />
-                        <TextBlock
-                            Grid.Column="2"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="{x:Bind People.Notifications, Mode=OneWay}" />
-                    </Grid>
-                </Button>
+                            <!--  Browse History  -->
+                            <Button Click="HistoryItem_Click" Style="{StaticResource CardRowButtonStyle}">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border
+                                        Grid.Column="0"
+                                        Width="32"
+                                        Height="32"
+                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                        CornerRadius="6">
+                                        <FontIcon
+                                            FontSize="15"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                            Glyph="&#xE81C;" />
+                                    </Border>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="浏览历史" />
+                                    <FontIcon
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Glyph="&#xE76C;" />
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
-                <!--  Browse History  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="HistoryItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FF7E57C2" />
-                            <FontIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Glyph="&#xE81C;" />
-                        </Grid>
+                <!--  ===== Sign Out =====  -->
+                <Button Click="CancelItem_Click" Style="{StaticResource DangerCardButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="14" Glyph="&#xE7E8;" />
                         <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
                             VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="浏览历史" />
-                    </Grid>
-                </Button>
-
-                <!--  New Topic  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="WriteItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FF00D1A4" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe600;" />
-                        </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            Text="写新主题" />
-                    </Grid>
-                </Button>
-
-                <!--  Sign Out  -->
-                <Button Style="{StaticResource MenuButtonStyle}" Click="CancelItem_Click">
-                    <Grid Padding="8,6" ColumnDefinitions="Auto,*">
-                        <Grid Grid.Column="0" Width="30" Height="30">
-                            <Ellipse
-                                Width="30"
-                                Height="30"
-                                Fill="#FFF05E4B" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="/Assets/IconFont/iconfont.ttf#iconfont"
-                                FontSize="20"
-                                Foreground="White"
-                                Text="&#xe7cb;" />
-                        </Grid>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                            FontSize="14"
+                            FontWeight="SemiBold"
                             Text="退出账号" />
-                    </Grid>
+                    </StackPanel>
                 </Button>
             </StackPanel>
         </ScrollViewer>

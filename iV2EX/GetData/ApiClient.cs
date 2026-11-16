@@ -125,8 +125,6 @@ namespace iV2EX.GetData
 
         public static async Task<Stream> GetStream(string url) => await Client.GetStreamAsync(url);
 
-        public static async Task<string> GetSettingInformation() => await Client.GetStringAsync($"{Host}/settings");
-
         public static async Task<string> ThankReply(int replyId, string once)
         {
             var request = new HttpRequestMessage
@@ -141,31 +139,5 @@ namespace iV2EX.GetData
             var match = Regex.Match(json, "\"message\"\\s*:\\s*\"([^\"]*)\"");
             return match.Success ? match.Groups[1].Value : "未知错误";
         }
-
-    }
-
-    internal enum CheckInStatus
-    {
-        Success = 0,
-        Failure = 1,
-        Gone = 2
-    }
-
-    internal enum SignInStatus
-    {
-        UsernameEmpty = 0,
-        PasswordEmpty = 1,
-        CaptchaEmpty = 2,
-        NetworkError = 3,
-        UsernameOrPasswordError = 4,
-        Success = 5
-    }
-
-    internal enum ReplyStatus
-    {
-        Success = 0,
-        Failure = 1,
-        Ban = 2,
-        TextEmpty = 3
     }
 }

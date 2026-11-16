@@ -45,7 +45,31 @@ namespace iV2EX.Util
 
         public static string CheckedToString(bool check)
         {
-            return check ? "未签到" : "已签到";
+            return check ? "每日签到" : "今日已签";
+        }
+
+        public static string CheckedToGlyph(bool check)
+        {
+            return check ? "\uE787" : "\uE73E";
+        }
+
+        public static string CountOrDash(string s)
+        {
+            return string.IsNullOrWhiteSpace(s) ? "-" : s.Trim();
+        }
+
+        public static Visibility UnreadBadgeVisibility(string notifications)
+        {
+            return int.TryParse(notifications, out var count) && count > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        public static Visibility NoUnreadVisibility(string notifications)
+        {
+            return int.TryParse(notifications, out var count) && count > 0
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
 
         public static string PercentToString(double percent)

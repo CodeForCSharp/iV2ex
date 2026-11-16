@@ -10,8 +10,6 @@
     x:Name="MemberPage"
     mc:Ignorable="d">
     <Page.Resources>
-        <converter:StringToImageSourceConverter x:Key="ImageConverter" />
-
         <Style x:Key="MemberActionButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="32" />
             <Setter Property="MinWidth" Value="72" />
