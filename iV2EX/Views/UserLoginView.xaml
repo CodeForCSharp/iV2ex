@@ -7,57 +7,185 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="UserLoginPage"
     mc:Ignorable="d">
+    <Page.Resources>
+        <Style x:Key="CaptchaButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="128" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="RootBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <ContentPresenter
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Content="{TemplateBinding Content}" />
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootBorder.Opacity" Value="0.86" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootBorder.Opacity" Value="0.72" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootBorder.Opacity" Value="0.5" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
-    <Grid>
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
-                <GradientStop Color="#FF0E68F2" />
-                <GradientStop Offset="1" Color="#FF89D280" />
-            </LinearGradientBrush>
-        </Grid.Background>
-        <Grid VerticalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <TextBox
-                Name="TbUsername"
-                Grid.Row="0"
-                Grid.Column="0"
-                MaxWidth="500"
-                Margin="5"
-                PlaceholderText="账号" />
-            <PasswordBox
-                Name="TbPassword"
-                Grid.Row="1"
-                Grid.Column="0"
-                MaxWidth="500"
-                Margin="5"
-                PasswordRevealMode="Peek"
-                PlaceholderText="密码" />
-            <Image
-                Name="CaptchaImage"
-                Grid.Row="2"
-                MaxWidth="500"
-                Margin="5" />
-            <TextBox
-                Name="TbCaptcha"
-                Grid.Row="3"
-                Grid.Column="0"
-                MaxWidth="500"
-                Margin="5"
-                PlaceholderText="验证码" />
-            <Button
-                Name="BtnLogin"
-                Grid.Row="4"
-                MaxWidth="500"
-                Margin="5"
-                HorizontalAlignment="Stretch"
-                Content="登录" />
-        </Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid Padding="24" VerticalAlignment="Center">
+                <Border
+                    MaxWidth="400"
+                    Padding="28,28,28,24"
+                    HorizontalAlignment="Stretch"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12">
+                    <StackPanel Spacing="18">
+                        <!--  Brand Header  -->
+                        <StackPanel Spacing="6">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Border
+                                    Width="34"
+                                    Height="34"
+                                    Background="{ThemeResource AppBrandSolidBrush}"
+                                    CornerRadius="8">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="15"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="V2" />
+                                </Border>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="20"
+                                    FontWeight="SemiBold"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                    Text="登录 iV2EX" />
+                            </StackPanel>
+                            <TextBlock
+                                FontSize="13"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="使用你的 V2EX 账号和密码登录" />
+                        </StackPanel>
+
+                        <!--  Form Fields  -->
+                        <StackPanel Spacing="12">
+                            <TextBox
+                                Name="TbUsername"
+                                Header="账号"
+                                KeyDown="Input_KeyDown"
+                                PlaceholderText="用户名或注册邮箱" />
+
+                            <PasswordBox
+                                Name="TbPassword"
+                                Header="密码"
+                                KeyDown="Input_KeyDown"
+                                PasswordRevealMode="Peek"
+                                PlaceholderText="请输入密码" />
+
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock
+                                        FontSize="14"
+                                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                        Text="验证码" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="11.5"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Text="点击图片刷新" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                    <TextBox
+                                        Name="TbCaptcha"
+                                        Grid.Column="0"
+                                        Height="36"
+                                        KeyDown="Input_KeyDown"
+                                        PlaceholderText="输入右侧字符" />
+                                    <Button
+                                        x:Name="RefreshCaptchaButton"
+                                        Grid.Column="1"
+                                        Click="RefreshCaptchaButton_Click"
+                                        Style="{StaticResource CaptchaButtonStyle}"
+                                        ToolTipService.ToolTip="点击刷新验证码">
+                                        <Grid>
+                                            <Image
+                                                Name="CaptchaImage"
+                                                Stretch="UniformToFill" />
+                                            <ProgressRing
+                                                x:Name="CaptchaLoadingRing"
+                                                Width="18"
+                                                Height="18"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Foreground="{ThemeResource AppBrandBrush}"
+                                                IsActive="False"
+                                                Visibility="Collapsed" />
+                                        </Grid>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!--  Sign In Button  -->
+                        <Button
+                            Name="BtnLogin"
+                            Height="38"
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Stretch"
+                            Click="BtnLogin_Click"
+                            Style="{StaticResource PrimaryBrandButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ProgressRing
+                                    x:Name="LoginRing"
+                                    Width="16"
+                                    Height="16"
+                                    Foreground="White"
+                                    IsActive="False"
+                                    Visibility="Collapsed" />
+                                <TextBlock
+                                    x:Name="BtnLoginText"
+                                    VerticalAlignment="Center"
+                                    Text="登录" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
         <localcontrol:ToastTips
             x:Name="Toast"
             HorizontalAlignment="Stretch"

@@ -8,6 +8,75 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="WrittenPage"
     mc:Ignorable="d">
+    <Page.Resources>
+        <Style x:Key="SyntaxSegmentRadioStyle" TargetType="RadioButton">
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid
+                            x:Name="Root"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <Border
+                                x:Name="HoverOverlay"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                IsHitTestVisible="False"
+                                Opacity="0" />
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Foreground="{TemplateBinding Foreground}" />
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="HoverOverlay.Opacity" Value="1" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Opacity" Value="0.78" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Opacity" Value="0.45" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource AppBrandSolidBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="White" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -15,51 +84,220 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBox
-            Name="TitleText"
+
+        <!--  ===== Page Header =====  -->
+        <Grid
             Grid.Row="0"
-            MinHeight="36"
-            Margin="12,8,12,4"
-            PlaceholderText="标题,不超过120字" />
-        <TextBox
-            Name="Body"
-            Grid.Row="1"
-            Margin="12,4,12,0"
-            AcceptsReturn="True"
-            TextWrapping="Wrap"
-            VerticalContentAlignment="Top"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            PlaceholderText="正文,不超过20000字" />
-        <Grid Grid.Row="2" Margin="12,8,12,8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <AutoSuggestBox
-                Name="Option"
-                Grid.Column="0"
-                Width="200"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                PlaceholderText="选择节点"
-                ItemsSource="{x:Bind Show}">
-                <AutoSuggestBox.ItemTemplate>
-                    <DataTemplate x:DataType="data:NodeModel">
-                        <TextBlock Text="{x:Bind Title}" />
-                    </DataTemplate>
-                </AutoSuggestBox.ItemTemplate>
-            </AutoSuggestBox>
-            <Button
-                Name="Send"
+            Padding="20,14"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,0,0,1"
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="12">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                    Text="写新主题" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="选择发布节点并填写主题标题与正文" />
+            </StackPanel>
+            <Border
+                x:Name="SelectedNodeBadge"
                 Grid.Column="1"
-                Width="36"
-                Height="36"
-                Padding="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center">
-                <SymbolIcon Symbol="Send" />
-            </Button>
+                Padding="10,4"
+                VerticalAlignment="Center"
+                Background="{ThemeResource AppBrandSubtleBrush}"
+                CornerRadius="12"
+                Visibility="Collapsed">
+                <TextBlock
+                    x:Name="SelectedNodeText"
+                    FontSize="12"
+                    FontWeight="SemiBold"
+                    Foreground="{ThemeResource AppBrandBrush}" />
+            </Border>
         </Grid>
+
+        <!--  ===== Composer Form =====  -->
+        <Grid
+            Grid.Row="1"
+            Padding="20,16"
+            RowDefinitions="Auto,Auto,*"
+            RowSpacing="14">
+            <!--  Node Selector  -->
+            <StackPanel Grid.Row="0" Spacing="6">
+                <TextBlock
+                    FontSize="13"
+                    FontWeight="SemiBold"
+                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                    Text="目标节点" />
+                <AutoSuggestBox
+                    Name="Option"
+                    HorizontalAlignment="Stretch"
+                    ItemsSource="{x:Bind Show}"
+                    PlaceholderText="输入节点中文名或英文 slug 搜索..."
+                    QueryIcon="Find">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="data:NodeModel">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                <TextBlock
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                    Text="{x:Bind Title}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                    Text="{x:Bind Name}" />
+                            </Grid>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+            </StackPanel>
+
+            <!--  Title Input  -->
+            <StackPanel Grid.Row="1" Spacing="6">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock
+                        Grid.Column="0"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        Text="标题" />
+                    <TextBlock
+                        x:Name="TitleCountText"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Text="0 / 120" />
+                </Grid>
+                <TextBox
+                    Name="TitleText"
+                    MinHeight="38"
+                    MaxLength="120"
+                    PlaceholderText="清晰准确的标题更容易获得回应"
+                    TextChanged="TitleText_TextChanged" />
+            </StackPanel>
+
+            <!--  Body Input  -->
+            <Grid
+                Grid.Row="2"
+                RowDefinitions="Auto,*"
+                RowSpacing="6">
+                <Grid
+                    Grid.Row="0"
+                    ColumnDefinitions="Auto,*,Auto"
+                    ColumnSpacing="12">
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        Text="正文" />
+                    <Border
+                        Grid.Column="1"
+                        Padding="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        CornerRadius="6">
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <RadioButton
+                                x:Name="SyntaxDefaultRadio"
+                                Checked="SyntaxRadio_Checked"
+                                Content="原生格式"
+                                GroupName="SyntaxGroup"
+                                IsChecked="True"
+                                Style="{StaticResource SyntaxSegmentRadioStyle}"
+                                Tag="default" />
+                            <RadioButton
+                                x:Name="SyntaxMarkdownRadio"
+                                Checked="SyntaxRadio_Checked"
+                                Content="Markdown"
+                                GroupName="SyntaxGroup"
+                                Style="{StaticResource SyntaxSegmentRadioStyle}"
+                                Tag="markdown" />
+                        </StackPanel>
+                    </Border>
+                    <TextBlock
+                        x:Name="BodyCountText"
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Text="0 / 20000" />
+                </Grid>
+                <TextBox
+                    Name="Body"
+                    Grid.Row="1"
+                    Padding="12,10"
+                    VerticalContentAlignment="Top"
+                    AcceptsReturn="True"
+                    MaxLength="20000"
+                    PlaceholderText="写下你的想法、问题描述或补充细节（自动识别链接与图片直链，可留空）..."
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    TextChanged="Body_TextChanged"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </Grid>
+
+        <!--  ===== Bottom Action Bar =====  -->
+        <Border
+            Grid.Row="2"
+            Padding="20,12"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock
+                    x:Name="NodeStatusHint"
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="请选择节点后发布主题"
+                    TextTrimming="CharacterEllipsis" />
+                <Button
+                    Name="Send"
+                    Grid.Column="1"
+                    Click="Send_Click"
+                    Style="{StaticResource PrimaryBrandButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <ProgressRing
+                            x:Name="SendRing"
+                            Width="15"
+                            Height="15"
+                            Foreground="White"
+                            IsActive="False"
+                            Visibility="Collapsed" />
+                        <FontIcon
+                            x:Name="SendIcon"
+                            FontSize="13"
+                            Glyph="&#xE724;" />
+                        <TextBlock
+                            x:Name="SendButtonText"
+                            VerticalAlignment="Center"
+                            Text="发布主题" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <ProgressBar
+            x:Name="LoadingBar"
+            Grid.Row="1"
+            VerticalAlignment="Top"
+            Foreground="{ThemeResource AppBrandBrush}"
+            IsHitTestVisible="False"
+            IsIndeterminate="True"
+            Visibility="Collapsed" />
+
         <localcontrol:ToastTips
             x:Name="Toast"
             Grid.Row="0"
